@@ -7,6 +7,7 @@
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
+\usepackage{bm}
 \usepackage{etex}
 \usepackage{color}
 \usepackage{graphicx}
@@ -20,6 +21,7 @@
 \usepackage{mathtools}
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
+
 \newtheorem{definition}{Definition}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
@@ -89,19 +91,19 @@
 
 
 % DOI
-\acmDOI{10.475/123_4}
+%% \acmDOI{10.475/123_4}
 % ISBN
-\acmISBN{123-4567-24-567/08/06}
+%% \acmISBN{123-4567-24-567/08/06}
 %Conference
-\acmConference[WOODSTOCK'97]{ACM Woodstock conference}{July 1997}{El Paso, Texas USA}
-\acmYear{2019}
-\copyrightyear{2019}
-\acmArticle{4}
-\acmPrice{15.00}
+%% \acmConference[WOODSTOCK'97]{ACM Woodstock conference}{July 1997}{El Paso, Texas USA}
+%% \acmYear{2019}
+%% \copyrightyear{2019}
+%% \acmArticle{4}
+%% \acmPrice{15.00}
 
 
 \begin{document}
-\title{Computing the characteristic polynomial of a finite Drinfeld module}
+\title{Computing the characteristic polynomial of a finite rank two Drinfeld module}
 
 \author{Yossef Musleh}
 \affiliation{%
@@ -120,10 +122,11 @@
 
 
 \begin{abstract}
-  Motivated by finding analogues of classical point counting techniques
-  for rank two Drinfeld modules, we introduce two new algorithms which
-  provide a runtime complexity improvement over previous algorithms
-  given by Gekeler in~\cite{GEKELE1991187}.
+  Motivated by finding analogues of classical point counting
+  techniques for rank two Drinfeld modules, we introduce new
+  algorithms to compute the characteristic polynomial of a finite rank
+  two Drinfeld module. We compare them to previous algorithms given by Gekeler,
+ Narayanan and Garai-Papikian.
 \end{abstract}
 
 \begin{CCSXML}
@@ -138,7 +141,7 @@
 
 \ccsdesc[500]{Computing methodologies~Symbolic and algebraic algorithms}
 
-\keywords{Drinfeld module, algorithms}
+\keywords{Drinfeld module, algorithms, complexity}
 
 \maketitle
 
@@ -148,13 +151,13 @@
 
 \section{Introduction}
 
-Drinfeld modules were introduced in~\cite{DrinfeldXX} (under the 
-name {\em elliptic module}) in the context of the Langlands program;
+Drinfeld modules were introduced in~\cite{Drinfeld74} (under the 
+name {\em elliptic modules}) in the context of the Langlands program;
 they are themselves extensions of a previous construction known 
-as the {\em Carlitz module}~\cite{CarlitzXX} -- see below.
+as the {\em Carlitz module}~\cite{Carlitz35}.
 
 In this paper, we consider so-called Drinfeld modules of rank two over
-some field $\L$; in our algorithms, $\L$ will always be a finite
+a field $\L$; in our algorithms, $\L$ will always be a finite
 field. Precise definitions are given below, but in a word, this means
 that we will study the properties of ring homomorphisms from $\F_q[x]$ to
 the skew polynomial ring $\L\ang{\tau}$, where $\tau$ satisfies the
@@ -175,7 +178,8 @@ starting being considered under the algorithmic viewpoint. For
 instance, they have been proved to be unsuitable for usual forms of
 public key cryptography~\cite{Scanlon01}; they have also been used to
 design polynomial factorization
-algorithms~\cite{xxx,yyy,NarayananXX,zzz}.
+algorithms~\cite{PaPo89,vanderHeiden04,Narayanan18,eschost2017arXiv171200669D}.
+See also~\cite{GaPa18} for the computation of their endomorphism rings.
 
 A fundamental object attached to an elliptic curve $E$ defined over a
 finite field $\F_q$ is its Frobenius endomorphism $\pi:(x,y) \mapsto
@@ -191,20 +195,21 @@ Our main objective is to develop algorithms to deal with Drinfeld
 analogues of these questions. Given a rank two Drinfeld module over a
 degree $n$ extension $\L$ of $\F_q$, one can define its Frobenius
 endomorphism, and prove that it satisfies a degree-two relation $T^2 -
-a T + b$, where $a$ and $b$ are in now $\F_q[x]$; see~\cite{xxx}. As
-in the elliptic case, $b$ is rather easy to determine, and of degree
-$n$. Hence, our main question is the determination of the polynomial
-$a$, which is known to have degree at most $n/2$ (note the parallel
-with the elliptic case).
+a T + b$, where $a$ and $b$ are now in $\F_q[x]$. As in the elliptic
+case, $b$ is rather easy to determine, and of degree $n$. Hence, our
+main question is the determination of the polynomial $a$, which is
+known to have degree at most $n/2$ (note the parallel with the
+elliptic case).
 
 Contrary to the elliptic case, computing the characteristic polynomial
 of a Drinfeld module is easily seen to be feasible in polynomial time:
 it boils down to finding the $\Theta(n)$ coefficients of $a$, which
-are known to satisfy certain linear relations. Gekeler detailed a
-straightforward procedure in~\cite{xxx}; we will briefly revisit it in
-order to analyse its complexity, which turns out to be cubic in $n$.
-Our main contributions are two algorithms (randomized, resp./ deterministic)
-with an improved complexity.
+are known to satisfy certain linear relations. Gekeler detailed such
+an algorithm in~\cite{GEKELE1991187}; we will briefly revisit it in
+order to analyse its complexity, which turns out to be cubic in
+$n$. Our main contributions in this paper are several new algorithms
+with improved runtimes; we also present experimental results obtained
+by an implementation based on NTL~\cite{shoup2001ntl}.
 
 TODO: why. Cite the Diplomarbeit.
 
@@ -215,13 +220,13 @@ TODO: why. Cite the Diplomarbeit.
 \section{Preliminaries}
 
 In this section, we introduce notation to be used throughout the
-paper; we recall the basic definition of Drinfeld module and state our
-main problem. For a general reference on these questions, see for
-instance~\cite{Goss96}.
+paper; we recall the basic definition of Drinfeld modules and state
+precisely our main problem. For a general reference on these
+questions, see for instance~\cite{Goss96}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Basic definitions}
+\subsection{The fields $\F_q$, $\K$ and $\L$}\label{ssec:not}
 
 In all the paper, $\F_q$ is a given finite field, of order a prime
 power $q$, and $\L \supset \F_q$ is another finite field of degree $n$
@@ -236,7 +241,7 @@ In addition, we suppose that we are given a ring homomorphism $\gamma:
 irreducible polynomial $\frakp$, referred to as the
 $\F_q[x]$-\textit{characteristic} of $\L$. Then, $\gamma$ induces an
 embedding $\K := \F_q[x]/\frakp \to \L$; we will write $m := [\L :
-  \K]$, so that $n = md$, with $d=\deg(\frakp)$. When needed, we will
+  \K]$, so that $n = md$, with $d=\deg \frakp$. When needed, we will
 denote by $\xi \in \K$ the class $x \bmod \frakp$.
 
 Although it may not seem justified yet, we may draw a parallel with
@@ -249,8 +254,8 @@ $\frakp$. The field extension $\L$ will be the ``field of
 definition'' of our Drinfeld modules.
 
 We denote by $\pi: \L \to \L$ the $q$-power Frobenius $u \mapsto u^q$;
-for $i \ge 1$, the $i$th iterate $\pi^i: \L \to \L$ is thus $u \mapsto
-u^{q^i}$.
+for $i \ge 0$, the $i$th iterate $\pi^i: \L \to \L$ is thus $u \mapsto
+u^{q^i}$; for $i \ge 0$, $\pi^i$ is the $i$th iterate of $\pi^{-1}$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -259,7 +264,7 @@ u^{q^i}$.
 We write $\L\ang{\tau}$ for the ring of so-called {\em skew
   polynomials}
 \begin{align}\label{def:skewpoly}
-\L\ang{\tau} &= \{u_0 + u_1 \tau + \cdots + u_s \tau^s \ \mid \ s \in
+\L\ang{\tau} &= \{U=u_0 + u_1 \tau + \cdots + u_s \tau^s \ \mid \ s \in
 \N, u_0,\dots,u_s \in \L\}.
 \end{align}
 This ring is endowed with the multiplication induced by the relation
@@ -269,22 +274,21 @@ isomorphism mapping $\L\ang{\tau}$ to polynomials of the form $u_0x +
 u_1 x^q + \cdots + u_s x^{q^s}$, which form a ring for the operations
 of addition and composition. 
 
-An element $u$ of $\L\ang{\tau}$ admits a unique representation as
-in~\eqref{def:skewpoly}; for $u$ non-zero, its {\em degree} $\deg(u)$
-is the highest integer $s$ for which $\tau^s$ appears with a non-zero
-coefficient (as usual, we set $\deg(0) =-\infty$).  The ring
-$\L\ang{\tau}$ admits a right Euclidean division: given $u$ and $v$ in
-$\L\ang{\tau}$, with $v$ non-zero, there exist a unique pair $(q,r)$
-in $\L\ang{\tau}^2$ such that $u = qv +r$ and $\deg(r) < \deg(v)$.
+A non-zero element $U$ of $\L\ang{\tau}$ admits a unique
+representation as in~\eqref{def:skewpoly} with $u_s$ non-zero. Its
+{\em degree} $\deg U$ is the integer $s$ (as usual, we set $\deg 0
+=-\infty$).  The ring $\L\ang{\tau}$ admits a right Euclidean
+division: given $U$ and $V$ in $\L\ang{\tau}$, with $V$ non-zero,
+there exists a unique pair $(Q,R)$ in $\L\ang{\tau}^2$ such that $U =
+QV +R$ and $\deg R < \deg V$.
 
 Related to the isomorphism given above, there is a ring homomorphism
 $\iota:\L\ang{\tau} \to {\rm End}_{\F_q}[\L]$ given by
 \[\iota: u_0 + u_1\tau + \dots
 + u_s\tau^s \mapsto u_0 \rm{Id} + u_1 \pi + \dots+ u_s \pi^s, \] where
 $\rm{Id}: \L \to \L$ is the identity operator and $\pi$ and its powers
-are as defined above. This mapping is a ring homomorphism; it allows
-us to interpret elements $u \in \L\ang{\tau}$ as $\F_q$-linear
-operators $\L \to \L$.
+are as defined above. This mapping allows us to interpret elements in
+$ \L\ang{\tau}$ as $\F_q$-linear operators $\L \to \L$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -297,16 +301,16 @@ will be concerned with the following special case.
   Let $\L$ and $\gamma$ be as above.  A rank $r$ {\em Drinfeld module}
   over $(\L,\gamma)$ is a ring homomorphism $\varphi: \F_q[x] \to
   \L\ang{\tau}$ such that
-  \[\varphi(x) = \gamma(x) + a_1 \tau + \cdots + a_r\tau^r,\]
-  with $a_1,\dots,a_r$ in $\L$ and $a_r$ non-zero.
+  \[\varphi(x) = \gamma(x) + u_1 \tau + \cdots + u_r\tau^r,\]
+  with $u_1,\dots,u_r$ in $\L$ and $u_r$ non-zero.
 \end{definition}
-For $u$ in $\F_q[x]$, we will abide by the convention of writing
-$\varphi_u$ in place of $\varphi(u)$. Since $\varphi$ is a ring
-homomorphism, we have $\varphi_{uv} = \varphi_u \varphi_v$ and
-$\varphi_{u+v} = \varphi_u+ \varphi_v$ for all $u,v$ in $\F_q[x]$;
+For $U$ in $\F_q[x]$, we will abide by the convention of writing
+$\varphi_U$ in place of $\varphi(U)$. Since $\varphi$ is a ring
+homomorphism, we have $\varphi_{UV} = \varphi_U \varphi_V$ and
+$\varphi_{U+V} = \varphi_U+ \varphi_V$ for all $U,V$ in $\F_q[x]$;
 hence, the Drinfeld module $\varphi$ is determined entirely by
-$\varphi_x$; precisely, for $u$ in $\F_q[x]$, we have $\varphi_u =
-a(\varphi_x)$.
+$\varphi_x$; precisely, for $U$ in $\F_q[x]$, we have $\varphi_U =
+U(\varphi_x)$.
 
 We will restrict our considerations to rank two Drinfeld modules,
 which are widely viewed in the literature as a direct function field
@@ -318,144 +322,261 @@ $(g,\Delta) \in\L^2$.
 
 \begin{example}
   Let $q = 2$, $\frakf = z^2 + z + 1$ and $\L = \F_2[z]/\frakf =
-  \mathbb{F}_4$, so that $n=2$, writing $\zeta$ for the class of $z$
-  in $\L$.  Let then $\gamma: \F_q[x] \to \L$ be the quotient map by
-  $\frakf$, so that $\K=\L$ and $m=1$, and define the Drinfeld module
-  $\varphi: \F_2[x] \to \L$ by
+  \mathbb{F}_4$, so that $n=2$; we let $\zeta$ be the class of $z$ in
+  $\L$.
+
+  Let $\gamma: \F_2[x] \to \F_4$ be given by $x \mapsto \zeta$, so that
+  $\frakp=\frakf$, $\K=\L=\F_4$ and $m=1$. We define the Drinfeld module
+  $\varphi: \F_2[x] \to \F_4\ang{\tau}$ by
 \[ \varphi_x = \zeta + \tau + \tau^2,\]
 so that $(g,\Delta)=(1,1)$.
 \end{example}
 
-%% Since $\gamma$ and 
-%% Since each of these parameters can be specified with coefficients in
-%% $\F_q$, all cost analysis will be done in the algebraic model
-%% using $\F_q$ operations unless specified otherwise.
-
-For completeness, we briefly mention how our definitions can be
-broadened. First, one may start from a smooth, projective, connected curve
-$\mathcal{C}$ defined over $\F_q$ and replace the polynomial ring
-$\F_q[x]$ by the subring $\A\subset \F_q(\mathcal{C})$ of rational
-functions regular everywhere except possibly at some fixed point
-$\infty \in \mathcal{C}$; the rest of the definition remains
-unchanged. The definition given above has $\mathcal{C} = \P^1$, with
-$\infty$ being its point at infinity and $\A=\F_q[x]$. Another
-restriction that can be lifted is that $\L$ need not be a finite
-field; any field with a mapping $\gamma$ as above would do (another
-common choice is $\L=\F_q(x)$, which then parallels the theory of
-elliptic curves over $\Q$).
+%% For completeness, we briefly mention how our definitions can be
+%% broadened. First, one may start from a smooth, projective, connected
+%% curve $\mathcal{C}$ defined over $\F_q$ and replace the polynomial
+%% ring $\F_q[x]$ by the subring $\A\subset \F_q(\mathcal{C})$ of
+%% rational functions regular everywhere except possibly at some fixed
+%% point $\infty \in \mathcal{C}$; the rest of the definition remains
+%% unchanged. The definition given above has $\mathcal{C} = \P^1$, with
+%% $\infty$ being its point at infinity and $\A=\F_q[x]$. Another
+%% restriction that could be lifted is that $\L$ need not be a finite
+%% field; any field with a mapping $\gamma$ as above would do (another
+%% common choice is $\L=\F_q(x)$, which parallels the theory of elliptic
+%% curves over $\Q$).
 
 Suppose $\varphi$ is a rank two Drinfeld module over $(\L,\gamma)$. A
 central element in $\L\ang{\tau}$ is called an {\em endormorphism} of
 $\varphi$. Since $u^{q^n} = u$ for all $u$ in $\L$, $\tau^n$ is such
-an endomorphism. The following key theorem~\cite{frobdist} defines the
-main objects we wish to compute.
+an endomorphism. The following key theorem~\cite{GEKELE1991187}
+defines the main objects we wish to compute.
 \begin{theorem}\label{charpoly}
-  There is a polynomial $T^2 -aT + b \in \F_q[x][T]$ such that
-  $\tau^n$ satisfies the characteristic equation
-  \begin{equation} \tau^{2n} - \varphi_a \tau^n + \varphi_b = 0,\end{equation}
-  with $\deg(a) \le n/2$ and $\deg(b)=n$.
+  There is a polynomial $T^2 -AT + B \in \F_q[x][T]$ such that
+  $\tau^n$ satisfies the  equation
+  \begin{equation} \tau^{2n} - \varphi_A \tau^n + \varphi_B = 0,\end{equation}
+  with $\deg A \le n/2$ and $\deg B=n$.
 \end{theorem}
-The coefficients $a$ and $b$ are respectively referred to as the
+The polynomials $A$ and $B$ are respectively referred to as the
 \textit{Frobenius trace} and \textit{Frobenius norm} of $\varphi$.
-Note in particular the similariy with Hasse's theorem for elliptic 
-curves over finite fields regarding the ``size'' (degree, here) of 
-the Frobenius trace and norm.
-The main goal of this paper is then to find efficient algorithms to
-solve the following problem.
+Note in particular the similariy with Hasse's theorem for elliptic
+curves over finite fields regarding the respective ``sizes'' (degree,
+here) of the Frobenius trace and norm.  The main goal of this paper is
+then to find efficient algorithms to solve the following problem.
 \begin{problem}\label{pb1}
   Given a rank two Drinfeld module $\varphi = (g,\Delta)$, compute its
   Frobenius trace and norm.
 \end{problem}
 
 \begin{example}
-TODO: find $a$, $b$ for example 1
+TODO: find $A$, $B$ for example 1
 \end{example}
-
 
 By composing $\varphi: \F_q[x]\to \L\ang{\tau}$ and
 $\iota:\L\ang{\tau} \to {\rm End}_{\F_q}[\L]$ as defined in the
 previous subsection, we obtain another ring homomorphism $\Phi:
 \F_q[x]\to {\rm End}_{\F_q}[\L]$; we will use the same convention of
-writing $\Phi_u=\Phi(u)$ for $u$ in $\F_q[x]$. Thus, we see that a
+writing $\Phi_U=\Phi(U)$ for $U$ in $\F_q[x]$. Thus, we see that a
 Drinfeld module equips $\L$ with a new structure as an
 $\F_q[x]$-module, induced by the choice of $\Phi_x = \gamma(x) {\rm
-  Id} + g \pi + \Delta \pi^2$.
+  Id} + g \pi + \Delta \pi^2$, with $\pi:\L \to \L$ the $q$-power Frobenius map
 
 Applying $\iota$ to the equality in Theorem~\ref{charpoly}, we obtain
-that $\pi^{2n} + \Phi_a \pi^n + \Phi_b$ is the zero linear mapping $\L
-\to \L$, with $\pi:\L \to \L$ the $q$-power Frobenius map. Since
-$\pi^{n}$ is the identity map $\L\to\L$, and since we have $\Phi_a =
-a(\Phi_x)$, $\Phi_b = b(\Phi_x)$, this implies that the polynomial
-$1-a+b \in \F_q[x]$ cancels the $\F_q$-endormorphism
-$\Phi_x$. Actually, more is true: $1-a+b$ is the characteristic
+that $\pi^{2n} + \Phi_A \pi^n + \Phi_B$ is the zero linear mapping $\L
+\to \L$. Since $\pi^{n}$ is the identity map, and since we have
+$\Phi_A = A(\Phi_x)$, $\Phi_B = B(\Phi_x)$, this implies that the
+polynomial $1-A+B \in \F_q[x]$ cancels the $\F_q$-endormorphism
+$\Phi_x$. Actually, more is true: $1-A+B$ is the characteristic
 polynomial of this endomorphism~\cite[Th.~5.1]{GEKELE1991187}.  As it
-turns out, finding the Frobenius norm $b$ is a rather easy task (see
-next section); as a result, in view of the degree constraints on $a$
-and $b$, Problem~\ref{pb1} can be reduced to computing the
-characteristic polynomial of $\Phi_x$.
+turns out, finding the Frobenius norm $B$ is a rather easy task (see
+next section); as a result, Problem~\ref{pb1} can be reduced to
+computing the characteristic polynomial of $\Phi_x$.
 
+This shows in particular that finding $A$ and $B$ can be done in $(n
+\log q))^{O(1)}$ bit operations (in all the paper, we will use a
+boolean complexity model, which counts the bit complexity of all
+operations on a standard RAM). The questions that interest us are to
+make this cost estimate more precise, and to demonstrate algorithmic
+improvements in practice, whenever possible. Our main complexity
+results are as follows.
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{Basic algorithms}
-
-In determining the complexity of the algorithms presented, two
-computational models will be used:
-
+\begin{theorem}\label{theo:main}
+One can solve Problem~\ref{pb1}
 \begin{itemize}
-\item an algebraic model for algorithms over a ring or field, in which
-  the standard ring operations of addition and multiplication can be
-  performed at unit cost.
-
-\item a boolean model which counts bit complexity of all operations.
+\item in Monte Carlo time $(n^{1.885} \log q + n \log^2 q)^{1+o(1)}$,
+  if the minimal polynomial of $\Phi_x$ has degree $n$ (Section~\ref{sec:narayanan});
+\item in time $(n^{2+\varepsilon} \log q + n \log^2 q)^{1+o(1)}$, for
+  any $\varepsilon > 0$ (Section~\ref{sec:schoof}).
 \end{itemize}
+\end{theorem}
+In addition, we give in Section~\ref{sec:mc} a Monte Carlo algorithm
+whose runtime is in theory no better than those above, but which performs
+better in practice.
 
-The algebraic model will typically be preferred, however the
-Kedlaya-Umans algorithm for modular composition does not always admit
-an algebraic algorithm. Algorithms utilizing modular composition will
-have their complexity given in both an algebraic and boolean model.
+Input and output sizes are $\Theta(n \log q))$ bits, so the best we
+could hope for is a runtime quasi-linear in $n \log q)$; as the
+theorem shows, we are rather far from this, since the best
+unconditional results are quadratic in $n$. On the other hand,
+Problem~\ref{pb1} is similar to questions encountered when factoring
+polynomials over finite fields, and it was not until the work of
+Kaltofen and Shoup~\cite{KaSh98} that subquadratic factorization
+algorithms were discovered. 
 
-\begin{problem}[Matrix Multiplication]
+The algorithm of Section~\ref{sec:schoof} was directly inspired by
+Schoof's algorithm for elliptic curves (and similarly, the algorithm
+of~\cite{eschost2017arXiv171200669D} was inspired by its elliptic
+analogue). We believe this interaction has the potential to yield
+further algorithms of interest. While whether it will lead to
+e.g. improvements on polynomial factorization over finite fields is of
+course unknown, it is remains natural to wonder whether other
+``elliptic'' techniques, such as $p$-adic approaches~\cite{Satoh00} or
+Harvey's amortization techniques~\cite{Harvey14}, apply in the present
+context.
 
-Let $R$ be a ring, and let $M$ be an $m\times n$ matrix, and $N$ an $n
-\times \ell
-$ matrix, both with entries contained in $R$. Compute
-$M\times N$.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\end{problem}
+\section{Algorithmic background}
 
-We will let $\omega$ denote an exponent such that two $n\times n$
-matrices can be multiplied using $O(n^{\omega})$ ring operations in
-any ring $R$. The current best known bound is $\omega \approx 2.3728$
-\cite{DBLP:journals/corr/abs-1708-05622}. Similarly, we let $\omega_2$
-denote the exponent of $n \times n$ and $n \times n^2$ multiplication,
-with the best known bound of $\omega_2 < 3.2516$
-\cite{DBLP:journals/corr/abs-1708-05622}, and naively $\omega_2 \leq
-\omega + 1$.
+We now discuss the cost of operations in $\L$ and $\L\ang{\tau}$. The
+majority of these results are well-known or straightforward, so we
+organized them as a list of items, for future reference, with runtimes
+given in bit operations.
+
+Notation ($\F_q,\L,\dots$) is as in~\ref{ssec:not}. To simplify cost
+analyses, {\em we assume that $x^q \bmod \frakp$ is known}; we will
+see below the cost of computing it once and for all, at the beginning
+of our algorithms.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{A naive algorithm for the characteristic map}
+\subsection{Polynomial and matrix arithmetic}\label{ssec:basicpoly}
 
-In this section, we discuss the cost of direct approaches for
-computing the characteristic map and its inverse. First, we start by
-analyzing the cost of computing $\varphi_1,\varphi_x,\dots,\varphi_{x^i}$, for
-some $i \ge 0$. In this, we essentially follow a procedure used by
+
+\smallskip\noindent{\bf 3.1.1.}  Using FFT-based multiplication,
+polynomial multiplication, division and extended GCD in degree $n$,
+and thus addition, multiplication and inversion in $\L$, can be done
+in $(n\log q))^{1+o(1)}$ bit
+operations~\cite{Gathen:2003:MCA:945759}. In particular, computing $x^q \bmod \frakp$
+ by means of repeated squaring takes $(n\log^2 q)^{1+o(1)}$
+bit operations.
+
+\smallskip\noindent{\bf 3.1.2.}  We let $\omega$ be such that over any
+ring, square matrix multiplication in size $s$ can be done in
+$O(s^\omega)$ ring operations; the best known value to date is $\omega
+\le 2.373$~\cite{CoWi90,LeGall14}. Using block techniques,
+multiplication in sizes $(s,t) \times (t,u)$ takes $O(stu
+\min(s,t,u)^{\omega-3})$ ring operations. For matrices over
+$\F_q$, this is $(stu \min(s,t,u)^{\omega-3} \log q))^{1+o(1)}$ bit
+operations; over $\L$, this is $(stu \min(s,t,u)^{\omega-3}
+n\log q))^{1+o(1)}$.
+
+At various places, we could sharpen our results using the so-called
+exponent $\omega_2$ of rectangular matrix multiplication in size
+$(s,s) \times (s,s^2)$. We can of course take $\omega_2\le\omega+1 \le
+3.373$, but the better result $\omega_2 \le 3.252$ is
+known~\cite{LeUr18}. We will not use these refinments in this paper.
+
+\smallskip\noindent{\bf 3.1.3.} Of particular interest is an operation
+called {\em modular composition}, which maps $(F,G,H) \in \F_q[x]^3$
+to $F(G) \mod H$, with $\deg H=n$ and $\deg F,\deg G < n$.  We let
+$\theta \in [1,2]$ be such that this can be done in $(n^\theta
+\log q))^{1+o(1)}$ bit operations for inputs of degree $O(n)$.
+
+Modular composition is linear in $f$; we also require that its
+transpose map can be computed in the same runtime $(n^\theta
+\log q))^{1+o(1)}$. In an algebraic model, counting $\F_q$-operations
+at unit cost, the {\em transposition principle}~\cite{Kaltofen00}
+guarantees this, but this is not necessarily the case in our bit
+model.
+
+For long, the best known value for $\theta$ was Brent and Kung's 
+$\theta = (\omega+1)/2$~\cite{BrKu78}; a major result by Kedlaya and
+Umans proves that we can actually take $\theta = 1+\varepsilon$, for any
+$\varepsilon > 0$~\cite{Kedlaya:2011:FPF:2340436.2340448}. However, in
+practical terms, we are not aware of an implementation of Kedlaya and
+Umans' algorithm that would be competitive with Brent and Kung's;
+we discuss some consequences of this in {\bf 3.2.4}.
+
+\smallskip\noindent{\bf 3.1.4.}  A useful application of modular
+composition is the application of any power of the Frobenius map
+$\pi$: given $x^q \bmod \frakp$, for any $\alpha$ in $\L$ and $i \in
+\{-(n-1),\dots,n-1\}$, we can compute $\pi^i(\alpha)$ for $O(\log n)$
+modular compositions, that is, in $(n^\theta \log q))^{1+o(1)}$ bit
+operations. Indeed, we can assume $i \ge 0$; then, $\pi^i(\alpha) =
+\alpha(s_i) \bmod \frakp$, with $s_i = x^{q^i} \bmod \frak p$, where
+the sequence $s_i$ satisfies the recurrence $s_{2i} = s_i(s_i) \bmod
+\frakp$, $s_{2i+1} = s_{2i}(s_1) \bmod \frakp$ and $s_1 = x^q \bmod
+\frakp$.
+
+\smallskip\noindent{\bf 3.1.5.} The previous item implies that if
+$\varphi$ is a rank two Drinfeld module over $(\L,\gamma)$, given
+$\alpha$ in $\L$, we can compute $\Phi_x(\alpha)$ in time $(n^{\theta}
+\log q))^{1+o(1)}$.  Because of our requirements in $\theta$, the same
+holds for the {\em transpose} of $\Phi_x$: given an $\F_q$-linear form
+$\ell:\L\to \F_q$, we can compute the linear form $\Phi_x^\perp(\ell):
+\alpha\mapsto \ell(\Phi_x(\alpha))$ for the same cost.
+
+For small values of $i$, say $i=O(1)$, the computation of
+$\pi^i(\alpha)$ can also be done by repeated squaring, in $(n
+\log^2 q)^{1+o(1)}$ bit operations; this impacts the operations in
+this paragraph as well.  Since for all implementations we are aware
+of, $\theta=(\omega+1)/2$, this approach may be preferred for moderate
+values of $q$.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Skew polynomial arithmetic}
+
+\smallskip\noindent{\bf 3.2.1.}  With start with skew polynomial
+multiplication. This is an intricate question, with several
+algorithms co-existing, applicable for different degree ranges. We
+will be concerned with multiplication in degree $k$,
+for some $k \ll n$; in this case, the best algorithm to date is
+from~\cite[Th.~7]{PUCHINGER2017b}. That algorithm uses
+$O(k^{(\omega+1)/2})$ operations $+,\times$ in $\L$, together with
+$O(k^{3/2})$ applications of powers of the Frobenius, for a total of
+$(k^{(\omega+1)/2} n^\theta \log q))^{1+o(1)}$ bit operations.
+For higher degrees $k$, the algorithms in~\cite{CaLe17} have a better
+runtime.
+
+
+\smallskip\noindent{\bf 3.2.2.} Our next question is to compute
+$\varphi_{x^k}$, for some $k \ge 0$; this polynomial has
+$\Theta(k)$ coefficients in $\L$, so it occupies $\Theta(k n \log q))$
+bits. Since we have $\varphi_{x^{2k}}=\varphi_{x^{k}}\varphi_{x^{k}}$
+and $\varphi_{x^{2k+1}} = \varphi_x\varphi_{x^{2k}}$, we can obtain
+$\varphi_{x^k}$ from $\varphi_{x^{\floor*{k/2}}}$ using
+$k^{(\omega+1)/2} (n^\theta \log q))^{1+o(1)}$ bit operations.
+The cumulated time to obtain $\varphi_{x^k}$ from $\varphi_x$ admits
+the same upper bound.
+
+\smallskip\noindent{\bf 3.2.3.} We consider now the cost of computing
+$\varphi_C$, for some $C$ in $\F_q[x]$, by adapting the commutative
+algorithm of~\cite[Chapter~9]{Gathen:2003:MCA:945759}.
+\begin{enumerate}
+\item First, choose a power of two $k$ such that $k/2 \le \deg C <
+  k$. We compute $\varphi_{x^i}$, for all $i$ powers of two up to
+  $k/2$; using {\bf 3.2.2}, the cost is $(k^{(\omega+1)/2}
+  n^\theta\log q))^{1+o(1)}$.
+\item Write $C = C_0 + x^{k/2} C_1$, with $\deg C_0,\deg C_1 <
+  k/2$. Compute recursively $\varphi_{C_0}$ and $\varphi_{C_1}$, and
+  return $\varphi_C = \varphi_{C_0} + \varphi_{x^{k/2}}
+  \varphi_{C_1}$.
+\end{enumerate}
+The cumulated cost of all recursive calls is
+$(k^{(\omega+1)/2} n^\theta\log q))^{1+o(1)}$, which is $(\deg
+(C)^{(\omega+1)/2} n^\theta\log q))^{1+o(1)}$.
+
+\smallskip\noindent{\bf 3.2.4.}
+Next, we analyze the cost of computing 
+$\varphi_1,\varphi_x,\dots,\varphi_{x^k}$, for some $k \ge 0$. In
+this, we essentially follow a procedure used by
 Gekeler~\cite[Section~3]{frobdist}, although the cost analysis is not
-done in that reference.
-
-Remark first that for $i\ge 0$, $\varphi_{x^i}$ is a polynomial in $\tau$
-with $\Theta(i)$ coefficients in $\L$, so that writing it down uses
-$\Theta(ni)$ elements of $\F_q$. Thus, the representation of all
-elements $\varphi_1,\varphi_x,\dots,\varphi_{x^i}$ involves $\Theta(n i^2)$
-elements of $\F_q$.
-
-Techniques for skew polynomial multiplication offer a naive approach
-to compute $\varphi_{x^i}$; however an improvement can be obtained by
-using the following recurrence:
+done in that reference. These polynomials satisfy the following
+recurrence:
 \begin{align*}
  \varphi_{x^{i+1}} = \varphi_x \varphi_{x^i} & = (\gamma(x) + g\tau + \Delta \tau^2) \varphi_{x^i}.
 \end{align*}
@@ -470,331 +591,465 @@ so the $f_{i,j}$ satisfy the recurrence
 with known initial conditions $f_{0,0} = 1$, $f_{1,0} = \gamma(x)$,
 $f_{1,1} = g$, and $f_{1,2 = \Delta}$. Evaluating one instance of the
 recurrence involves $O(1)$ multiplications / additions in $\L$ and
-applications of the Frobenius map $\pi: \L\to \L$; the latter is the
-dominating step, and takes $O(\M(n) \log q)$ $\F_q$-operations. 
+applications of the Frobenius map $\pi$, for $(n^\theta \log
+q))^{1+o(1)}$ bit operations.  Given $\varphi_{x^i}$, there are
+$\Theta(i)$ choices of $j$, so the overall cost to obtain
+$\varphi_1,\varphi_x,\dots,\varphi_{x^k}$ is $(k^2 n^\theta \log
+q)^{1+o(1)}$ bit operations.
 
-Given $\varphi_{x^i}$, there are $\Theta(i)$ choices of $j$ on which we
-want to evaluate this recurrence, so the cost of finding
-$\varphi{x^{i+1}}$ is $O(\M(n) i \log q)$ $\F_q$-operations. Thus, the
-cost for all $\varphi_1,\varphi_x,\dots,\varphi_{x^i}$ is $O(\M(n) i^2 \log q)$
-$\F_q$-operations.
+In {\bf 3.1.3}, we pointed out that in practice, Brent and Kung's
+modular composition algorithm is widely used, with
+$\theta=(\omega+1)/2$. In this case, for moderate values of $\log q$,
+one may use the straightforward repeated squaring method to apply the
+Frobenius map; this leads to a runtime of $(k^2 n \log^2 q)^{1+o(1)}$
+bit operations, which may be acceptable in practice. This comment also
+applies to Proposition~\ref{prop:gek} below, and underlies the design
+of the algorithm in Section~\ref{sec:mc}.
 
-From this, we can deduce direct algorithms for the characteristic map
-$\varphi$ and its inverse. Suppose first we are given $c=\sum_{0 \le i
-  \le d} x^i $ in $\F_q[x]$. Then, 
-\begin{align}\label{eq:phic}
-\varphi_c &= \sum_{0 \le i \le d} c_i \sum_{0 \le j \le 2i} f_{i,j} \tau^j \nonumber \\ 
-&= \sum_{0 \le j \le d}  \left (\sum_{\lfloor j/2\rfloor \le i \le d} c_i f_{i,j} \right) \tau^j.
-\end{align}
-Given $\varphi_1,\varphi_x,\dots,\varphi_{x^d}$, the cost to obtain $\varphi_c$ is
-thus that of $\Theta(d^2)$ multiplication / additions in $\L$, that
-is, $O(\M(n) d^2)$ $\F_q$-operations, for a combined input / output size of
-$\Theta(nd)$ elements in $\F_q$.
-
-Conversely, suppose that we know $\varphi_c$ as $\varphi_c = \sum_{0 \le i
-  \le 2d} \alpha_i \tau^i$. Equating this expression
-with~\eqref{eq:phic} gives us $2d+1$ equations in $d+1$
+\smallskip\noindent{\bf 3.2.5.}  We deduce from this an algorithm for the
+inverting $\varphi$.  Given
+$\varphi_C = \sum_{0 \le i \le 2k} \alpha_i \tau^i$, we want to
+recover $C =\sum_{0 \le i \le k} c_ix^i $ in $\F_q[x]$. Writing the
+expansion
+\begin{align*}\label{eq:phic}
+\varphi_C &= \sum_{0 \le i \le k} c_i \sum_{0 \le j \le 2i} f_{i,j} \tau^j = \sum_{0 \le j \le k}  \left (\sum_{\lfloor j/2\rfloor \le i \le k} c_i f_{i,j} \right) \tau^j.
+\end{align*}
+gives us $2k+1$ equations in $k+1$
 unknowns. Keeping only those equations corresponding to even degree
-coefficients leaves the following upper triangular system of $d + 1$
-equations
+coefficients leaves the following upper triangular system of $k + 1$
+equations over $\L$,
 \begin{equation}
-\begin{bmatrix} f_{0,0} & f_{1,0} & \ldots & f_{d, 0} \\
-                 0      & f_{1,2} & \ldots & f_{d, 2}  \\
+\begin{bmatrix} f_{0,0} & f_{1,0} & \ldots & f_{k, 0} \\
+                 0      & f_{1,2} & \ldots & f_{k, 2}  \\
                  0      & 0       & \ddots & \vdots                      \\
                  \vdots  & \vdots  &  \ddots      & \vdots                       \\
-                 0  & 0 & \ldots & f_{d, 2d}
+                 0  & 0 & \ldots & f_{k, 2k}
 \end{bmatrix}
 \begin{bmatrix}
-  c_0 \\ c_1 \\ \vdots \\ c_d
-\end{bmatrix} = \begin{bmatrix} \alpha_{0} \\ \alpha_{2} \\ \vdots \\ \alpha_{2d} \end{bmatrix}.
+  c_0 \\ c_1 \\ \vdots \\ c_k
+\end{bmatrix} = \begin{bmatrix} \alpha_{0} \\ \alpha_{2} \\ \vdots \\ \alpha_{2k} \end{bmatrix}.
 \end{equation}
 Its diagonal entries are of the form $f_{i,2i}$; these are the
 coefficients of the leading terms of $\varphi_{x^i}$, so that for all
 $i$, $f_{i,2i} = \Delta^{e_i}$ for some exponent $e_i$. In particular,
 since $\Delta \neq 0$, the diagonal terms are non-zero, which allows
-us to find $c_0,\dots,c_{d}$.
+us to find $c_0,\dots,c_{k}$. Once we know all $f_{i,j}$'s, the cost
+for solving the system is $O(k^2)$ operations in $\L$, so the total is
+$ (k^2 n^{\theta} \log q))^{1+o(1)}$ bit operations.
 
-Given $\varphi_1,\varphi_x,\dots,\varphi_{x^d}$, this upper triangular system
-can be solved in $\Theta(d^2)$ $\L$-operations, including inverses,
-therefore $O( \M(n)\log n d^2))$ $\F_q$-operations. Remark that the
-$\Theta(d)$ inverses of the diagonal terms can be replaced by a single
-inverse and another $\Theta(d)$ multiplications~\cite[p.~66]{Montgomery92},
-leading to the slightly better bound $O(d^2 \M(n) + \M(n)\log n)$.
+\smallskip\noindent{\bf 3.2.6.}  Finally, we give an algorithm to
+evaluate a degree $k$ skew polynomial at $\mu$ elements
+$\alpha_1,\dots,\alpha_\mu$ in $\L$. In~\cite[Th.~15]{PUCHINGER2017b},
+Puchinger and Wachster-Zeh gave an algorithm that uses
+$O(k^{\max(\log_2 3, \omega_2/2)}\log k)$ operations in $\L$
+(including Frobenius-powers applications) in the case $\mu=k$,
+where $\omega_2 \le \omega+1$ is as in {\bf 3.2.1}.
 
-%% \subsection{Multiplication of skew polynomials}
+We propose a baby-steps / giant steps procedure, whose runtime is
+marginally better than in that reference, and more importantly does
+assume any relation between $\mu$ and $k$. Suppose without loss of
+generality that our input polynomial $U$ has degree less than $k$, for
+some perfect square $k$, and let $s=\sqrt{k}$.
+\begin{enumerate}
+\item Rewrite $U$ as 
+$$U = U^*_{0} + \tau^s U^*_{1} + \cdots + \tau^{s(s-1)} U^*_{s-1},$$
+  with all $U^*_i$ in $\L\ang{\tau}$ of degree less than $s$.
+This is $O(k)$  applications of Frobenius powers in $\L$.
+\item Compute $\alpha_{i,j}:=\pi^i(\alpha_j)$, for
+  $i=0,\dots,s-1$ and $j=1,\dots,\mu$; this is $O(s \mu)$
+applications of Frobenius powers.
+\item For $i< s$, let $u^*_{i,0},\dots,u^*_{i,s-1}$ be 
+the coefficients of $U^*_i$. Compute the matrix 
+$(s,s) \times (s,\mu)$ product
+\begin{align*}
+\left [ \begin{matrix}
+u^*_{0,0} & \cdots & u^*_{0,s-1} \\
+\vdots && \vdots \\
+u^*_{s-1,0} & \cdots & u^*_{s-1,s-1} 
+  \end{matrix} \right ]
+\left [ \begin{matrix}
+\alpha_{0,1} & \cdots & \alpha_{0,\mu} \\
+\vdots && \vdots \\
+u_{s-1,1} & \cdots & u_{s-1,\mu} 
+  \end{matrix} \right ],
+\end{align*}
+whose entries are the values $\beta_{i,j}:=U^*_{i}(\alpha_j)$.  When
+we apply this result, we will have $\mu \le s$, so the cost is $O(k
+\mu^{\omega-2})$ operations in~$\L$, by~{\bf 3.1.2}.
 
-%% One of the most basic operations that can be performed on a Drinfeld module is the computation of $\varphi_a \in L[X,\sigma]$ for an arbitrary element $a = \sum_{i=0}^d a_i T^i \in A$.
-
-%% \begin{operation}[Evaluating the Characteristic Map]
-%% Given a Drinfeld Module $\varphi: A \to L$ and an element $a \in A$, compute $\varphi_a$. 
-%% \end{operation}
-
-%% Let $\theta$ be the exponent such that two skew-polynomials in $\mathbb{F}_{q^m}[X,\sigma]$ of degree at most $e$ can be multiplied in $O(e^{\theta})$ $\F_q$ operations, dropping dependence on all other parameters. Since $\varphi$ is a ring homomorphism, we have that:
-
-%% \[ \varphi : \sum_{i = 0}^d a_iT^i \mapsto \sum_{i = 0}^d a_i\varphi_T^i \]
-
-%% \noindent which leads to a naive algorithm for computing $\varphi_a$ by computing $\varphi_T^i$ via skew-polynomial multiplication for all $2 \leq i \leq d$, which works for any rank $r$ Drinfeld Module. This involves at least $d/2$ multiplications of skew-polynomials of degree at least $rd/2$, and therefore has a complexity of $\Omega(d^{\theta + 1})$. 
-
-%% \begin{theorem}
-%% There is an algorithm that evaluates the characteristic map of any finite Drinfeld module $(q,\frakf,\frakp, \varphi_T)$ of rank $r$ at an element $a \in \F_q[T]$ of degree at most $d$ in $\widetilde{O}(n^{2} rd \log q)$ $\F_q$ operations.
-%% \end{theorem}
-
-%% \begin{proof}
-%% Given an element $a \in \F_q[T]$, without loss of generality we may assume $\deg(a) = d = 2^{e}$ for some integer $e$. Then we may factor $a$ as
-
-%% \[a = b + T^{d/2} c \] 
-
-%% \noindent with $\deg(b), \deg(c) \leq d/2$. We then have:
-
-%% \[\varphi_a = \varphi_b + \varphi_{T^{d/2}} \varphi_c\]
-
-%% \noindent where each of $\varphi_b$, $\varphi_{T^{d/2}}$, and $\varphi_c$ have degree at most $\frac{rd}{2}$ in $X$. This suggests a divide and conquer algorithm which recursively computes $\varphi_b, \varphi_c$ and $\varphi_{T^{d/2}} = \varphi_{T^{d/4}}\varphi_{T^{d/4}}$ when $e \geq 2$, with runtime $O(t(n,dr))$ $\F_q$ operations for some $t$ depending on $n$, $d$, $q$, and $r$. Suppressing the dependence on $n$ and $q$, set $\overline{d} = rd$ and $\hat{t}(\overline{d}) = t(n, d, q, r)$. Using the Caruso-Le Borgne algorithm for skew multiplication twice to compute $\varphi_{T^{d/2}}$ and $\varphi_{T^{d/2}} \varphi_c$, which from theorems \ref{smalldeg} and \ref{bigdeg} has worst case runtime $O(\overline{d}n^2 \log q)$ for any value of $\overline{d}$, $n$, and $q$, to recombine the subproblems, we obtain the following recurrence:
-
-%% \[ \hat{t}(\overline{d}) = 2 \hat{t}(\overline{d}/2) + O(\overline{d}).\]
-
-%% \noindent Therefore $\hat{t} \in O( \overline{d} \log \overline{d})$, and $O(t(n,d,r)) \in O(m^2 rd \log (rd) \log q)$.
-
-%% \end{proof}
-
-%% \begin{algorithm}
-%% \caption{Evaluating the Drinfeld Characteristic Map}\label{charmap}
-%% \begin{algorithmic}[1]
-%% \Procedure{CharMapEval}{} \\
-%%  \hspace*{\algorithmicindent} \textbf{Background} A Drinfeld Module $(q,\frakf,\frakp, \varphi_T)$ \\
-%%  \hspace*{\algorithmicindent} \textbf{Input} An element $a \in A$ \\
-%%  \hspace*{\algorithmicindent} \textbf{Output} $\varphi_a$
-%%  \State $a := \sum_{i=0}^d a_i T^i$
-%%  \If{$\deg(a) \leq 1$}
-%%  \Return $a_0 + a_1 \varphi_T$
-%%  \EndIf
-%%  \State $b \gets \sum_{i=0}^{\floor{d/2}}a_iT^i$
-%%  \State $c \gets \sum_{i = 0}^{\floor{d/2}}a_{i + \ceil{d/2}} T^i$
-%%  \State $\textbf{Memoize } \varphi_{\floor{d/2}} \gets \textbf{SkewMultiplication}(\varphi_{\floor{\floor{d/2}/2}}, \varphi_{\floor{\floor{d/2}/2}}) $
-%% \If{$d$ is odd}
-%% \State $\varphi_{\ceil{d/2}} \gets \textbf{SkewMultiplication}(\varphi_{\floor{\floor{d/2}/2}}, \varphi_{T}) $
-%% \Else 
-%% \State $\varphi_{\ceil{d/2}} \gets \varphi_{\floor{d/2}}$ 
-%% \EndIf
-%% \State $\varphi_b \gets \textbf{CharMapEval}(b)$
-%% \State $\varphi_c \gets \textbf{CharMapEval}(c)$
-
-%%  \Return $\varphi_b + \textbf{SkewMultiplication}(\varphi_{\ceil{d/2}}, \varphi_c)$
-
-%% \EndProcedure
-%% \end{algorithmic}
-%% \end{algorithm}
-
-
-%% %\begin{algorithm}
-%% %\caption{Evaluating the Drinfeld Characteristic Map}\label{charmap}
-%% %\begin{algorithmic}[1]
-%% %\Procedure{CharMapEval}{} \\
-%% % \hspace*{\algorithmicindent} \textbf{Input} A Drinfeld Module $(q,\frakf,\frakp, \varphi_T)$ and an element $a \in A$ \\
-%% % \hspace*{\algorithmicindent} \textbf{Output} $\varphi_a$
-%% % \State $\varphi_a \gets a \textnormal{ mod } \frakp$
-%% %\For{$i=0 \textbf{ to }\deg(a)$}
-%% %\State $\varphi_{T}^i \gets SkewPolynomialMultiplication( \varphi_T^{i-1}, \varphi_T) $
-%% %\State $\varphi_a \gets  \varphi_a + a_i \cdot \varphi_T^i$
-%% %\EndFor
-
-%% %\State \textbf{Return } $\varphi_a$
-
-%% %\EndProcedure
-%% %\end{algorithmic}
-%% %\end{algorithm}
+\item Using Horner's scheme, for $j=1,\dots,\mu$, recover $U(\alpha_j)$ as 
+$$U(\alpha_j) = \beta_{0,j} + \tau^s( \beta_{1,j} + \tau^s(\beta_{2,j}
+  + \cdots )).$$ The total is another $O(s \mu)$ operations
+in $\L$, including Frobenius powers.
+\end{enumerate}
+Overall, when $\mu \le \sqrt{k}$, the cost is $(k \mu^{\omega-2}
+n^\theta \log q)^{1+ o(1)}$ bit operations. If we were to take $\mu=k$
+and count operations in $\L$ at unit cost as in~\cite{PUCHINGER2017b},
+the runtime would be $O(k^{\omega_2/2})$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Previous work}
+\section{Review of previous work}
 
-In all this section, we fix $\F_q$, $\L$ and the homomorphism
-$\gamma$; we assume that its kernel $\frakp$ is known, and further
-that we have a presentation of $\L$ as $\L=\F_q[x,y]/\langle
-\frakp,\frakr\rangle$.
+Next, we briefly review existing algorithms for solving
+Problem~\ref{pb1}, and comment on their runtime. Notation are still
+from Section~\ref{ssec:not}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Gekeler's Algorithm}
+\subsection{Gekeler's Algorithm}\label{ssec:gek}
 
 As in the case of elliptic curves, determining the Frobenius norm is a
 rather straightforward operation. It is done using the following
-result from~\cite[Th.~2.11]{frobdist} (see also~\cite{Hsia00}).
+result from~\cite[Th.~2.11]{frobdist} (see also~\cite{HsYu00}).
 
 \begin{proposition}\label{frobnorm}
-  The Frobenius norm $b$ of a rank two Drinfeld module $\varphi=(g,\Delta)$ 
+Let $N_{\L/\F_q}$ be the norm $\L \to \F_q$. The Frobenius norm $B$ of a rank two Drinfeld module $\varphi=(g,\Delta)$ 
   over $(\L,\gamma)$ is
-  given by:
-  \[b = (-1)^n N_{\L/\F_q}(\Delta)^{-1}\frakp^m.\]
+  \[B = (-1)^n N_{\L/\F_q}(\Delta)^{-1}\frakp^m.\]
 \end{proposition}
-In particular, the above expression shows that $b$ can be computed using
-$O(\M(n)\log n)$ $\F_q$-operations. Indeed, $\frakp^m$ is a degree $n$
-polynomial, and we can compute it in $O(\M(n))$ operations by
-repeated squaring. Moreover $N_{\L/\F_q}(\Delta) = \pm
-\textnormal{resultant}(\Delta,\frakf)$~\cite{Pohst:1989:AAN:76692}, which
-can be computed in $O(\M(n)\log n)$
-$\F_q$-operations~\cite{Gathen:2003:MCA:945759}.
+In particular, $B$ can be computed in $(n \log q))^{1+o(1)}$ bit
+operations. Indeed, $\frakp^m$ is a degree $n$ polynomial, and we can
+compute it in the prescribed time repeated squaring. Moreover
+$N_{\L/\F_q}(\Delta) =
+\textnormal{resultant}(\frakf,\Delta)$~\cite{Pohst:1989:AAN:76692},
+so we can compute it in the same time~\cite{Gathen:2003:MCA:945759}.
 
-Gekeler also gave in \cite[Section~3]{frobdist} a general algorithm that
-determines the Frobenius trace $a$ for any rank two Drinfeld module,
-by solving a linear system for the coefficients of $a$. The key
-subroutines used in this algorithm were described in the previous
-section, and imply the following result (the cost analysis is not
-provided in the original paper).
-\begin{proposition}
-  The Frobenius trace $a$ of a rank two Drinfeld module $\varphi = (g,
-  \Delta)$ over $(\L,\gamma)$ can be determined in $O(\M(n)n^2 \log q)$
-  $\F_q$-operations.
+Gekeler also gave in \cite[Section~3]{frobdist} an algorithm that
+determines the Frobenius trace $A$ by solving a linear system for the
+coefficients of $A$. The key subroutines used in this algorithm were
+described in the previous section, and imply the following result (the
+cost analysis is not provided in the original paper).
+\begin{proposition}\label{prop:gek}
+  One can solve Problem~\ref{pb1} in $(n^{\theta+2}\log
+  q + n \log^2 q)^{1+o(1)}$ bit operations.
 \end{proposition}
 \begin{proof}
-Recall that $\textnormal{deg}(a) \leq \frac{n}{2}$ and set
-\begin{align*}
-a & = \sum_{0 \le i \leq n/2} a_i x^i, 
-\end{align*}
-with all $a_i$'s in $\F_q$. Theorem~\ref{charpoly} implies
-that 
-\[ \tau^n \varphi_a = \tau^{2n} + \varphi_b.\]
-As in the previous section, we start by computing
-$\varphi_1,\dots,\varphi_n$, using $O(\M(n) n^2 \log q)$
-$\F_q$-operations. We also saw above that we can compute $b$ using
-$O(\M(n)\log n)$ $\F_q$-operations. From that, the previous section
-implies that we can compute $\varphi_b$ in $O(\M(n) n^2)$
-$\F_q$-operations, from which $\varphi_a$ follows. Given $\varphi_a$, we
-also saw in the last section how to recover $a$, at the cost of
-another $O(\M(n) n^2)$ $\F_q$-operations.
+First, we compute $x^q\bmod \frakp$, for $(n \log^2 q)^{1+o(1)}$ bit
+operations. Then, since $\deg A \leq{n}/{2}$, we set $A = \sum_{0
+  \le i \leq \floor*{n/2}} a_i x^i$, with all $a_i$'s in $\F_q$. By
+Theorem~\ref{charpoly}, we have $\tau^n \varphi_A = \tau^{2n} +
+\varphi_B.$
+\begin{enumerate}
+\item We start by computing $\varphi_1,\dots,\varphi_{x^n}$, in
+$(n^{\theta+2} \log q)^{1+o(1)}$ bit operations ({\bf 3.2.4})
+\item Compute $B$ and deduce $\varphi_B$; this takes comparatively
+negligible time (see above and {\bf 3.2.3}) and gives us $\varphi_A$.
+\item Recover $A$ in $(n^{\theta+2} \log q)^{1+o(1)}$
+bit operations ({\bf 3.2.5}). \qedhere
+\end{enumerate}
 \end{proof}
-Since we can take $\M(n)$ in $\softO(n)$, this is thus $\softO(n^3
-\log q)$. The cubic complexity in $n$ is due to the need to compute
-the $\Theta(n^2)$ coefficients $f_{i,j}$ of $\varphi_1,\dots,\varphi_n$ in
-  $\L$, and therefore cannot be repaired in an elementary manner.
+The cost of this procedure is at least cubic in $n$, due to the need
+to compute the $\Theta(n^2)$ coefficients $f_{i,j}$ of
+$\varphi_1,\dots,\varphi_{x^n}$ in $\L$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{The Case $\L = \K$}
 
-Gekeler in \cite{frobdist} gives another algorithm in the case where
-$\L = \K$, that is, when $\gamma: \F_q[x] \to \L$ is onto.  In analogy
-with the elliptic case, it is based on the so-called {\em Hasse
-  Invariant} $h_{\varphi}$ of a rank two Drinfeld module.
+The case where $\L = \K$, that is, when $\gamma: \F_q[x] \to \L$ is
+onto, allows for some faster algorithms, based on two observations:
+we can recover $A$ from its image $\gamma(A)$ in this case (since
+ $\deg A \le \floor*{n/2}$), and $\gamma(A)$ can be easily
+derived from the {\em Hasse Invariant} of $\varphi$, which is the
+coefficient of $\tau^{n}$ in $\varphi_{\frakp}$.
 
-\begin{definition}
-  Let $\varphi=(g, \Delta)$ be a rank two Drinfeld module over
-  $(\L,\gamma)$. We define the {\em Hasse invariant} $h_{\varphi}$ of
-  $\varphi$ as the coefficient of $\tau^{d}$ in $\varphi_{\frakp}$.
-\end{definition}
+From this, Hsia and Yu~\cite{HsYu00} and Garai and
+Papikian~\cite{GaPa18} sketched algorithms that compute $A$.  When
+$\varphi_{\frakp}$ is computed in a direct manner, they take
+$\Theta(n^2)$ additions, multiplications and Frobenius applications in
+$\L$, so $\Omega(n^3)$ bit operations.
 
-Let as before $a$ be the Frobenius trace of $\varphi$. It was established
-in~\cite{Gekeler83} that $\gamma(a)= (-1)^n N_{\L/\F_q}(\Delta)^{-1}
-N_{\L/\K}(h_\varphi)$. Now, when $\K=\L$, the polynomial $a$, which has
-degree at most $n/2$, can be recovered from its image $\gamma(a) \in
-\L$, so it suffices to find an algorithm to compute $h_\varphi$
-efficiently. Proposition~3.7 in~\cite{frobdist}, stated below, shows
-how to achieve this; we recall that we write $\K=\F_q[x]/\frakp$,
-$d=\deg(\frakp)$, and where we let $\xi$ be the residue class of $x
-\bmod \frakp \in \L$. \todo{explain better}
-\begin{theorem}
-  Let $\varphi=(g,\Delta)$ be a rank two Drinfeld module over
-  $(\L,\gamma)$, with $\gamma$ onto. Let $(g_i)_{i \ge 0}$ be the
-  sequence of elements in $\L$ defined by $g_0 = 1$, $g_1 = g$ and
-  \[ g_{k+1} = g^{q^{k}} g_{k} - (\xi^{q^{k}} - \xi) \Delta^{q^{k-1}} g_{k-1}.\]
-  Then $h_{\varphi} = g_n$.
-\end{theorem}
-
-Using fast modular composition and techniques for solving linear
-recurrences with polynomial inspired by~\cite{xxx}, the main algorithm
-in \cite{eschost2017arXiv171200669D} features a runtime for computing
-$g_n$ of $O\big(n^{(1-\beta)(\omega - 1)/2 + (\omega + 1)/2 } +
-\M(n^{1 + \beta}) \log qn) \big)$ $\F_q$-operations, for any positive
-constant $\beta < 1$. Again making use of Kedlaya-Umans modular
-composition, all of $g^{q^i}$, $\Delta^{q^i}$, and $\xi^{q^i} - \xi$
-for $i < n$ can be computed in $O( n^{2 + \epsilon} \log^{1 + o(1)}
-q)$ bit operations, and therefore $g_n$ can be computed with the same
-asymptotic cost.
+Gekeler~\cite[Prop.~3.7]{frobdist} gave an algorithm inspired by an
+analogy with the elliptic case, where the Hasse invariant can be
+computed as a suitable term in a recurrent sequence (with non-constant
+coefficients). A direct application of this result does not improve on
+the runtime above. However, using techniques inspired by both the
+elliptic case~\cite{BoGaSc07} and the polynomial factorization
+algorithm of~\cite{KaSh98}, it was shown
+in~\cite{eschost2017arXiv171200669D} how to reduce the cost to
+$(n^{\theta+1/2} \log q + n \log^2 q)^{1+o(1)}$ bit operations, which
+is subquadratic in $n$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Narayanan's Algorithm}
+\section{On Narayanan's algorithm}\label{sec:narayanan}
 
-We now discuss a randomized approach based on computing minimal
-polynomials of sequences due to Narayanan
-\cite[Section~3.1]{DBLP:journals/corr/Narayanan15}, based itself on
-results from~\cite{GEKELE1991187}.
+In~\cite[Section~3.1]{Narayanan18}, Narayanan gives the sketch of a
+Monte Carlo algorithm to solve Problem~\ref{pb1}, which applies to
+those Drinfeld modules for which the minimal polynomial $\Gamma$ of
+$\Phi_x$ has degree $n$. In this case, it must coincide with the
+characteristic polynomial of $\Phi_x$, which we saw is equal to
+$1-A+B$ (this assumption on $\Gamma$ holds for more than half of 
+elements of the parameter domain~\cite[Th.~3.6]{Narayanan18}). Since
+$B$ is easy to compute, knowing $1-A+B$ gives us $A$ readily.
 
-Narayanan's algorithm applies to those Drinfeld modules for which the
-minimal polynomial of $\Phi$ has maximal degree $n$, in which case it
-must necessarily be equal to $1-a+b$; this is proved to hold for more
-than half of all elements of the parameter domain~\cite[theorem
-  3.6]{DBLP:journals/corr/Narayanan15}. The idea of the algorithm is
-then to use Wiedemann's algorithm to compute this minimal polynomial;
-this requires the computation of elements in a sequence of the form
-$\ell(\Phi^i(\alpha))_{i\ge 0} \in \K^\N$, for a random $\F_q$-linear
-map $\L\to\K$ and a random $\alpha \in \L$.
-
-The bottleneck of this algorithm is to computation of elements of the
-above sequence. Narayanan asserts that we can adapt the so-called {\em
-  automorphism power projection} algorithm of Kaltofen and
-Shoup~\cite{KaSh98} to this context and enjoy its sub-quadratic
+Narayanan's algorithm computes the minimal polynomial
+$\Gamma_{\ell,\alpha}$ of a sequence of the form $(r_k)_{k \ge 0} =
+(\ell(\Phi^k(\alpha))_{k\ge 0} \in {\F_q}^\N$, for a random $\F_q$-linear
+map $\L\to\F_q$ and a random $\alpha \in \L$. Using Wiedemann's
+analysis~\cite{Wiedemann:1986:SSL:13738.13744}, one can bound below
+the fraction of $\ell$ and $\alpha$ for which
+$\Gamma_{\ell,\alpha}=\Gamma$.
+The bottleneck of this algorithm is the computation of sufficiently
+many elements of the above sequence: the first $2n$ terms are needed,
+after which applying Berlekamp-Massey's algorithm gives us
+$\Gamma_{\ell,\alpha}$. To compute $(r_k)_{k < 2n}$, Narayanan states
+that we can adapt the {\em automorphism projection} algorithm of
+Kaltofen and Shoup~\cite{KaSh98} and enjoy its subquadratic
 complexity. Kaltofen and Shoup's algorithm computes terms in a similar
-sequence, namely $\ell(\pi^i(\alpha))_{i\ge 0}$. However, that
-algorithm relies on the fact that $\pi$ is multiplicative, which
-$\Phi$ is not; as a result, we were not able to verify Narayanan's
-claim. (We contacted Narayanan regarding this assertion, and to date
-no resolution regarding whether it holds was reached).
+sequence, namely $\ell(\pi^k(\alpha))_{k\ge 0}$. However, that
+algorithm uses the fact that $\pi$ is a field automorphism, whereas
+$\Phi_x$ is not. As a result, whether a direct adaptation of Kaltofen
+and Shoup's algorithm is possible remains unclear to us.
 
-As a result, the best result we can deduce from Narayanan's approach
-is that if the minimal polynomial of $\Phi$ has maximal degree $n$,
-there exists a randomized algorithm that can compute it in quadratic
-time. Once it is known, we deduce the Frobenius trace $a$ readily.
+We propose an following alternative approach, which establishes the
+first point in Theorem~\ref{theo:main}.  It is inspired by
+Coppersmith's block Wiedemann algorithm~\cite{Coppersmith94}, and
+involves a matrix sequence rather than a scalar one; the application
+of the multipoint evaluation algorithm in {\bf 3.2.6} makes it
+possible to obtain a subquadratic cost.  The algorithm is Monte Carlo.
+\begin{enumerate}
+\item Fix $\mu=\lfloor n^{b} \rfloor$, for some exponent $b$ to be
+  determined later; choose $\mu$ $\F_q$-linear mappings $\L\to\F_q$,
+  say ${\bm \ell}=(\ell_1,\dots,\ell_\mu)$, and $\mu$ elements ${\bm
+    \alpha}=(\alpha_1,\dots,\alpha_\mu)$ in $\L$.  They define
+  sequences $(r_{i,j,k})_{k \ge 0} := (\ell_i(\Phi_x^k(\alpha_j)))_{k
+    \ge 0}$, which we see as a sequence of $\mu \times \mu$ matrices
+  $({\bm R}_k)_{k \ge 0}$ over $\F_q$.
+\item Compute $({\bm R}_k)_{k \le 2n/\mu}$. We will discuss 
+  the cost of this operation further on.
+\item Compute matrices ${\bm Q}, {\bm N}$ in $\F_q[z]^{\mu \times
+  \mu}$ such that the generating series $\sum_{k \ge 0} {\bm R}_k /
+  z^{k+1}$ can be written as ${\bm Q}^{-1}{\bm N}$. 
 
-%% \begin{theorem}
-%% Let $\varphi = (\Delta, g)$ be a rank two Drinfeld module over $L$, $[L:
-%%   \F_q] = n$, and suppose $\textnormal{CharPoly}(\varphi_T) =
-%% \minpol(\varphi_T)$. There exists a Monte Carlo randomized algorithm for
-%% determining the characteristic polynomial $C_{\varphi} = X^2 -aX + b$ in
-%% $O(n^{(\omega_2)/2 + o(1)}\log^{1+o(1)}q + n^{1+o(1)}\log^{2+o(1)}q)$
-%% $\F_q$ field operations.
-%% \end{theorem}
+  The last paragraphs of~\cite[Section~2.1]{KaVi04} show that there is
+  a non-zero polynomial $D$ in $\F_q[{\bm L}_1,\dots,{\bm L}_\mu,{\bm
+      A}_1,\dots,{\bm A}_\mu]$, where each boldface symbol is a vector
+  of $n$ indeterminates, such that $\deg D \le 2n$, and such that if
+  $D({\ell}_1,\dots,{\ell}_\mu,{\alpha}_1,\dots,{\alpha}_\mu)\ne 0$,
+  ${\bm Q}$ has degree at most $n/\mu$ and ${\bm Q}, {\bm N}$ can be
+  computed from $({\bm R}_k)_{k \le 2n/\mu}$.  In that case,
+  the cost is $(\mu^{\omega-1} n \log q)^{1+o(1)}$ bit
+  operations~\cite{GiJeVi03}.
 
-%% \begin{proof}
-%% Choose an $\alpha \in L$ and an $\F_q$ linear map $\ell: L \to \F_q$ uniformly at random. By Lemma \ref{kalsaun}, with probability at least half and at least $1 - \frac{n}{2q}$, $\textnormal{MinPoly}(\{\ell(\varphi_T^i(\alpha)\}_i) = \minpol(\varphi_T)$. The determination of $\textnormal{MinPoly}(\{\ell(\varphi_T^i(\alpha)\}_i)$ can be done using the Berlekamp-Massey algorithm in time $O(n^{1+ o(1)} \log q)$ using the first $2n - 1$ entries. Narayanan claims that computing the collection $\{ \ell(\varphi_T^i(\alpha)\}_{i=0}^{2n-2}$ is a restatement of the automorphism projection problem for elements of the endomorphism ring $L\{\sigma\}$, for which the algorithm of Kedlaya-Umans in \cite{Kedlaya:2011:FPF:2340436.2340448} yields a runtime of $O(n^{(\omega_2)/2 + o(1)}\log^{1+o(1)}q + n^{1+o(1)}\log^{2+o(1)}q)$ bit operations.
-%% \end{proof}
+\item Compute the determinant $\Gamma^*$ of ${\bm Q}$.  The cost of this step is
+  another $(\mu^{\omega-1} n \log q)^{1+o(1)}$ bit
+  operations~\cite{LaNeZh17}.
+  
+  By~\cite[Th.~2.12]{KaVi04}, $\Gamma^*$ divides the characteristic
+  polynomial of $\Phi_x$, which we assume coincides with $\Gamma$. On
+  the other hand, there exists a non-zero polynomial $D^*$ in
+  $\F_q[{\bm L}_1,{\bm A}_1]$ of degree at most $2n$ such that if
+  $D^*({\ell}_1,{\alpha}_1)\ne 0$, the minimal polynomial of
+  $(r_{1,1,k})_{k \ge 0}$ is precisely $\Gamma$. If this is the case,
+  since $\Gamma^*$ cancels that sequence, $\Gamma$ divides $\Gamma^*$,
+  so that $\Gamma = \Gamma^*$.
+\end{enumerate}
+Based on this analysis, the DeMillo-Lipton-Zippel-Schwartz lemma shows
+that the probability of failure is at most $4n/q$. If $q < 4n$,
+we may have to choose the coefficients of ${\bm \ell}$ and ${\bm
+  \alpha}$ in an extension of $\F_q$ of degree $O(\log n)$; this
+affects the runtime only with respect to logarithimic factors.
+
+It remains to explain how to compute the required matrix values $({\bm
+  R}_k)_{k \le 2n/\mu}$ at step (2). This is done by adapting the
+baby-steps / giant steps techniques of~\cite[Algorithm {\bf
+    AP}]{KaSh98} to the context of the block-Wiedemann algorithm, and
+leveraging multipoint evaluation.  Let $K:=\floor*{ (n/2\mu)^{c}}$,
+for another constant $c$ to be determined, and $K':=\lceil n/(2\mu K)
+\rceil$; remark that $\mu K' \le n$.  For our final choices of
+parameters, we will also have the inequalities $K' \le K$, $\mu \le
+\sqrt{K}$.
+\begin{enumerate}
+\item[(2.1)] For $i \le \mu$ and $u < K$, compute the linear mapping
+  $\ell_{i,u}:= {\Phi_x^\perp}^u(\ell_i)$, so that $\ell_{i,u}(\beta)
+  = \ell_i( \Phi_x^u(\beta) )$ for $\beta$ in $\L$. By {\bf 3.1.5},
+  this takes $ (K \mu n^{\theta} \log q)^{1+o(1)}$ bit
+  operations.
+
+\item[(2.2)] Compute $\varphi_{x^K} \in \L\ang{\tau}$; 
+  this takes $(K^{(\omega+1)/2}n^\theta \log q)^{1+o(1)}$ bit
+  operations, by {\bf 3.2.2}.
+
+\item[(2.3)] For $j \le \mu$ and $v < K'$, compute $\alpha_{j,v} :=
+  \Phi_x^{Kv}(\alpha_j)$, so that $r_{i,j,u+Kv} =
+  \ell_{i,u}(\alpha_{j,v})$ for all $i,j,u,v$.
+
+Starting from $(\alpha_{1,v},\dots,\alpha_{\mu,v})$, the application
+of $\varphi_{x^K}$ gives us
+$(\alpha_{1,v+1},\dots,\alpha_{\mu,v+1})$. Since $\mu \le \sqrt{K}$,
+the algorithm of {\bf 3.2.6} takes $ (K \mu^{\omega-2} n^{\theta} \log
+q)^{1+o(1)}$ bit operations per index $v$, for a total of
+$(\mu^{\omega-3} n^{1+\theta} \log q)^{1+o(1)}$.
+
+\item[(2.4)] Multiply the $(\mu K,n) \times (n,\mu K')$ matrices with
+  entries the coefficients of $(\ell_{1,0},\dots,\ell_{\mu,K-1})$,
+  resp.\, $(\alpha_{1,0},\dots,\alpha_{\mu,K'-1})$, to obtain all
+  needed values $r_{i,j,u+Kv}$.  The inequalities above imply that the
+  smallest dimension is $\mu K'$ so by {\bf 3.1.2}, the cost is $(\mu
+  K^{3-\omega} n^{\omega-1} \log q)^{1 + o(1)}$ bit operations.
+\end{enumerate}
+We know that we can take $\theta=1+\varepsilon$, for any $\varepsilon
+> 0$. To find $b$ and $c$ that minimize the overall exponent in $n$, we can
+thus replace $\theta$ by $1$ and disregard the exponent $1+o(1)$ and
+the terms depending on $\log q$; we will then round up the final
+result.  The terms that come into play are $\{\mu K n,
+K^{(\omega+1)/2}n, \mu^{\omega-2} n^2, \mu K^{3-\omega}n^{\omega-1},
+\mu^{\omega-1} n\}$.  For $\omega = 2.373$, taking $b = 0.183$ and
+$c=0.642$, all inequalities we needed are satisfied and the runtime is
+$(n^{1.885} \log q)^{1 + o(1)}$ bit operations. Taking into account
+the cost of computing $x^q$ in $\L$, this proves the first point in
+our main theorem.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{New Algorithms for computing the characteristic polynomial}
+\section{A deterministic algorithm}\label{sec:schoof}
+
+We present here an alternative approach inspired by Schoof's algorithm
+for elliptic curves, establishing the second item in our main theorem:
+we can solve Problem~\ref{pb1} in time $(n^{2+\varepsilon} \log q + n
+\log^2 q)^{1+o(1)}$, for any $\varepsilon > 0$. As before, we first assume 
+that we know $x^q \bmod \frakp$.
+
+\smallskip\noindent{\bf 6.1.} We will first compute the Frobenius norm
+$B$. The idea of the algorithm is then to compute $A_i:=A \bmod E_i$, for
+some pairwise distinct irreducible polynomials $E_1,\dots,E_s$ in
+$\F_q[x]$ and recover $A$ by Chinese remaindering.  In particular, we
+need $\deg(E_1 \cdots E_s) > n/2$, and we will also impose that $\deg
+E_i \in O(\log n)$ for all $i$. First, we show that we can find such
+polynomials $E_i$'s in $(n^2 \log q)^{1+o(1)}$ bit operations.
+
+If $q > n/2$, it is enough to take $E_i = x-e_i$, for pairwise
+distinct elements $e_i$ in $\F_q$; enumerating $n/2+1$ elements of
+$\F_q$ takes $(n \log q)^{1+o(1)}$ bit operations.
+
+Otherwise, let $t= \lceil \log_q (n+1)\rceil$. The sum of the degrees
+of the monic irreducible polynomials of degree $t$ over $\F_q$ is at
+least $1/2 q^t$, which is greater than $n/2$. Thus, we test all monic
+polynomials of degree $t$ for irreducibility. There are $q^t < q(n+1)
+\le n^2$ such polynomials (note that here $q \le n/2$) and each
+irreducibility test takes $\log^{O(1)} n$ bit
+operations~\cite{vonzurGathen1992} (a term $\log q$ usually appears in
+such runtime estimates, but here $\log q$ is in $O(\log n)$).
+
+\smallskip\noindent{\bf 6.2.} Let $F \in\L\ang{\tau}$ be of degree
+$\delta$ and $\L\ang{\tau}_{\delta}$ be the set of all elements in
+$\L\ang{\tau}$ of degree less than $\delta$. Our main algorithm will
+rely on the following operation: define the operator $\text{\sf
+  T}:\L\ang{\tau}_{\delta} \to \L\ang{\tau}_{\delta}$ by $\text{\sf
+  T}(U) := \tau U \bmod F$.  We are interested in computing $\text{\sf
+  T}^s(U)$, for some $r \ge 0$ and $U$ in
+$\L\ang{\tau}_{\delta}$.
+
+The operator is $\text{\sf T}$ is $\F_q$-linear but not $\L$-linear;
+the coefficient vector of $\text{\sf T}(U)$ is ${\bm M}\, \pi({\bm
+  v}_U)$, where ${\bm M}$ is the companion matrix of $F$ (seen as a
+commutative polynomial), ${\bm v}_U$ is the coefficient vector of $U$
+and where we still denote by $\pi$ the entry-wise application of the
+Frobenius to a vector (or to a matrix). As a result, the coefficient
+vector of $\text{\sf T}^r(U)$ is ${\bm M}\, \pi({\bm M}) \cdots
+\pi^{r-1}({\bm M})\, \pi^r({\bm v}_U)$.
+
+Lemma~5.3 in~\cite{vonzurGathen1992} shows how to compute such
+an expression in $O(\log r)$ applications of Frobenius powers (to
+matrices) and matrix products. When $r$ is $O(n)$, the runtime is
+$(\delta^3 n^\theta \log q)^{1+o(1)}$ bit operations.
+
+\smallskip\noindent{\bf 6.3.} We will also have to invert $\text{\sf
+  T}$.  In order to be able do so, we assume that the constant
+coefficient of $F$ is non-zero; as a result, ${\bm M}$ is invertible.
+, given $V=\text{\sf T}(U)$, we can recover the coefficient vector
+of $U=\text{\sf T}^{-1}(V)$ as ${\bm N}\, \pi^{-1}({\bm v}_V)$, where
+${\bm N}=\pi^{-1}({\bm M}^{-1})$. For $r$ in $O(n)$, we can compute
+$\text{\sf T}^{-r}(V)$ in $(\delta^3 n^\theta \log q)^{1+o(1)}$ bit
+operations as well, replacing the applications of powers of $\pi$ by
+powers of $\pi^{-1}$.
+
+\smallskip\noindent{\bf 6.4.} Using the results in {\bf 6.2} and {\bf
+  6.3}, let us show how to compute $A \bmod E$, for some irreducible
+$E$ in $\F_q[x]$. We let $F=\varphi_E \in \L\ang{\tau}$ and $\delta =
+\deg F = 2 \deg E$. We suppose that $E(\gamma(x)) \ne 0$ (recall that
+$\gamma$ is the structural homomorphism $\F_q[x] \to \L$); as a
+result, the constant coefficient of $F$ is non-zero. As input,
+assume that we know $E$ and $B \bmod E$.
+
+Start from the characteristic equation $\tau^{2n} - \tau^n \varphi_A +
+\varphi_B=0$, which we rewrite as $\tau^n \varphi_A = \tau^{2n} +
+\varphi_B$ and reduce both sides modulo $F=\varphi_E$. On the left, we
+obtain $(\tau^n \varphi_A) \bmod F = \text{\sf T}^n(\varphi_A \bmod
+F)$, that is, $\text{\sf T}^n(\varphi_{A \bmod E})$. Similarly, on the
+right, we obtain $\text{\sf T}^{2n}(1) + \varphi_{B \bmod E}.$ Thus, we can
+proceed as follows:
+\begin{enumerate}
+\item Compute $F:=\varphi_E$ and $V_0:=\varphi_{B \bmod E}$. By
+  {\bf 3.2.3}, the cost is
+  $(\delta^{(\omega+1)/2} n^\theta \log q)^{1+o(1)}$ bit operations.
+\item Compute the companion matrix ${\bm M}$ of $F$ in 
+  $(\delta^2 n \log q)^{1+o(1)}$ bit operations.
+\item Compute $V_1:=\text{\sf T}^{2n}(1)$ in $(\delta^3 n^\theta \log
+  q)^{1+o(1)}$ bit operations ({\bf 6.2}).
+\item Compute $\varphi_{A \bmod E}=\text{\sf T}^{-n}(V_0+V_1)$ in $(\delta^3
+  n^\theta \log q)^{1+o(1)}$ bit operations ({\bf 6.3}).
+\item Deduce $A \bmod E$ in $(\delta^2 n^\theta \log q)^{1+o(1)}$ bit
+  operations ({\bf 3.2.5}).
+\end{enumerate}
+The overall runtime is $(\delta^3 n^\theta \log q)^{1+o(1)}$ bit
+operations.
+
+\smallskip\noindent{\bf 6.5.} We can finally present the
+whole algorithm. 
+\begin{enumerate}
+\item Compute the Frobenius norm $B$ (Proposition~\ref{frobnorm})
+\item Compute polynomials $E_1,\dots,E_s$ as in {\bf 6.1}.
+\item For $i=1,\dots,s$, compute $B_i:=B \bmod E_i$.
+\item For $i=1,\dots,s$, compute $A_i:=A \bmod E_i$ by {\bf 6.4}.
+\item Recover $A$ by Chinese remaindering.
+\end{enumerate}
+Steps (1), (2), (3) and (5) take a total of $(n^2 \log q)^{1+o(1)}$
+bit operations. Since the degrees of all polynomials $E_i$ are $O(\log
+n)$, the time spent at Step (4) is $(n^{\theta+1} \log
+q)^{1+o(1)}$ bit operations. Since we can take $\theta = 1+\varepsilon$ 
+for any $\varepsilon > 0$, and adding the cost
+$(n \log^2 q)^{1+o(1)}$
+ of computing $x^q \bmod \frakp$, 
+this establishes the last statement in Theorem~\ref{theo:main}.
+\todo{discard $E_i$ if $E_i(\gamma(x)) =0$}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{A randomized algorithm}
+\section{A practical algorithm}\label{sec:mc}
 
-This section is dedicated to prove the following result.
-\begin{theorem}
-  Let $\varphi = (\Delta, g)$ be a rank two Drinfeld module over $L$,
-  $[L: \F_q] = n$. There exists a Monte Carlo randomized algorithm for
-  determining the characteristic polynomial $C_{\varphi} = X^2 -aX + b$
-  in $\widetilde{O}(n^2 \log q)$ $\F_q$ operations.
-\end{theorem}
-The algorithm bears similarities with the one by Narayanan discussed
-above, but does not require the assumption that the minimal polynomial
-of $\Phi_x=\iota(\varphi_x)$ have degree $n$. Note also that the
-complexity of our algorithm could be made sub-quadratic if a solution
-to the issue raised in the previous subsection was found.
+Finally, we prove the third item in the main theorem: {\em there
+  exists a Monte Carlo algorithm that solves Problem~\ref{pb1} in
+  $(n^2 \log^2 q)^{1+o(1)}$ bit operations.}
 
-Letting as before $\pi:\L\to\L$ denote the Frobenius map $u \mapsto
-u^q$, by Theorem \ref{charpoly}, the characteristic equation for
-$\tau^n$ tells us that for any $\alpha \in \L$, we have
-\[\Phi_a(\alpha)=\alpha + \Phi_b(\alpha).\]
+The algorithm is inspired by~\cite[Th.~5]{Shoup94}; it bears
+similarities with the one above, but does not require the assumption
+that the minimal polynomial $\Gamma$ of $\Phi_x$ have degree
+$n$. Whether the subquadratic runtime obtained in the previous section
+can be carried over to the approach presented here is of course an
+interesting question.
+
+The characteristic equation for $\tau^n$ tells us that for $\alpha \in
+\L$, we have
+\[\Phi_A(\alpha)=\alpha + \Phi_B(\alpha).\]
 Choose such an $\alpha$ and define $r:=\alpha +
-\Phi_b(\alpha)$. Determining $b$ using Gekeler's algorithm
-(Theorem~\ref{xxx}), we may compute $r$ simply by determining
-$\Phi_x^i(\alpha)$ for $i \leq n$. Each individual application of
-$\Phi_x$ requires three Frobenius operations on elements of $\L$,
-giving an individual runtime of $O(\M(n) \log q)$ and a total
-complexity of determining $r$ of $O(n\M(n)  \log q)$.
+\Phi_B(\alpha)$. Determining $B$ as in Section~\ref{ssec:gek}, we may
+compute $r$ simply by determining $\Phi_x^i(\alpha)$ for $i \leq
+n$. Each individual application of $\Phi_x$ requires three Frobenius
+operations on elements of $\L$, giving an individual runtime of
+$O(M(n) \log q))$ and a total complexity of determining $r$ of
+$O(nM(n) \log q))$.
 
 Let further $\ell: \L \to \F_q$ be an $\F_q$-linear projection map.
 Starting from 
@@ -807,14 +1062,16 @@ For $j \geq 0$, applying $\Phi_{x^j}=\Phi_x^j$ to this equality implies
 Finally, we can apply $\ell$ to both sides of such equalities,
 for $j=0,\dots,\kappa$, for some parameter $\kappa$ to be determined.
 This yields the following Hankel system:
-\[\begin{bmatrix}
+\begin{align}\label{eq:H}
+\begin{bmatrix}
    \ell(\alpha) & \ldots & \ell(\Phi_x^{\floor*{n/2}}(\alpha)) \\
     \vdots & & \vdots  \\ 
   \ell(\Phi_x^{\kappa}(\alpha)) &  \ldots & \ell(\Phi_x^{\floor*{n/2} + \kappa}(\alpha))
 \end{bmatrix} 
 \begin{bmatrix} a_0  \\ \vdots \\ a_{\floor*{n/2}} \end{bmatrix} 
 = 
-\begin{bmatrix} \ell(r) \\ \vdots \\   \ell(\Phi_x^{\kappa}(r)) \end{bmatrix}. \]
+\begin{bmatrix} \ell(r) \\ \vdots \\   \ell(\Phi_x^{\kappa}(r)) \end{bmatrix}. 
+\end{align}
 
 We first show that we can recover $a_0,\dots,a_{\floor*{n/2}}$
 uniquely by taking $\kappa \in O(n)$. A desirable property would be to
@@ -833,7 +1090,7 @@ sequence $\ell(\Phi_x^i(\alpha))$; applying the Berlekamp-Massey
 algorithm then gives us $\Gamma_{\ell,\alpha}$.  As above, using the
 recurrence $\Phi_x^{i+1}(\alpha) = (\gamma(x) {\rm Id} + g\pi + \Delta
 \pi^2)(\Phi_x^i(\alpha))$, we obtain all needed $\Phi_x^i(\alpha)$ using
-$O(n\M(n)\log q)$ $\F_q$-operations. Evaluating the projection map
+$O(nM(n)\log q))$ $\F_q$-operations. Evaluating the projection map
 once takes $O(n)$ time, which adds a total of $O(n^2)$ operations; the
 Berlekamp-Massey algorithm takes $O(n^2)$ operations as well.
 
@@ -844,11 +1101,6 @@ $1/(12 \max(1, \log_q \nu))$ (see
 also~\cite{Kaltofen:1991:PEP:113379.113396,Kaltofen-saun:1991:WMS:646027.676885}
 for a discussion in terms of the DeMillo-Lipton-Zippel-Schwartz
 lemma). We will assume henceforth that this is the case.
-
- 
-%% To set up this system, $2n$ entries of the form
-%% $\ell(\Phi_x^i(\alpha))$ or $\ell(\Phi_x^i(r))$ need to be
-%% computed. or $\Phi_x^i(r)$ using
 
 Since $\Gamma_{\ell,\alpha}=\Gamma$, applying for instance Lemma~1
 in~\cite{Kaltofen:1991:PEP:113379.113396}, we deduce that the square
@@ -895,8 +1147,14 @@ we can recover $a_0,\dots,a_{\floor*{n/2}}$ by solving the $\nu \times \nu$ syst
 \begin{bmatrix} a_0  \\ \vdots \\ a_{\nu-1} \end{bmatrix} 
 = 
 \begin{bmatrix} \ell(r) \\ \vdots \\   \ell(\Phi_x^{\nu-1}(r)) \end{bmatrix}, \]
-knowing that $a_{\floor*{n/2}+1},\dots,a_{\nu-1}$ will assume the value $0,\dots,0$
-in the solution.
+knowing that $a_{\floor*{n/2}+1},\dots,a_{\nu-1}$ will assume the
+value $0,\dots,0$ in the solution.
+
+To set up this system, $\Theta(n)$ entries of the form
+$\ell(\Phi_x^i(r))$ still need to be computed to obtain the
+right-hand-side. As above, this can be done using $O(nM(n)\log q))$
+$\F_q$-operations. Then, the Hankel system can be solved in $O(n^2)$
+operations $\F_q$-operations using classical algorithms..
 
 If $n$ is even, and if $\nu > n/2$, the same approach works, without
 modification. The only case that requires extra care is when $n$ is
@@ -904,445 +1162,23 @@ even and $\nu = n/2$, since then $H$ has size only $n/2$, and we are
 looking for $n/2 + 1$ coefficients. In this case, we rely
 on~\cite[Prop.~2.14]{frobdist}, which shows the last coefficient
 $a_{n/2}$ may be computed as
-\[a_{n/2} = {\rm Tr}_{\F_{q^2}/\F_{q}}(N_{\L/\F_{q^2}}(\Delta)^{-1}).\]
+\[a_{n/2} = {\rm Tr}_{\F_{q^2}/\F_{q}}(N_{\L/\F_{q^2}}(\Delta)^{-1}),\]
+where $\F_{q^2}$ is the unique degree 2 extension of $\F_q$ contained
+in $\L$. As explained in~\ref{xxx}, $a_{n/2}$ can then be computed in
+$O(M(n)\log n)$ operations in $\F_q$. Once this is done, we can
+rewrite~\eqref{eq:H}, with $\kappa = n/2-1$, as
+\begin{align*}
+H\begin{bmatrix} a_0  \\ \vdots \\ a_{n/2-1} \end{bmatrix} 
+= 
+\begin{bmatrix} \ell(r)-a_{n/2} \ell(\Phi_x^{n/2-1}(\alpha)) \\ \vdots \\   \ell(\Phi_x^{n/2-1}(r))-a_{n/2}\ell(\Phi_x^{n-1}(\alpha)) \end{bmatrix}. 
+\end{align*}
+Since $H$ is invertible, we deduce $a_0,\dots,a_{n/2-1}$ for the same
+asymptotic cost as before.
+
+%% Using $Tr_{\mathbb{F}_{q^2}/\mathbb{F}_{q}}(x) = x + x^q$ we can
+%% compute $a_{n/2}$ in $O(M(n)(\log n + \log q)))$ $\F_q$
+ %% operations.
 
-To set up this system, $\Theta(\kappa + n)$ entries of the form
-$\ell(\Phi_x^i(\alpha))$ or $\ell(\Phi_x^i(r))$ need to be
-computed. As above, using the recurrence $\Phi_x^{i+1}(\alpha) =
-(\gamma(x) {\rm Id} + g\pi + \Delta \pi^2)(\Phi_x^i(\alpha))$, we
-obtain all needed $\Phi_x^i(\alpha)$ or $\Phi_x^i(r)$ using $O((n +
-\kappa)\M(n)\log q)$ $\F_q$-operations; evaluating the projection map
-takes $O(n)$ time, which adds a total of $O(n(n+\kappa))$ operations.
-
-If $\kappa \in O(n)$, then the solution of the Hankel system can be
-solved in $O(n^2)$ operations using classical algorithms or $O(n
-\log^2(n))$ using algorithms due to Kaltofen \cite{kaltofen1994}. 
-
-
-
-%% By lemma \ref{kalsaun}, with probability at least $(1 - \frac{n}{2q})^2$ we have that $\minpol(\{\ell(\varphi_T^i(\alpha)\}_i) = \minpol(\varphi_T)$, in which case by lemma \ref{kalpan} and the upper bound $\deg \minpol(\varphi_T) \leq n$  we can guarantee that an upper left submatrix of
-
-%% \[\overline{H}_{\kappa} = \begin{bmatrix}\ell(\alpha) & \ell(\varphi_T(\alpha)) & \ldots & \ell(\varphi_T^{\floor*{n/2}}(\alpha)) & \ell(\varphi_T^{\floor*{n/2} + 1}(\alpha)) & \ldots & \ell(\varphi_T^{2\floor{n/2}}(\alpha))
-
-%% \\ \vdots & \vdots & & \vdots & \vdots & & \vdots \\ 
-
-%% \ell(\varphi_T^{j}(\alpha)) & \ell(\varphi_T^{1+j}(\alpha)) & \ldots & \ell(\varphi_T^{\floor*{n/2}+j}(\alpha)) & \ell(\varphi_T^{\floor*{n/2} +j + 1}(\alpha)) & \ldots & \ell(\varphi_T^{2\floor{n/2} + j}(\alpha))
-
-%% \\ \vdots & \vdots & & \vdots & \vdots & & \vdots \\
-
-%% \ell(\varphi_T^{\kappa}(\alpha)) & \ell(\varphi_T^{1 + \kappa }(\alpha)) & \ldots & \ell(\varphi_T^{\floor*{n/2} + \kappa}(\alpha) & \ell(\varphi_T^{\floor*{n/2} + \kappa + 1}(\alpha)) & \ldots & \ell(\varphi_T^{2\floor{n/2} + \kappa}(\alpha)))
-
-%% \end{bmatrix} \]
-%% \noindent of size at least $\frac{n-1}{2}$ is invertible when $\kappa = \minpol(\{\ell(\varphi_T^i(\alpha)\}_i)$ and $\frac{n-1}{2} \leq \kappa \leq n$. Therefore a solution to the system
-
-%% \[\overline{H}_{\kappa}\begin{bmatrix} a_0 \\ a_1 \\ \vdots \\ a_i \\ \vdots \\ a_{\floor*{n/2}} \\ a_0 \\ a_1 \\ \vdots \\ a_i \\ \vdots \\ a_{\floor*{n/2}} \end{bmatrix} = 
-%% \begin{bmatrix} \ell(r) + \ell(\varphi_T^{\floor*{n/2}}(r)) \\ \ell(\varphi_T(r)) + \ell(\varphi_T^{\floor*{n/2 + 1}}(r))  \\ \vdots \\ \ell(\varphi_T^j(r)) + + \ell(\varphi_T^{\floor*{n/2} + j}(r))  \\ \vdots  \\   \ell(\varphi_T^{\kappa}(r)) + \ell(\varphi_T^{\floor*{n/2} + \kappa}(r))  \end{bmatrix} \]
-
-
-
-%% \noindent where $\mathbb{F}_{q^2}$ is the unique degree 2 extension of $\F_q$ contained in $\mathbb{F}_{q^n}$. Using $Tr_{\mathbb{F}_{q^2}/\mathbb{F}_{q}}(x) = x + x^q$ we can compute $a_{n/2}$ in $O(\M(n)(\log n + \log q))$ $\F_q$ operations.
-
-%% %$N_{\mathbb{F}_{q^2}/ \F_q}(x) = x^{q^2 + 1}$, and $N_{L/\F_q} = N_{L/\mathbb{F}_{q^2}} \circ N_{\mathbb{F}_{q^2}/ \F_q}$,
-
-%% %Moreover for the linear sequence $\{\ell(\varphi_T^{i}(\alpha)) \}_{i=0}^{\infty} $, $\minpol( \{ a_i\}_{i=0}^{\infty} ) | \minpol(\varphi_T)$, 
-
-%% %so for generic $\ell, \alpha$ we have that $\minpol( \{ a_i\}_{i=0}^{\infty} ) = \minpol(\varphi_T)$. Moreover $\varphi_T$ satisfies a polynomial of degree at most $n$, so from lemma 4, the matrix $T_{\kappa}$ is invertible for some $\frac{n}{2} \leq \kappa \leq n$, guaranteeing a unique solution.
-
-
-%%  \begin{algorithm}
-%% \caption{A New Randomized Algorithm for Finding the Frobenius Trace}\label{euclid}
-%% \begin{algorithmic}[1]
-%% \Procedure{RandomizedFrobeniusTrace}{} \\
-%% \hspace*{\algorithmicindent} \textbf{Input} A rank two Drinfeld Module $(q,\frakf,\frakp, g, \Delta)$ and Frobenius Norm $b$\\
-%%  \hspace*{\algorithmicindent} \textbf{Output} The Frobenius Trace $a$
- 
-%%  \State Choose a map $\ell: L \to \F_q$ uniformly at random from $\F_q^n$
-%%  \State Choose an element $\alpha \in L$ uniformly at random from $L$
-%% \State $r \gets \alpha + \varphi_b(\alpha)$
-%% \State $A[0] \gets \alpha$
-%% \State $B[0] \gets r$
-%% \For{$i=1 \textbf{ to } \lfloor \frac{n-1}{2} \rfloor$}
-%% \State $B[i] = \varphi_T(\varphi_T^{i-1}(r))$
-%% \State $B[i-1] \gets \ell(B[i-1])$
-%% \EndFor
-%% \For{$i=1 \textbf{ to } n-1$}
-%% \State $A[i] = \varphi_T(\varphi_T^{i-1}(\alpha))$
-%% \State $A[i-1] \gets \ell(A[i-1])$
-%% \EndFor
-%% \For{$i=0 \textbf{ to } \lfloor \frac{n-1}{2} \rfloor$}
-%% \For{$j=0 \textbf{ to } \lfloor \frac{n}{2} \rfloor$}
-%% \State $M[i,j] = A[i + j]$
-%% \EndFor
-%% \EndFor
-
-%% \State Solve Hankel system $Mx = B$
-%% \Return $x$
-%% %\If {$i > \textit{stringlen}$} \Return false
-%% %\EndIf
-%% %\State $j \gets \textit{patlen}$
-
-%% %\If {$\textit{string}(i) = \textit{path}(j)$}
-%% %\State $j \gets j-1$.
-%% %\State $i \gets i-1$.
-%% %\State \textbf{goto} \emph{loop}.
-%% %\State \textbf{close};
-%% %\EndIf
-%% %\State $i \gets i+\max(\textit{delta}_1(\textit{string}(i)),\textit{delta}_2(j))$.
-%% %\State \textbf{goto} \emph{top}.
-%% \EndProcedure
-%% \end{algorithmic}
-%% \end{algorithm}
-
-
-
-%% % add
-%% % Genericity 
-
-%% %The values $\varphi_T^i$ can be computed as before in time $\widetilde{O}(n^2 \log q)$ [alternatively use power projection for improved runtime - see Narayanan]. 
-
-
-%% %It remains to determine the probability that the minimal polynomial of the sequence corresponds to the minimal polynomial of $\varphi_T$. 
-
-%% %This algorithm is virtually identical to the one given in \cite{Wiedemann:1986:SSL:13738.13744}, by which it follows that, given $k$ minimal polynomial computations and taking their lcm, the probability that this is the minimal polynomial of $\varphi_T$ is at least $1 - \log  \frac{q^{k-1}}{q^{k-1} - 1} $. For any $q \geq 2$ after two trials this probability is at least a half, and so we require $O(\log(\delta))$ trials to obtain a probability of success at least $1 - \delta$.
-
-
-%% \subsection{Schoof's Algorithm for Drinfeld modules}
-
-%% We present here an alternative approach inspired by Schoof's algorithm for elliptic curves. Supposing $ \frac{n}{2} + 1 < q$, for some choice of elements $e_0, e_1, \ldots, e_{n/2} \in \F_q$, we aim to compute $a(e_i)$. Invoking either the Universal Property of Quotients for rings, or the observation that $\varphi_{a + r(T-e_i)} = \varphi_a + \varphi_{r} \varphi_{T- e_i}$, this can be determined using $\varphi_a \textnormal{ (mod } \varphi_{T - e_i} \textnormal{)} = \varphi_{a(e_i)} = a(e_i)$ for each index $i$. Reducing the characteristic equation mod $\varphi_{T- e_i}$ we obtain
-
-%% \begin{equation}\label{charmodpol}
-%%  a(e_i) \sigma^n  = \sigma^{2n} + b(e_i) \textnormal{ (mod } \varphi_{T} - e_i \textnormal{)}.
-%%  \end{equation}
-
-%% \noindent Therefore it is sufficient to determine
-
-%% \[\sigma^{n} \textnormal{ (mod } \varphi_{T} - e_i \textnormal{)} \]
-
-%% \noindent for each $e_i$ and solve for $a$ satisfying equation \ref{charmodpol}. 
-
-%% \begin{theorem}
-
-%% Let $\varphi = (\Delta, g)$ be a rank two Drinfeld module over $L$, $[L: \F_q] = n$. There exists a deterministic algorithm for determining the characteristic polynomial $C_{\varphi} = X^2 -aX + b$ in
-%% \begin{itemize}
-%% \item $\widetilde{O}(n^{\omega_2/2 + 1} + n^2 \log q)$ $\F_q$ operations
-
-%% \item $\widetilde{O}(n^{2+\delta} \log^{1 + o(1)} q)$ bit operations for any $\delta > 0$.
-%% \end{itemize}
-
-%% \end{theorem}
-
-%% \begin{proof}
-%% Let 
-
-%% \[ \sigma^j = \nu_j + \mu_j \sigma \textnormal{ (mod } \varphi_{T} - e_i \textnormal{)}\]
-
-%% \noindent for $\nu_j, \mu_j \in L$ and let $\gamma(T) = \gamma_T$. Then we obtain the recurrence relation:
-
-%% \[\sigma^{j+1} = \nu_j^q \sigma + \mu_j^q \sigma^2 = \nu_j^q \sigma + \mu_i^q\big( -\frac{\gamma_T - e_i}{\Delta} - \frac{g}{\Delta} \sigma \big) \textnormal{ (mod } \varphi_{T} - e_i \textnormal{)}. \]
-
-%% \noindent That is, $\nu_{j+1} = -\frac{\gamma_T - e_i}{\Delta}\mu_{j}^q$ and $\mu_{j + 1} = \nu_j^q - \frac{g}{\Delta} \mu_j^q$. Letting $\alpha = -\frac{\gamma_T - e_i}{\Delta}$, $\beta = - \frac{g}{\Delta}$, and
-
-%% \[ M^{(q^i)} = \begin{bmatrix} 0 & \alpha^{q^i} \\ 1 & \beta^{q^i} \end{bmatrix} \]
-
-%% \[ \begin{bmatrix} \nu_{n} \\ \mu_n  \end{bmatrix} = M M^{(q)} \ldots M^{(q^{n-1})}  \begin{bmatrix} 1 \\ 0  \end{bmatrix}. \]
-
-%% %\[ \begin{bmatrix} \nu_{n} \\ \mu_n  \end{bmatrix} = \displaystyle\prod_{i = 0}^{n-1}M_i  \begin{bmatrix} 1 \\ 0  \end{bmatrix} \]
-
-%% \noindent Therefore, efficiently computing $\sigma^n$ relies on computing the products $ P_j = M M^{(q)} \ldots M^{(q^j)}$. This can be done effectively using the following observation:
-
-%% \[ P_{2j + 1} = P_{j} P_{j}^{(q^{j+1})}.\]
-
-%% \noindent We then compute $\sigma^{2n}$ as
-%% \begin{align*}
-%% \sigma^{2n} & = (\nu_n + \mu_n \sigma)(\nu_n + \mu_n \sigma) & \textnormal{ (mod } \varphi_{T} - e_i \textnormal{)} \\
-%%  & = \nu_n^2 + \nu_n\mu_n \sigma + \mu_n\nu_n^q \sigma + \mu_n^{q+1} (\alpha + \beta \sigma) & \textnormal{ (mod } \varphi_{T} - e_i \textnormal{)}\\
-%%  & = \nu_n^2 + \mu_n^{q + 1} \alpha + (\nu_n \mu_n + \mu_n \nu_n^q + \mu_n^{q+1}\beta)\sigma & \textnormal{ (mod } \varphi_{T} - e_i \textnormal{)}
-%% \end{align*}
-
-%% \noindent Substituting back into \ref{charmodpol} results in the relation
-
-%% \begin{equation} \label{reduct}
-%% a(e_i) (\nu_n + \mu_n \sigma) = \nu_n^2 + \mu_n^{q + 1} \alpha + b(e_i) + (\nu_n \mu_n + \mu_n \nu_n^q + \mu_n^{q+1}\beta)\sigma \textnormal{ (mod } \varphi_{T} - e_i \textnormal{)} .
-%% \end{equation}
-
-%% \noindent Therefore when $\mu_n \neq 0$ we conclude that
-
-%% \[a(e_i) = \nu_n + \nu_n^q + \mu_n^q \beta \]
-
-%% \noindent which allows the determination of $a(e_i)$ without computing the Frobenius norm beforehand. Otherwise, \ref{reduct} gives
-
-%% \begin{equation}
-%% a(e_i) = \nu_n + b(e_i)
-%% \end{equation}
-
-%% \noindent when $\mu_n = 0$.
-
-%% The algorithm may be summarized as follows:
-
-%% \begin{enumerate}
-
-%% \item Compute $\sigma^n  \textnormal{ (mod } \varphi_{T} - e_i \textnormal{)} $ by computing $P_n$.
-
-%% %using $\log(n)$ multiplications and $q^n$ exponentiations.
-
-%% \item Solve for $a(e_i) \in \F_q$ such that $a(e_i)\sigma^n = \sigma^{2n}+ b(e_i)  \textnormal{ (mod } \varphi_{T} - e \textnormal{)} $.
-
-%% \item Interpolate the values $a(e_i)$.
-
-%% \end{enumerate}
-
-%% The only potential degeneracy occurs when $\sigma^n = 0 \textnormal{ (mod } \varphi_{T} - e_i \textnormal{)} $, which can be excluded when $\gamma_T \neq e_i$. Suppose $\sigma^n = \sum_{i=0}^{n-2} a_i \sigma^i(\varphi_T - e_i)$. Then clearly $a_0 = 0$ if $\gamma_T - e \neq 0$. Moreover, if $a_i = 0$ for all $i < d < n - 2$, then $0 = a_{d} (\gamma_T - e_i)^d + a_{d-1}g^{d-1} + a_{d-2} \Delta^{d-2} = a_{d} (\gamma_T - e_i)^d$, therefore $a_d = 0$. So $\sigma^n = a_{n-2} \sigma^{n-2} \sigma^i(\varphi_T - e_i)$ which is a contradiction.
-
-%% We can compute polynomial representations for all $\sigma^i$ beforehand using modular composition for at most $O(\log n)$ choices of index $i$. Next, for each $e_i$, we perform $O(\log n)$ $2\times 2$ matrix multiplications and modular compositions to evaluate the Frobenius map up to order $q^{n/2}$. These two steps together contribute $O(n^{\omega_2/2} \log n + \M(n) \log q )$ $\F_q$ operations using Brent-Kung composition, or $O(n^{1+\delta} \log^{1 + o(1)} q \log n)$ bit operations, for any $\delta > 0$, using Kedlaya-Umans. Repeating for $\frac{n}{2} + 1$ choices of $e_i$ raises the cost in either case by a factor of $O(n)$. The interpolation step takes at most $O(n^2)$ operations, so the total cost remains either $O(n^{\omega_2/2 + 1} \log n + \M(n) n \log q)$ $\F_q$ operations  or $O(n^{2+\delta} \log^{1 + o(1)} q \log n)$ bit operations
-
-%% \end{proof}
-
-
-
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% %%%%%%%%%%%%%%%% Work here %%%%%%%%%%%%%%%%%%
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%% For the case where $\frac{n}{2} + 1 > q$, we now instead aim to compute $\sigma^n \textnormal{ mod } \varphi_{g_i}$ for pairwise co-prime polynomials $\{g_i\}_{i=0}^{t}$ of degrees $d_i$ such that $\sum_{i} d_i > \frac{n}{2}$. Here we let:
-
-%% \begin{align*}
-%% \varphi_{g_i} & = \sum_{\ell = 0}^{2d_i} c_{i,\ell} \sigma^{\ell} & \\
-%% \sigma^{j} & = \sum_{k=0}^{2d_i-1}a_{i,j,k}\sigma^k & \textnormal{ (mod } g_i \textnormal{)} \\
-%% \sigma^{j+1} & =  \sum_{k=0}^{2d_i-2}a_{i,j,k}^q\sigma^{k+1} - a_{i,j,2d_i-1}^q\sum_{\ell = 0}^{2d_i - 1} \frac{c_{i,\ell}}{c_{i,2d_i}} \sigma^{\ell}  & \textnormal{ (mod } g_i \textnormal{)}\\
-%%  & = -a_{i,j,2d_i -1}\frac{c_{i,0}}{c_{i,2d_i}} + \sum_{k=1}^{2d_{i}-1} \bigg( a_{i,j,k -1}^q - a_{i,j,2d_i-1}^q\frac{c_{i,k}}{c_{i,2d_i}}\bigg)\sigma^k & \textnormal{ (mod } g_i \textnormal{)}
-%% \end{align*}
-
-%% Defining $\alpha_{i,k} = -\frac{c_{i,k}}{c_{i,2d_i}}$, we have
-
-%% \[M = \begin{bmatrix} 0 & 0 & 0 & \ldots & 0 & \alpha_{i,0} \\
-%%                       1 & 0 & 0 & \ldots & 0 & \alpha_{i,1} \\
-%%                       0 & 1 & 0 & \ldots & 0 & \alpha_{i,2} \\
-%%                       0 & 0 & 1 & \ldots & 0 & \alpha_{i,3} \\
-%%                       \vdots & \vdots & \vdots & \ddots & \vdots & \vdots \\
-%%                       0 & 0 & 0 & \ldots & 1 & \alpha_{i,2d_i - 1}
-%% \end{bmatrix}\]
-
-%% Utilising the same notation as before, we have:
-
-%% \[ \begin{bmatrix} a_{i,n,0} \\ a_{i,n,1} \\ \vdots \\ a_{i,n,2d_i -1} \end{bmatrix} = MM^{(q)} \ldots M^{(q^{n-1})} \begin{bmatrix}1 \\ 0 \\ 0 \\ \ldots \\ 0 \end{bmatrix}\]
-
-%% Since the number of irreducible polynomials grows exponentially, we can require $d_i \leq d \in O(\log n)$ in order to guarantee $\sum_{i} d_i > \frac{n}{2}$. To select our irreducible polynomials, we can use the factor refinement technique introduced in \cite{Bach:1993:FR:158390.158392} on the set of all polynomials of degree $d$ which runs in $O(n^2)$ bit operations.
-
-%% Computing the $\alpha_{i,k}$ requires computing $\varphi_{g_i}$, which we can do for all $i$ efficiently by computing $\varphi_T, \ldots, \varphi_{T^d}$ by using efficient algorithms for skew polynomial multiplication which are quadratic in $d$. The complexity analysis follows the same approach as before, with an additional $\log n$ factor for the number of applications of the Frobenius maps $\sigma^j$. 
-
-%% To recombine the individual modular computations, we recall that given coprime elements $p,q$, if $x = a \mod p$ and $x = b \mod q$, if $pp^{-1} = 1 \mod q$ and $qq^{-1} = 1 \mod p$, then we have $x = aqq^{-1} + bpp^{-1} \mod pq$. Using algorithms for multiplication and division due to Puchinger and Wachter-Zeh \cite{PUCHINGER2017}, both operations can be done in time at worst $\otilde{O}(n^{\omega_2/2} \log q)$. Performing up to $O(n)$ recombinations gives an overall recombination cost of $\otilde{O}(n^{\omega_2/2 + 1} \log q)$
-
-%% The overall runtime in the general case is $O(n^{\omega_2/2 + 1} \log^2 n \log q + \M(n) n \log q \log n)$ $\F_q$ operations  or $O(n^{2+\delta} \log^{1 + o(1)} q \log^2 n)$ bit operations.  
-
-
-
-%% %We expect the algorithm may be extended to the case $\frac{n}{2} + 1 > q$ by computing $\sigma^n \textnormal{ mod } \varphi_g$ for irreducible polynomials $g$, though an exposition of this approach will not be given. 
-
-%%  \begin{algorithm}
-%% \caption{Schoof's Algorithm for Drinfeld modules}\label{euclid}
-%% \begin{algorithmic}[1]
-%% \Procedure{FrobeniusTrace}{} \\
-%% \hspace*{\algorithmicindent} \textbf{Input} A rank two Drinfeld Module $(q,\frakf,\frakp, g, \Delta)$ and Frobenius Norm $b$\\
-%%  \hspace*{\algorithmicindent} \textbf{Output} The Frobenius Trace $a$
- 
-%%  \State $E \gets \{e_0, \ldots, e_{n/2}\} \subset \F_q$
-
-%% \State $\sigma \gets x^q$ mod $\mathfrak{f}$
-%% \While{$i < n$}
-%% \If{$2i + 1 < n$}
-%% \State $\sigma^{i + 1} \gets \sigma^i \circ \sigma$
-%% \State $\sigma^{2i + 1} \gets \sigma^i \circ \sigma^i \circ \sigma$
-%% \State $i \gets 2i+1$
-%% \Else
-%% \State $\sigma^{i+1} \gets \sigma^i \circ \sigma$
-%% \State $i \gets i+1$
-%% \EndIf
-%% \EndWhile
- 
-%% \For{$e_i \in E$}
-%% \State $\alpha \gets -(\gamma_T - e_i)/\Delta$
-%% \State $\beta \gets -g/\Delta$
-
-%% \State $P_0 \gets \begin{bmatrix} 0 & \alpha \\ 1 & \beta \end{bmatrix}$
-%% \State $i \gets 0$
-%% \While{$i < n-1$}
-%% \If{$2i + 1 < n$}
-%% \State $P_i^{\sigma^{i+1}} \gets \begin{bmatrix} P_{i}[0,0](\sigma^{i+1}) & P_{i}[0,1](\sigma^{i+1}) \\ P_{i}[1,0](\sigma^{i+1}) & P_{i}[1,1](\sigma^{i+1}) \end{bmatrix}$
-%% \State $P_{2i+1} \gets P_iP_i^{\sigma^{i+1}}$
-
-%% \State $i \gets 2i+1$
-%% \Else
-%% \State $M_i \gets \begin{bmatrix} 0 & \alpha(\sigma^{i}) \\ 1 & \beta(\sigma^{i}) \end{bmatrix}$
-%% \State $P_{i+1} \gets P_iM_i$
-%% \State $i \gets i+1$
-%% \EndIf
-%% \EndWhile
-
-%% \State $\nu_{n} \gets P_{n-1}[0,0]$
-%% \State $\mu_n \gets P_{n-1}[1,0]$
-%% \If{$\mu_n \neq 0$}
-%% \State $a(e_i) \gets \nu_n + \nu_n^q + \mu_n^q \beta$
-%% \Else
-%% \State $a(e_i) \gets \nu_n + b(e_i)$
-%% \EndIf
-%% \EndFor
-%% \Return $\textbf{Interpolate}(\{ (e_0, a(e_0)), (e_1, a(e_1)), \ldots, (e_{n/2}, a(e_{n/2})) \})$
-%% %\If {$i > \textit{stringlen}$} \Return false
-%% %\EndIf
-%% %\State $j \gets \textit{patlen}$
-
-%% %\If {$\textit{string}(i) = \textit{path}(j)$}
-%% %\State $j \gets j-1$.
-%% %\State $i \gets i-1$.
-%% %\State \textbf{goto} \emph{loop}.
-%% %\State \textbf{close};
-%% %\EndIf
-%% %\State $i \gets i+\max(\textit{delta}_1(\textit{string}(i)),\textit{delta}_2(j))$.
-%% %\State \textbf{goto} \emph{top}.
-%% \EndProcedure
-%% \end{algorithmic}
-%% \end{algorithm}
-
-%% %\begin{lemma}
-%% %Suppose $e_i \neq \gamma_T$. Then  $\sigma^n \neq 0 \textnormal{ (mod } \varphi_{T} - e_i \textnormal{)} $
-%% %\end{lemma}
-
-%% %\begin{proof}
-%% %. Then we have for all $d < n - 2$:
-
-
-%% %\[ 0 = \sum_{i+j= d } a_i (\gamma_T - e)^{q^i} + \sum_{i+j + 1 =d} a_i g^{q^i} + \sum_{i+j + 2 = d} a_i \Delta^{q^i}\]
-
-
-
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% %\[ 0 = \sum_{i+j= d } a_i (\gamma_T - e)^{q^i} + \sum_{i+j + 1 =d} a_i g^{q^i} + \sum_{i+j + 2 = d} a_i \Delta^{q^i}\]
-
-%% %for all $d < n - 2$, and
-
-%% %\[ 1 = \sum_{i+j + 2 = n} a_i b_j^{q^i} \Delta^{q^i} (2)\]
-
-%% %We show that $a_ib_j = 0$ for $i + j = d$ for all $d < n - 2$. The base case follows trivially from equation (1) above since $a_0b_0 (\gamma_T - e) = 0$. For the inductive case, note that
-
-%% %\[ 0 = \sum_{i+j= d } a_i b_j^{q^i} (\gamma_T - e)^{q^i} \]
-
-%% %If some $a_ib_j \neq 0$, then $a_{i'}b_{j'} \neq 0$ for some $i \neq i'$, $j \neq j'$. Then without loss of generality $i < i'$, so $a_ib_{j'} \neq 0$ but $i + j' < d$, yielding a contradiction and the desired sub-lemma.
-
-%% %Then we must have:
-
-%% %\[1 = a_ub_v^{q^u} (\gamma_T - e)^{q^u} \]
-
-%% %So $a_u, b_v \neq 0$. Hence by the sub-lemma $a_i = 0$ and $b_j = 0$ for all $i < u$, $j < v$. This leaves
-
-%% %\[\sigma^n = a\sigma^{u} (\gamma_T - e + g\sigma + \Delta \sigma^2  ) b \sigma^v\]
-
-%% %Which does not hold for any choice of $a,b$.
-
-
-
-%% %\end{proof}
-
-%% \begin{example}
-%% Let $q = 5$, $n = 4$. Then $L = \mathbb{F}_5[T]/(T^4 + 4T^2 + 4T + 2)$. Take $\varphi$ to be a rank two Drinfeld module over $L$ with $g = 1, \Delta = 1$. Then for $e_0 = 0$ we have $\alpha = 4t$, $\beta = 4$. Letting
-
-%% \[M = \begin{bmatrix}0 & 4T \\ 1 & 4 \end{bmatrix}.\]
-
-%% \noindent We get:
-
-%% \[M M^{5} M^{25} M^{125} = \begin{bmatrix} T^3 + T^2 + 3 & T^3 + 2T + 3 \\ 2T^3 + 2T^2 + 3T + 4 & 4T^3 + 4T^2 + 4 \end{bmatrix}\]
-
-%% \noindent So $\nu_4 = T^3 + T^2 + 3$ and $\mu_4 = 2T^3 + 2T^2 + 3T + 4$ and
-
-%% \[a(0) = \nu_4 + \nu_4^5 + 4\mu_4^5 = 2\]
-
-%% \noindent For $e_1 = 1$ we have 
-
-%% \begin{align*}
-%% M & = \begin{bmatrix}0 & 4t + 1 \\ 1 & 4 \end{bmatrix}\\
-%% M M^{5} M^{25} M^{125} & = \begin{bmatrix} 4T & 4T^2 \\ 2T^3 + 2T^2 + 3T + 2 & T+3 \end{bmatrix}
-%% \end{align*}
-
-%% \noindent and we get $a(1) = 3$. Repeating this calculation once more yields $a(2) = 3$ and we can interpolate to get
-
-%% \[a = (T-1)(T-2) + 2T(T-2) + 4T(T-1)   = 2T^2 + 4T + 2.\]
-
-%% \end{example}
-%% %The runtime of the algorithm is dominated by the interpolation step, taking $O(n^2)$ time, and the computation of the matrix, which takes $O(\M(n)\log(n)^2\log(q))$.
-
-%% \section{Computational Results}
-
-%% We attempted to verify the runtime of the two new algorithms presented here with an implementation using SageMath \cite{sagemath}. The rank two Drinfeld module with parameters $g = 1$, $\Delta = 1$ was used for all computations. The runtimes shown in tables \ref{tab:table1} and \ref{tab:table2} are for fields of characteristic $ p= 1299827$ and $ p = 179426549$ for varying values of $k$ such that the base field has order $q = p^k$, and $n = [L: \F_q]$ was fixed at $ n = 6$. The values given are the averages over 10 trials. The results appear to confirm the logarithmic dependence on $q$ for both new algorithms. 
-
-%% \begin{center}
-%% \begin{tabular}{ | m{2cm} | m{3cm}| m{3cm} | } 
-%% %\caption{A summary of the computational results}
-%% \hline
-%%  & $p = 1299827$ & $p = 179426549 $ \\ 
-%% \hline
-%% $k = 1$ & 0.0791 & 0.0951 \\ 
-%% \hline
-%% $k = 3$ & 1.1438 & 1.418019056\\
-%% \hline 
-
-%% $k = 6$ &5.3689 & 11.35429311\\
-
-%% \hline
-%% \end{tabular}
-%% \end{center}
-%% \begin{table}[h!]
-%%   \centering
-%%   \caption{Runtime in seconds of our new randomized algorithm when $q = p^k$ and $n = 6$}
-%%   \label{tab:table1}
-%% \end{table}
-
-
-%% \begin{center}
-%% \begin{tabular}{ | m{2cm} | m{3cm}| m{3cm} | } 
-%% %\caption{A summary of the computational results}
-%% \hline
-%%  & $p = 1299827$ & $p = 179426549 $ \\ 
-%% \hline
-%% $k = 1$ & 0.0791 & 0.0951 \\ 
-%% \hline
-%% $k = 3$ & 1.1438 & 1.418019056\\
-%% \hline 
-
-%% $k = 6$ &5.3689 & 11.35429311\\
-
-%% \hline
-%% \end{tabular}
-%% \end{center}
-%% \begin{table}[h!]
-%%   \centering
-%%   \caption{Runtime in seconds of our new deterministic algorithm when $q = p^k$ and $n = 6$}
-%%   \label{tab:table2}
-%% \end{table}
-
-
-%% We then attempted to verify the order of dependence on $n$ by producing a log-log plot on $n$ versus runtime. Logarithms are taken base 2, and results are averaged over 10 trials. The linear regressions for our randomized algorithm shown in figures \ref{fig:figure1} and \ref{fig:figure2} have slopes below 3, which is consistent with the sub-cubic runtime given by our analysis.
-
-%% In contrast, our linear regression for the deterministic algorithm exceeds 3. This is almost certainly due to difficulties in finding library implementations for fast modular composition. The only reference implementations we could find worked only in the case where the base field was $\mathbb{F}_2$, which due to the requirement $q > \frac{n}{2} + 1$ was insufficient for testing our deterministic algorithm. Efforts to produce our own general implementation of fast modular composition were unsuccessful in the time available.
-
-%% \begin{figure}\label{fig:figure1}
-%% \centering
-%%   \includegraphics[width=6in]{chart2-1}
-%%   \caption{Log-log plot of $n$ versus runtime with $p = 2$, $k = 1$ for our new randomized algorithm}
-%% \end{figure}
-
-%% \begin{figure}\label{fig:figure2}
-%% \centering
-%%   \includegraphics[width=6in]{chart31-1}
-%%   \caption{Log-log plot of $n$ versus runtime with $p = 31$, $k = 2$ for our new randomized algorithm}
-%% \end{figure}
-
-%% \begin{figure}\label{fig:figure3}
-%% \centering
-%%   \includegraphics[width=6in]{chart31-2}
-%%   \caption{Log-log plot of $n$ versus runtime with $p = 31$, $k = 2$ for our new deterministic algorithm}
-%% \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
