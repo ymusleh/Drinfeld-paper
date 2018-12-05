@@ -405,13 +405,10 @@ One can solve Problem~\ref{pb1}
 \item in Monte Carlo time $(n^{1.885} \log q + n \log^2 q)^{1+o(1)}$,
   if the minimal polynomial of $\Phi_x$ has degree $n$ (Section~\ref{sec:narayanan});
 \item in time $(n^{2+\varepsilon} \log q + n \log^2 q)^{1+o(1)}$, for
-  any $\varepsilon > 0$ (Section~\ref{sec:schoof}).
+  any $\varepsilon > 0$ (Section~\ref{sec:schoof});
+\item in Monte Carlo time $(n^2 \log^2 q)^{1+o(1)}$ (Section~\ref{sec:mc}).
 \end{itemize}
 \end{theorem}
-In addition, we give in Section~\ref{sec:mc} a Monte Carlo algorithm
-whose runtime is in theory no better than those above, but which performs
-better in practice.
-
 Input and output sizes are $\Theta(n \log q))$ bits, so the best we
 could hope for is a runtime quasi-linear in $n \log q)$; as the
 theorem shows, we are rather far from this, since the best
@@ -491,13 +488,16 @@ at unit cost, the {\em transposition principle}~\cite{Kaltofen00}
 guarantees this, but this is not necessarily the case in our bit
 model.
 
-For long, the best known value for $\theta$ was Brent and Kung's 
+For long, the best known value for $\theta$ was Brent and Kung's
 $\theta = (\omega+1)/2$~\cite{BrKu78}; a major result by Kedlaya and
-Umans proves that we can actually take $\theta = 1+\varepsilon$, for any
-$\varepsilon > 0$~\cite{Kedlaya:2011:FPF:2340436.2340448}. However, in
-practical terms, we are not aware of an implementation of Kedlaya and
-Umans' algorithm that would be competitive with Brent and Kung's;
-we discuss some consequences of this in {\bf 3.2.4}.
+Umans proves that we can actually take $\theta = 1+\varepsilon$, for
+any $\varepsilon >
+0$~\cite{Kedlaya:2011:FPF:2340436.2340448}. However, in practical
+terms, we are not aware of an implementation of Kedlaya and Umans'
+algorithm that would be competitive with Brent and Kung's: for
+practical purposes, $\theta$ is $(\omega+1)/2$, and $\omega$ itself is
+either 3 or Strassen's $\log_2 7 \simeq 2.81$. we discuss some
+consequences of this in {\bf 3.2.4}.
 
 \smallskip\noindent{\bf 3.1.4.}  A useful application of modular
 composition is the application of any power of the Frobenius map
@@ -946,7 +946,7 @@ $\L\ang{\tau}$ of degree less than $\delta$. Our main algorithm will
 rely on the following operation: define the operator $\text{\sf
   T}:\L\ang{\tau}_{\delta} \to \L\ang{\tau}_{\delta}$ by $\text{\sf
   T}(U) := \tau U \bmod F$.  We are interested in computing $\text{\sf
-  T}^s(U)$, for some $r \ge 0$ and $U$ in
+  T}^r(U)$, for some $r \ge 0$ and $U$ in
 $\L\ang{\tau}_{\delta}$.
 
 The operator is $\text{\sf T}$ is $\F_q$-linear but not $\L$-linear;
@@ -958,15 +958,17 @@ Frobenius to a vector (or to a matrix). As a result, the coefficient
 vector of $\text{\sf T}^r(U)$ is ${\bm M}\, \pi({\bm M}) \cdots
 \pi^{r-1}({\bm M})\, \pi^r({\bm v}_U)$.
 
-Lemma~5.3 in~\cite{vonzurGathen1992} shows how to compute such
-an expression in $O(\log r)$ applications of Frobenius powers (to
-matrices) and matrix products. When $r$ is $O(n)$, the runtime is
-$(\delta^3 n^\theta \log q)^{1+o(1)}$ bit operations.
+Lemma~5.3 in~\cite{vonzurGathen1992} shows how to compute such an
+expression in $O(\log r)$ applications of Frobenius powers (to
+matrices) and matrix products (the original reference deals with
+scalars, but there is no difference in the matrix case). When $r$ is
+$O(n)$, the runtime is $(\delta^3 n^\theta \log q)^{1+o(1)}$ bit
+operations.
 
 \smallskip\noindent{\bf 6.3.} We will also have to invert $\text{\sf
   T}$.  In order to be able do so, we assume that the constant
 coefficient of $F$ is non-zero; as a result, ${\bm M}$ is invertible.
-, given $V=\text{\sf T}(U)$, we can recover the coefficient vector
+Given $V=\text{\sf T}(U)$, we can recover the coefficient vector
 of $U=\text{\sf T}^{-1}(V)$ as ${\bm N}\, \pi^{-1}({\bm v}_V)$, where
 ${\bm N}=\pi^{-1}({\bm M}^{-1})$. For $r$ in $O(n)$, we can compute
 $\text{\sf T}^{-r}(V)$ in $(\delta^3 n^\theta \log q)^{1+o(1)}$ bit
@@ -975,11 +977,11 @@ powers of $\pi^{-1}$.
 
 \smallskip\noindent{\bf 6.4.} Using the results in {\bf 6.2} and {\bf
   6.3}, let us show how to compute $A \bmod E$, for some irreducible
-$E$ in $\F_q[x]$. We let $F=\varphi_E \in \L\ang{\tau}$ and $\delta =
-\deg F = 2 \deg E$. We suppose that $E(\gamma(x)) \ne 0$ (recall that
-$\gamma$ is the structural homomorphism $\F_q[x] \to \L$); as a
-result, the constant coefficient of $F$ is non-zero. As input,
-assume that we know $E$ and $B \bmod E$.
+$E$ in $\F_q[x]$. As input, assume that we know $E$ and $B \bmod
+E$. We let $F=\varphi_E \in \L\ang{\tau}$ and $\delta := \deg F = 2
+\deg E$. We suppose that $E(\gamma(x)) \ne 0$ (recall that $\gamma$ is
+the structural homomorphism $\F_q[x] \to \L$); as a result, the
+constant coefficient of $F$ is non-zero, so {\bf 6.3} applies.
 
 Start from the characteristic equation $\tau^{2n} - \tau^n \varphi_A +
 \varphi_B=0$, which we rewrite as $\tau^n \varphi_A = \tau^{2n} +
@@ -1027,157 +1029,141 @@ this establishes the last statement in Theorem~\ref{theo:main}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{A practical algorithm}\label{sec:mc}
+\section{A practical Monte Carlo algorithm}\label{sec:mc}
 
-Finally, we prove the third item in the main theorem: {\em there
-  exists a Monte Carlo algorithm that solves Problem~\ref{pb1} in
-  $(n^2 \log^2 q)^{1+o(1)}$ bit operations.}
+In this section, we prove the last item in our main theorem: {\em
+  there exists a Monte Carlo algorithm that solves Problem~\ref{pb1}
+  in $(n^2 \log^2 q)^{1+o(1)}$ bit operations.} The runtime is now
+quadratic in $\log q$, but genuinely quadratic in $n$, not of the form
+$n^{2+\varepsilon}$. The main point is that we avoid applying high
+powers of the Frobenius (and thus modular composition); the required
+applications of $\Phi_x$ are done by repeated squaring.  This
+algorithm behaves well in practice, whereas almost-quadratic behavior
+of modular composition in practice significantly hinders the
+implementation of the algorithm in the previous section; see {\bf
+  3.1.3} and {\bf 3.2.4}.
 
 The algorithm is inspired by~\cite[Th.~5]{Shoup94}; it bears
-similarities with the one above, but does not require the assumption
+similarities with Narayanan's, but does not require the assumption
 that the minimal polynomial $\Gamma$ of $\Phi_x$ have degree
-$n$. Whether the subquadratic runtime obtained in the previous section
-can be carried over to the approach presented here is of course an
-interesting question.
+$n$. Whether the subquadratic runtime obtained in
+Section~\ref{sec:narayanan} can be carried over to the approach
+presented here is of course an interesting question.
 
-The characteristic equation for $\tau^n$ tells us that for $\alpha \in
-\L$, we have
-\[\Phi_A(\alpha)=\alpha + \Phi_B(\alpha).\]
-Choose such an $\alpha$ and define $r:=\alpha +
-\Phi_B(\alpha)$. Determining $B$ as in Section~\ref{ssec:gek}, we may
-compute $r$ simply by determining $\Phi_x^i(\alpha)$ for $i \leq
-n$. Each individual application of $\Phi_x$ requires three Frobenius
-operations on elements of $\L$, giving an individual runtime of
-$O(M(n) \log q))$ and a total complexity of determining $r$ of
-$O(nM(n) \log q))$.
+\smallskip\noindent{\bf 7.1.} When $n$ is even, we may need to
+determine the leading coefficient $a_{n/2}$ of the Frobenius trace $A$
+separately. We will use the following result, due to
+Jung~\cite{Jung00,frobdist}:
+\[a_{n/2} = {\rm Tr}_{\F_{q^2}/\F_{q}}({\rm N}_{\L/\F_{q^2}}(\Delta)^{-1}),\]
+where $\F_{q^2}$ is the unique degree 2 extension of $\F_q$ contained
+in $\L$, and ${\rm Tr}$ and ${\rm N}$ are (finite field) trace and
+norm. Using repeated squaring for exponentation, $a_{n/2}$ can be
+computed in $(n^2 \log q)^{1+o(1)}$ operations in $\F_q$, so $(n^2
+  \log^2 q)^{1+o(1)}$ bit operations.
+(Other solutions are possible, using for instance a resultant
+ for norm computation as in Section~\ref{ssec:gek}.)
 
-Let further $\ell: \L \to \F_q$ be an $\F_q$-linear projection map.
-Starting from 
-\[a = \sum_{i = 0}^{\floor*{n/2}}a_ix^i \in \F_q[x]\]
-and the relation $\Phi_a(\alpha)=r$,
-we get
-\[  \sum_{i = 0}^{\floor*{n/2}}a_i\Phi_x^i(\alpha)  = r.\]
-For $j \geq 0$, applying $\Phi_{x^j}=\Phi_x^j$ to this equality implies
-\[ \sum_{i = 0}^{\floor*{n/2}}a_i \Phi_x^{i+j}(\alpha) = \Phi_x^j(r).\]
-Finally, we can apply $\ell$ to both sides of such equalities,
-for $j=0,\dots,\kappa$, for some parameter $\kappa$ to be determined.
-This yields the following Hankel system:
-\begin{align}\label{eq:H}
-\begin{bmatrix}
-   \ell(\alpha) & \ldots & \ell(\Phi_x^{\floor*{n/2}}(\alpha)) \\
-    \vdots & & \vdots  \\ 
-  \ell(\Phi_x^{\kappa}(\alpha)) &  \ldots & \ell(\Phi_x^{\floor*{n/2} + \kappa}(\alpha))
-\end{bmatrix} 
-\begin{bmatrix} a_0  \\ \vdots \\ a_{\floor*{n/2}} \end{bmatrix} 
-= 
-\begin{bmatrix} \ell(r) \\ \vdots \\   \ell(\Phi_x^{\kappa}(r)) \end{bmatrix}. 
-\end{align}
+\smallskip\noindent{\bf 7.2.} Let $\Gamma \in \F_q[x]$ be the minimal
+polynomial of $\Phi_x$ and let $\nu \le n$ its degree. We prove here 
+that the inequality $\nu\ge n/2$ holds.
 
-We first show that we can recover $a_0,\dots,a_{\floor*{n/2}}$
-uniquely by taking $\kappa \in O(n)$. A desirable property would be to
-establish that for $\kappa = \floor*{n/2}$, the matrix of system above
-is invertible, at least for generic $\ell$ and $\alpha$. As we will
-see, we will obtain a slightly different invertibility property, which
-will be sufficient for our purposes.
+For any positive integers $i,j$ with $0 \le i < j < n$, $\pi^i \ne
+\pi^j$ (since otherwise $\pi^{j-i}$ would be the identity on
+$\L$). Therefore, by independence of characters, ${\rm Id}, \pi,
+\ldots, \pi^{n-1}$ satisfy no non-trivial $\L$-linear relation;
+that is, there are no constants $c_0, \ldots, c_{n-1}$ in $\L$,
+with at least one $c_i \neq 0$, such that $c_0 + c_1 \pi + \ldots +
+c_{n-1}\pi^{n-1}=0$ in ${\rm End}_{\F_q}[\L]$.
 
-Let $\Gamma \in \F_q[x]$ be the minimal polynomial of $\Phi_x$ and let
-$\nu \le n$ its degree.  The sequence $(\ell(\Phi_x^i(\alpha)))_{i \ge
-  0}$ is linearly generated, and its minimal polynomial
-$\Gamma_{\ell,\alpha}$ divides $\Gamma$. The first stage of the
-algorithm thus consists in computing this minimal polynomial
-$\Gamma_{\ell,\alpha}$. To this effect, we need $2n$ entries in the
-sequence $\ell(\Phi_x^i(\alpha))$; applying the Berlekamp-Massey
-algorithm then gives us $\Gamma_{\ell,\alpha}$.  As above, using the
-recurrence $\Phi_x^{i+1}(\alpha) = (\gamma(x) {\rm Id} + g\pi + \Delta
-\pi^2)(\Phi_x^i(\alpha))$, we obtain all needed $\Phi_x^i(\alpha)$ using
-$O(nM(n)\log q))$ $\F_q$-operations. Evaluating the projection map
-once takes $O(n)$ time, which adds a total of $O(n^2)$ operations; the
-Berlekamp-Massey algorithm takes $O(n^2)$ operations as well.
+Assume by way of contradiction that $2\nu \le n-1$.  We know that
+$\Gamma(\Phi_x) = 0$; since $\Gamma$ has degree $\nu$, we may write
+is as $\Gamma = c_0 + \cdots + c_{\nu-1} x^{\nu-1} +
+x^\nu$. Evaluating at $\Phi_x = \gamma(x) {\rm Id} + g \pi + \Delta
+\pi^2$, we obtain a relation of the form $\bar c_0 {\rm Id} + \bar
+c_1 \pi + \cdots + \bar c_{2\nu} \pi^{2\nu} = 0$ with
+coefficients in $\L$, where all exponents are at most $n-1$. The
+leading coefficient $\bar c_{2\nu}$ is given by $\bar c_{2\nu} =
+\Delta^{(1-q^{2\nu})/(1-q)}$, so it is non-zero, a contradiction.
+Thus, $2\nu \ge n$, as claimed.
+
+\smallskip\noindent{\bf 7.3.} The first step in the algorithm computes
+the minimal polynomial $\Gamma$ of $\Phi_x$. 
+To do so, choose at random $\alpha$ in $\L$ and an $\F_q$-linear
+projection map further $\ell: \L \to \F_q$. The sequence
+$(\ell(\Phi_x^i(\alpha)))_{i \ge 0}$ is linearly generated, and its
+minimal polynomial $\Gamma_{\ell,\alpha}$ divides $\Gamma$. Given $2n$
+entries in the sequence $\ell(\Phi_x^i(\alpha))$, we apply the
+Berlekamp-Massey algorithm to obtain $\Gamma_{\ell,\alpha}$.
 
 Assuming that $\ell$ and $\alpha$ are chosen uniformly at random,
-Wiedemann proved in~\cite{Wiedemann:1986:SSL:13738.13744} that
-$\Gamma_{\ell,\alpha}$ equals $\Gamma$ with probability at least
-$1/(12 \max(1, \log_q \nu))$ (see
-also~\cite{Kaltofen:1991:PEP:113379.113396,Kaltofen-saun:1991:WMS:646027.676885}
-for a discussion in terms of the DeMillo-Lipton-Zippel-Schwartz
-lemma). We will assume henceforth that this is the case.
+Wiedemann proved~\cite{Wiedemann:1986:SSL:13738.13744} that the
+probability that $\Gamma_{\ell,\alpha}=\Gamma$ is at least $1/(12
+\max(1, \log_q \nu))$. Using the DeMillo-Lipton-Zippel-Schwartz lemma
+gives another lower bound for the probability that
+$\Gamma_{\ell,\alpha}$ equals $\Gamma$, namely
+$1-2n/q$~\cite{Kaltofen:1991:PEP:113379.113396,Kaltofen-saun:1991:WMS:646027.676885}. We
+will assume henceforth that this is the case.
 
-Since $\Gamma_{\ell,\alpha}=\Gamma$, applying for instance Lemma~1
-in~\cite{Kaltofen:1991:PEP:113379.113396}, we deduce that the square
-Hankel matrix
-\[H=\begin{bmatrix}
-   \ell(\alpha) & \ldots & \ell(\Phi_x^{\nu-1}(\alpha)) \\
-    \vdots & & \vdots  \\ 
-  \ell(\Phi_x^{\nu-1}(\alpha)) &  \ldots & \ell(\Phi_x^{2\nu-2}(\alpha))
-\end{bmatrix} \]
-is invertible. To go further, we need a lower bound on the degree $\nu$.
+\smallskip\noindent{\bf 7.4.}
+We start from $A = \sum_{i = 0}^{\floor*{n/2}}a_ix^i \in \F_q[x]$, for
+some unknown coefficients $a_i$. Since $n/2 \le \nu$ (by {\bf 7.2}), we must have 
+$\floor*{n/2} \le \nu -1$, except if $n$ is even and $n/2 = \nu$.
+Hence, we may rewrite $A$ as 
+$$A = \sum_{i = 0}^{\nu - 1}a_ix^i + a_{\nu}x^{\nu},$$ where $a_i = 0$
+for $i=\floor*{n/2}+1,\dots,\nu-1$ and either $a_\nu=0$ (if
+$\floor*{n/2} \le \nu -1$) or $a_\nu$ can be determined as in {\bf
+  7.1} (if $\floor*{n/2} = \nu$). In any case, $a_\nu$ is known.
 
-\begin{lemma}
-  The inequality $\nu\ge n/2$ holds.
-\end{lemma}
-\begin{proof}
-   For any positive integers $i,j$ with $0 \le i < j < n$, $\pi^i \ne
-   \pi^j$ (since otherwise $\pi^{j-i}$ would be the identity on
-   $\L$). Therefore, by independence of characters, ${\rm Id}, \pi,
-   \ldots, \pi^{n-1}$ satisfy no non-trivial $\L$-linear relation;
-   that is, there are no constants $c_0, \ldots, c_{n-1}$ in $\L$,
-   with at least one $c_i \neq 0$, such that $c_0 + c_1 \pi + \ldots +
-   c_{n-1}\pi^{n-1}=0$ in ${\rm End}_{\F_q}[\L]$.
-
-   Assuming by way of contradiction that $2\nu \le n-1$.  We know that
-   $\Gamma(\Phi_x) = 0$; since $\Gamma$ has degree $\nu$, we may write
-   is as $\Gamma = c_0 + \cdots + c_{\nu-1} x^{\nu-1} +
-   x^\nu$. Evaluating at $\Phi_x = \gamma(x) {\rm Id} + g \pi + \Delta
-   \pi^2$, we obtain a relation of the form $\bar c_0 {\rm Id} + \bar
-   c_1 \pi + \cdots + \bar c_{2\nu} \pi^{2\nu} = 0$ with
-   coefficients in $\L$, where all exponents are at most $n-1$. The
-   leading coefficient $\bar c_{2\nu}$ is given by $\bar c_{2\nu} =
-   \Delta^{(1-q^{2\nu})/(1-q)}$, so it is non-zero, a contradiction.
-   Thus, $2\nu \ge n$, as claimed.
-\end{proof}
-
-If $n$ is odd, then we can refine the inequality in the lemma as $\nu
-\ge (n+1)/2$, or equivalently $\nu-1 \ge \floor*{n/2}$. In this case,
-we can recover $a_0,\dots,a_{\floor*{n/2}}$ by solving the $\nu \times \nu$ system
-\[\begin{bmatrix}
-   \ell(\alpha) & \ldots & \ell(\Phi_x^{\nu-1}(\alpha)) \\
+Theorem~\ref{charpoly} implies that for $\alpha$ as above, we have
+\[\Phi_A(\alpha)=r \quad\text{with}\quad r:=\alpha + \Phi_B(\alpha) \in \L.\]
+Using the expression of $A$ given above, this yields
+\[ \sum_{i = 0}^{\nu - 1}a_i \Phi_{x^{i}}(\alpha) = \tilde r,\]
+with $\tilde r =  r-a_\nu \Phi_\nu(\alpha)$.
+For $j \ge 0$, applying $\Phi_{x^j}$ to this equality
+gives
+\[ \sum_{i = 0}^{\nu - 1}a_i \Phi_{x^{i+j}}(\alpha) = \Phi_{x^j}(\tilde r).\]
+Finally, we can apply $\ell$ to both sides of such equalities,
+for $j=0,\dots,\nu-1$.
+This yields the following Hankel system:
+\begin{align}\label{eq:A}
+  \begin{bmatrix}   \ell(\alpha) & \ldots & \ell(\Phi_x^{\nu-1}(\alpha)) \\
     \vdots & & \vdots  \\ 
   \ell(\Phi_x^{\nu-1}(\alpha)) &  \ldots & \ell(\Phi_x^{2\nu-2}(\alpha))
 \end{bmatrix} 
 \begin{bmatrix} a_0  \\ \vdots \\ a_{\nu-1} \end{bmatrix} 
 = 
-\begin{bmatrix} \ell(r) \\ \vdots \\   \ell(\Phi_x^{\nu-1}(r)) \end{bmatrix}, \]
-knowing that $a_{\floor*{n/2}+1},\dots,a_{\nu-1}$ will assume the
-value $0,\dots,0$ in the solution.
+\begin{bmatrix} \ell(\tilde r) \\ \vdots \\   \ell(\Phi_x^{\nu-1}(\tilde r)) \end{bmatrix}. 
+\end{align}
+Since we assumed that $\Gamma_{\ell,\alpha}=\Gamma$, applying for
+instance Lemma~1 in~\cite{Kaltofen:1991:PEP:113379.113396}, we deduce 
+that the matrix of the system is invertible, allowing us to
+recover $a_0,\dots,a_{\nu-1}$.
 
-To set up this system, $\Theta(n)$ entries of the form
-$\ell(\Phi_x^i(r))$ still need to be computed to obtain the
-right-hand-side. As above, this can be done using $O(nM(n)\log q))$
-$\F_q$-operations. Then, the Hankel system can be solved in $O(n^2)$
-operations $\F_q$-operations using classical algorithms..
-
-If $n$ is even, and if $\nu > n/2$, the same approach works, without
-modification. The only case that requires extra care is when $n$ is
-even and $\nu = n/2$, since then $H$ has size only $n/2$, and we are
-looking for $n/2 + 1$ coefficients. In this case, we rely
-on~\cite[Prop.~2.14]{frobdist}, which shows the last coefficient
-$a_{n/2}$ may be computed as
-\[a_{n/2} = {\rm Tr}_{\F_{q^2}/\F_{q}}(N_{\L/\F_{q^2}}(\Delta)^{-1}),\]
-where $\F_{q^2}$ is the unique degree 2 extension of $\F_q$ contained
-in $\L$. As explained in~\ref{xxx}, $a_{n/2}$ can then be computed in
-$O(M(n)\log n)$ operations in $\F_q$. Once this is done, we can
-rewrite~\eqref{eq:H}, with $\kappa = n/2-1$, as
-\begin{align*}
-H\begin{bmatrix} a_0  \\ \vdots \\ a_{n/2-1} \end{bmatrix} 
-= 
-\begin{bmatrix} \ell(r)-a_{n/2} \ell(\Phi_x^{n/2-1}(\alpha)) \\ \vdots \\   \ell(\Phi_x^{n/2-1}(r))-a_{n/2}\ell(\Phi_x^{n-1}(\alpha)) \end{bmatrix}. 
-\end{align*}
-Since $H$ is invertible, we deduce $a_0,\dots,a_{n/2-1}$ for the same
-asymptotic cost as before.
-
-%% Using $Tr_{\mathbb{F}_{q^2}/\mathbb{F}_{q}}(x) = x + x^q$ we can
-%% compute $a_{n/2}$ in $O(M(n)(\log n + \log q)))$ $\F_q$
- %% operations.
+\smallskip\noindent{\bf 7.5.} We can now summarize the algorithm and
+analyze its runtime.
+\begin{enumerate}
+\item Compute the Frobenius norm $B=\sum_{i \le n} b_i x^i$ (Proposition~\ref{frobnorm});
+this takes $(n \log q)^{1+o(1)}$ bit operations.
+\item Compute the sequence $(\Phi_{x^{i}}(\alpha))_{i < 2n}$ using the
+  recurrence relation $\Phi_x^{i+1}(\alpha) = (\gamma(x) {\rm Id} +
+  g\pi + \Delta \pi^2)(\Phi_x^i(\alpha))$. Using repeated squaring to
+  apply the Frobenius, we get all terms in $(n^2 \log^2 q)^{1+o(1)}$ bit
+  operations.
+\item Apply $\ell$ to all terms of the sequence and deduce
+  $\Gamma_{\ell,\alpha}$ by the Berlekamp-Massey algorithm. This takes
+  $(n^2 \log q)^{1+o(1)}$ bit operations. We assume
+  $\Gamma_{\ell,\alpha}=\Gamma$ and let $\nu$ be its degree.
+\item If $n$ is even and $\nu=n/2$, compute $a_\nu$ as in {\bf 7.1};
+  otherwise, set $a_\nu=0$. This takes $(n^2 \log^2 q)^{1+o(1)}$ bit
+  operations.
+\item Compute $\tilde r = \alpha + \sum_{i \le n} b_i
+  \Phi_{x^{i}}(\alpha) - a_\nu \Phi_\nu(\alpha)$; this takes $(n^2
+  \log^2 q)^{1+o(1)}$ bit operations.
+\item Solve~\eqref{eq:A}; since the matrix is Hankel and non-singular,
+  this takes $(n^2 \log q)^{1+o(1)}$ bit operations.
+\end{enumerate}
+Altogether, this takes  $(n^2 \log^2 q)^{1+o(1)}$ bit operations,
+as claimed.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
