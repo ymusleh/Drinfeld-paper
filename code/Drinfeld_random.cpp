@@ -1,4 +1,17 @@
+#include <NTL/ZZ_pE.h>
+#include <NTL/ZZ_pEX.h>
+#include <NTL/vec_ZZ_p.h>
+#include<NTL/mat_ZZ_pE.h>
 
+#include <NTL/ZZ_pXFactoring.h>
+#include <NTL/ZZ_pEXFactoring.h>
+//#include <math.h>
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+
+using namespace std;
+using namespace NTL;
 
 
 
@@ -6,33 +19,6 @@
 
 int ilog(double base, double targ) {
 	return (int) (ilogb(targ)/ ilogb(base));
-}
-
-
-void skew_mul(vector<ZZ_pE> & ret, vector<ZZ_pE>& a, vector<ZZ_pE>& b, int q ) {
-	for (int i = 0; i < ret.size(); i++) clear(ret[i]);
-	ret.resize(b.size() + a.size());
-	for (int i = 0; i < a.size(); i++) {
-		for (int j = 0; j < b.size(); j++) {
-			add(ret[i + j], ret[i + j], a[i] * power(b[j], pow(q,i)) );
-		}
-	}
-}
-
-void skew_add(vector<ZZ_pE> & ret, vector<ZZ_pE>& a, vector<ZZ_pE>& b ) {
-	int n_deg = max(b.size(), a.size());
-	ret.resize(n_deg);
-	for (int i = 0; i < n_deg; i++) {
-		if (i < a.size()) {
-			if (i < b.size()) {
-				add(ret[i], b[i], a[i]);
-			}
-			else ret[i] = a[i];
-		}
-		else ret[i] = b[i];
-	}
-	return;
-
 }
 
 void operator_eval(ZZ_pE& res, vector<ZZ_pE>& op, ZZ_pE& elem, long q ) {
@@ -69,11 +55,7 @@ void elem_exp(mat_ZZ_pE& ret, mat_ZZ_pE& matr, double expo ) {
 
 
 ZZ_pX char_poly1(ZZ_pE& g, ZZ_pE& del, long p, long q_exp, int n, ZZ_pX& P) {
-	int m = n;
-	int cnum = n/2 + 1;
-	int rnum = n;
-	int q = pow(p, q_exp);
-	q = p;
+	int m = n, cnum = n/2 + 1, rnum = n, q = pow(p, q_exp);
 	int tot = rnum + cnum;
 	ZZ_pX cons = ZZ_pX(INIT_MONO, 1, 1);
 	ZZ_pE mono = conv<ZZ_pE>(cons);
@@ -162,7 +144,26 @@ ZZ_pX char_poly1(ZZ_pE& g, ZZ_pE& del, long p, long q_exp, int n, ZZ_pX& P) {
 		poly[i] = x[i];
 
 	}
-	cout << poly << std::endl;
 
 	return poly;
+}
+
+
+
+int main() {
+	int p = 1299721, q_exp = 1, n = 50;
+
+
+	ZZ_p::init(ZZ(p));
+	ZZ_pX P;
+	BuildIrred(P, n);
+	ZZ_pE::init(P);
+
+	ZZ_pE g, del;
+	set(g);
+	set(del);
+
+	ZZ_pX out = char_poly1(g,del,p,q_exp,n,P);
+
+	cout << "Char poly: " << out << endl;
 }
