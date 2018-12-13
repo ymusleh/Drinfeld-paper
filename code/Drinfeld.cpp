@@ -34,6 +34,25 @@ void operator_eval(ZZ_pE& res, vector<ZZ_pE>& op, ZZ_pE& elem, long q ) {
 	}
 }
 
+void operator_eval(ZZ_pE& res, ZZ_pE& op, ZZ_pE& elem, long q ) {
+	clear(res);
+	vector<ZZ_pE> powers;
+	ZZ_pX repp = rep(op);
+	long d = deg(repp);
+	if (d == -1) {
+		res = 0;
+		return;
+	}
+	powers.resize(d + 1);
+	powers[0] = 1;
+	for (int i = 0; i <= d; i++) {
+		if (i < d) {
+			mul(powers[i+1], powers[i], elem);
+		}
+		res += powers[i] * repp[i];
+	}
+}
+
 
 void build_poly(ZZ_pX& poly, int* arr, int len) {
 	poly.SetLength(len);
@@ -49,6 +68,50 @@ void elem_exp(mat_ZZ_pE& ret, mat_ZZ_pE& matr, double expo ) {
 			power(ret[i][j], matr[i][j], expo);
 		}
 	}
+	return;
+}
+
+void elem_exp(mat_ZZ_pE& ret, mat_ZZ_pE& matr, double q, double expo ) {
+	ZZ_pX cons = ZZ_pX(INIT_MONO, 1, 1);
+	ZZ_pE mono = conv<ZZ_pE>(cons);
+	ZZ_pE xq;
+	ZZ_pE temp;
+	power(xq, mono, q);
+	for (int i = 0; i < 2; i++) {
+		for (int j = 0; j < 2; j++) {
+			if (matr[i][j] == 0) {
+				ret[i][j] = 0;
+			}
+			else {
+				ret[i][j] = matr[i][j];
+				for (int k = 0; k < expo; k++) {
+					operator_eval(temp, ret[i][j], xq, 1 );
+					ret[i][j] = temp;
+				}
+			}
+		}
+	}
+	return;
+}
+
+
+void frob(ZZ_pE& ret, ZZ_pE& matr, double q, double expo ) {
+	cout << "entering" << endl;
+	ZZ_pX cons = ZZ_pX(INIT_MONO, 1, 1);
+	ZZ_pE mono = conv<ZZ_pE>(cons);
+	ZZ_pE xq;
+	ZZ_pE temp;
+	power(xq, mono, q);
+			if (matr == 0) {
+				ret = 0;
+			}
+			else {
+				ret = matr;
+				for (int k = 0; k < expo; k++) {
+					operator_eval(temp, ret, xq, 1 );
+					ret = temp;
+				}
+			}
 	return;
 }
 
@@ -148,10 +211,12 @@ ZZ_pX char_poly1(ZZ_pE& g, ZZ_pE& del, long p, long q_exp, int n, ZZ_pX& P) {
 	return poly;
 }
 
+
+
 ZZ_pEX char_poly2(ZZ_pE g, ZZ_pE del, long p, long q_exp, int n, ZZ_pX P) {
 
 	int m = n, cnum = n/2 + 1, rnum = n, q = pow(p, q_exp);
-	int tot = rnum + cnum;
+	int tot = rnum + cnum, ind = 0;
 	ZZ_pX cons = ZZ_pX(INIT_MONO, 1, 1);
 	ZZ_pE mono = conv<ZZ_pE>(cons);
 	ZZ_pE alpha, beta;
@@ -168,11 +233,12 @@ ZZ_pEX char_poly2(ZZ_pE g, ZZ_pE del, long p, long q_exp, int n, ZZ_pX P) {
 	elem.SetLength(maxdeg);
 
 	for (int i = 0; i < cnum; i++) {
-		ei[i] = conv<ZZ_p>(ZZ(i));
+		ei[i] = conv<ZZ_pE>(ZZ(i));
 		alpha = (-1)*(mono - ei[i]) / del;
 		beta = (-1)*g / del;
+		ind = 0;
 
-		mat_ZZ_pE M, B, N;
+		mat_ZZ_pE M, B, N, temp;
 		N.SetDims(2,2);
 		B.SetDims(2,2);
 		M.SetDims(2,2);
@@ -180,21 +246,23 @@ ZZ_pEX char_poly2(ZZ_pE g, ZZ_pE del, long p, long q_exp, int n, ZZ_pX P) {
 		M[1][0] = 1;
 		M[0][1] = alpha;
 		M[1][1] = beta;
-
 		B = M;
-
-		int ind = 0;
+		N = M;
 
 		while(2*ind + 1 < n) {
-			elem_exp(B, M, pow(q, ind + 1));
-			mul(M,M,B);
+			elem_exp(B, M, q, ind + 1);
+			mul(temp,M,B);
+			M = temp;
 			(ind*=2)++;
-
+			//cout << M << endl;
 		}
-		elem_exp(B, B, pow(q, ind));
+
+		elem_exp(B, N, q, ind);
+
 		while (ind + 1 < n) {
 			elem_exp(B,B,q);
 			mul(M,M,B);
+			//cout << M << endl;
 			ind++;
 		}
 
@@ -205,7 +273,9 @@ ZZ_pEX char_poly2(ZZ_pE g, ZZ_pE del, long p, long q_exp, int n, ZZ_pX P) {
 			power(temp, M[1][0], q);
 			rvals[i] += beta*temp;
 		}
-		else rvals[i] = M[0][0];
+		else {
+			rvals[i] = M[0][0];
+		}
 
 
 	}
@@ -216,9 +286,8 @@ ZZ_pEX char_poly2(ZZ_pE g, ZZ_pE del, long p, long q_exp, int n, ZZ_pX P) {
 }
 
 
-
 int main() {
-	int p = 17, q_exp = 1, n = 6;
+	int p = 1163, q_exp = 1, n = 50;
 
 
 	ZZ_p::init(ZZ(p));
@@ -230,8 +299,21 @@ int main() {
 	set(g);
 	set(del);
 
-	ZZ_pX out = char_poly1(g,del,p,q_exp,n,P);
-	ZZ_pEX out2 = char_poly2(g,del,p,q_exp,n,P);
+	ZZ_pE base, res, op, elem;
+	ZZ_pX cons = ZZ_pX(INIT_MONO, 1, 1);
+	ZZ_pE mono = conv<ZZ_pE>(cons);
+	elem = mono;
+	elem = elem*mono + elem + 1;
+	op = mono*mono + mono + 1;
+	power(base, elem, p*p);
+	frob(res, elem, p, 2);
+	//cout << "ref: " << base << "res: " << res << endl;
 
-	cout << "Char poly (random): " << out << endl << "(deterministic): " << out2 << endl;
+	ZZ_pX out2 = char_poly1(g,del,p,q_exp,n,P);
+
+
+	ZZ_pEX out = char_poly2(g,del,p,q_exp,n,P);
+	cout << "P: " << P << endl;
+
+	cout << "Char poly (det): " << out << " char poly (rand): " << out2 << endl;
 }
