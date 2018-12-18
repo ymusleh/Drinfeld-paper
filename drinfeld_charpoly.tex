@@ -12,15 +12,15 @@
 \usepackage{color}
 \usepackage{graphicx}
 \usepackage{esint}
-\usepackage{stmaryrd}
+%\usepackage{stmaryrd}
 \usepackage{tabularx}
 \usepackage{multirow}
 \usepackage[squaren]{SIunits}
 \usepackage[tight]{subfigure}
 \usepackage{multirow}
 \usepackage{mathtools}
-\usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
+\usepackage[colorinlistoftodos]{todonotes}
 
 \newtheorem{definition}{Definition}
 \newtheorem{theorem}{Theorem}
@@ -358,7 +358,7 @@ defines the main objects we wish to compute.
 \end{theorem}
 The polynomials $A$ and $B$ are respectively referred to as the
 \textit{Frobenius trace} and \textit{Frobenius norm} of $\varphi$.
-Note in particular the similariy with Hasse's theorem for elliptic
+Note in particular the similarity with Hasse's theorem for elliptic
 curves over finite fields regarding the respective ``sizes'' (degree,
 here) of the Frobenius trace and norm.  The main goal of this paper is
 then to find efficient algorithms to solve the following problem.
@@ -424,7 +424,7 @@ of~\cite{eschost2017arXiv171200669D} was inspired by its elliptic
 analogue). We believe this interaction has the potential to yield
 further algorithms of interest. While whether it will lead to
 e.g. improvements on polynomial factorization over finite fields is of
-course unknown, it is remains natural to wonder whether other
+course unknown, it remains natural to wonder whether other
 ``elliptic'' techniques, such as $p$-adic approaches~\cite{Satoh00} or
 Harvey's amortization techniques~\cite{Harvey14}, apply in the present
 context.
@@ -589,7 +589,7 @@ for some coefficients $f_{i,j} \in \L$ to be determined. We obtain
 so the $f_{i,j}$ satisfy the recurrence
 \[ f_{i+1,j} = \gamma(x) f_{i,j} + g f_{i,j-1}^q + \Delta f_{i,j-2}^{q^2}\]
 with known initial conditions $f_{0,0} = 1$, $f_{1,0} = \gamma(x)$,
-$f_{1,1} = g$, and $f_{1,2 = \Delta}$. Evaluating one instance of the
+$f_{1,1} = g$, and $f_{1,2} = \Delta$. Evaluating one instance of the
 recurrence involves $O(1)$ multiplications / additions in $\L$ and
 applications of the Frobenius map $\pi$, for $(n^\theta \log
 q))^{1+o(1)}$ bit operations.  Given $\varphi_{x^i}$, there are
@@ -606,7 +606,7 @@ bit operations, which may be acceptable in practice. This comment also
 applies to Proposition~\ref{prop:gek} below, and underlies the design
 of the algorithm in Section~\ref{sec:mc}.
 
-\smallskip\noindent{\bf 3.2.5.}  We deduce from this an algorithm for the
+\smallskip\noindent{\bf 3.2.5.}  We deduce from this an algorithm for
 inverting $\varphi$.  Given
 $\varphi_C = \sum_{0 \le i \le 2k} \alpha_i \tau^i$, we want to
 recover $C =\sum_{0 \le i \le k} c_ix^i $ in $\F_q[x]$. Writing the
@@ -832,10 +832,11 @@ possible to obtain a subquadratic cost.  The algorithm is Monte Carlo.
       A}_1,\dots,{\bm A}_\mu]$, where each boldface symbol is a vector
   of $n$ indeterminates, such that $\deg D \le 2n$, and such that if
   $D({\ell}_1,\dots,{\ell}_\mu,{\alpha}_1,\dots,{\alpha}_\mu)\ne 0$,
-  ${\bm Q}$ has degree at most $n/\mu$ and ${\bm Q}, {\bm N}$ can be
-  computed from $({\bm R}_k)_{k \le 2n/\mu}$.  In that case,
+  ${\bm Q}$ has degree at most $n/\mu$ \todo{Relationship between D and Q unclear.} and ${\bm Q}, {\bm N}$ can be
+  computed \todo{Is computing $\bm N$ necessary?} from $({\bm R}_k)_{k \le 2n/\mu}$.  In that case,
   the cost is $(\mu^{\omega-1} n \log q)^{1+o(1)}$ bit
-  operations~\cite{GiJeVi03}.
+  operations~\cite{GiJeVi03}. \todo{Cite or explain specific algorithm used to compute Q}
+  
 
 \item Compute the determinant $\Gamma^*$ of ${\bm Q}$.  The cost of this step is
   another $(\mu^{\omega-1} n \log q)^{1+o(1)}$ bit
@@ -854,7 +855,7 @@ Based on this analysis, the DeMillo-Lipton-Zippel-Schwartz lemma shows
 that the probability of failure is at most $4n/q$. If $q < 4n$,
 we may have to choose the coefficients of ${\bm \ell}$ and ${\bm
   \alpha}$ in an extension of $\F_q$ of degree $O(\log n)$; this
-affects the runtime only with respect to logarithimic factors.
+affects the runtime only with respect to logarithmic factors.
 
 It remains to explain how to compute the required matrix values $({\bm
   R}_k)_{k \le 2n/\mu}$ at step (2). This is done by adapting the
@@ -1008,12 +1009,13 @@ operations.
 
 \smallskip\noindent{\bf 6.5.} We can finally present the
 whole algorithm. 
+\todo{Consider splitting case where $q  \geq \frac{n}{2}$}
 \begin{enumerate}
 \item Compute the Frobenius norm $B$ (Proposition~\ref{frobnorm})
 \item Compute polynomials $E_1,\dots,E_s$ as in {\bf 6.1}.
 \item For $i=1,\dots,s$, compute $B_i:=B \bmod E_i$.
 \item For $i=1,\dots,s$, compute $A_i:=A \bmod E_i$ by {\bf 6.4}.
-\item Recover $A$ by Chinese remaindering.
+\item Recover $A$ by the Chinese remainder map.
 \end{enumerate}
 Steps (1), (2), (3) and (5) take a total of $(n^2 \log q)^{1+o(1)}$
 bit operations. Since the degrees of all polynomials $E_i$ are $O(\log
@@ -1164,6 +1166,7 @@ this takes $(n \log q)^{1+o(1)}$ bit operations.
 \end{enumerate}
 Altogether, this takes  $(n^2 \log^2 q)^{1+o(1)}$ bit operations,
 as claimed.
+\todo{table comparing the different approaches?}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
