@@ -359,7 +359,6 @@ $(g,\Delta) \in\L^2$.
   Let $q = 5$, $\frakf = z^4 +4z^2+ 4z + 2$ and $\L = \F_5[z]/\frakf =
   \mathbb{F}_{625}$, so that $n=4$; we let $\zeta$ be the class of $z$ in
   $\L$.
-
   Let $\gamma: \F_5[x] \to \F_{625}$ be given by $x \mapsto \zeta$, so
   that $\frakp=\frakf$, $\K=\L=\F_{625}$ and $m=1$. We define the Drinfeld
   module $\varphi: \F_5[x] \to \F_{625}\ang{\tau}$ by
@@ -399,7 +398,7 @@ here) of the Frobenius trace and norm.  The main goal of this paper is
 then to find efficient algorithms to solve the following problem.
 \begin{problem}\label{pb1}
   Given a rank two Drinfeld module $\varphi = (g,\Delta)$, compute its
-  Frobenius trace and norm.
+  Frobenius trace $A$ and Frobenius norm $B$.
 \end{problem}
 
 \begin{example}
@@ -752,9 +751,9 @@ $$U(\alpha_j) = \beta_{0,j} + \tau^s( \beta_{1,j} + \tau^s(\beta_{2,j}
   + \cdots )).$$ The total is another $O(s \mu)$ operations
 in $\L$, including Frobenius powers.
 \end{enumerate}
-Overall, when $\mu \le \sqrt{k}$, the cost is $(k \mu^{\omega-2}
-n^\theta \log q)^{1+ o(1)}$ bit operations. If we were to take $\mu\ge
-\sqrt{k}$, the cost would become $(k^{(\omega-1)/2} \mu n^\theta \log
+When $\mu \le \sqrt{k}$, the cost is $(k \mu^{\omega-2}
+n^\theta \log q)^{1+ o(1)}$ bit operations. If we take $\mu\ge
+\sqrt{k}$, the cost  becomes $(k^{(\omega-1)/2} \mu n^\theta \log
 q)^{1+ o(1)}$ bit operations; in particular for $k=\mu$, this is
 $(k^{(\omega+1)/2} n^\theta \log q)^{1+ o(1)}$.
 
@@ -772,18 +771,19 @@ from Section~\ref{ssec:not}.
 
 \subsection{Gekeler's Algorithm}\label{ssec:gek}
 
-As in the case of elliptic curves, determining the Frobenius norm is a
-rather straightforward operation. It is done using the following
-result from~\cite[Th.~2.11]{frobdist} (see also~\cite{HsYu00}).
+As in the case of elliptic curves, determining the Frobenius norm $B$
+of Theorem~\ref{charpoly} is a rather straightforward operation. It is
+done using the following result from~\cite[Th.~2.11]{frobdist} (see
+also~\cite{HsYu00}).
 
 \begin{proposition}\label{frobnorm}
 Let $N_{\L/\F_q}$ be the norm $\L \to \F_q$. The Frobenius norm $B$ of a rank two Drinfeld module $\varphi=(g,\Delta)$ 
   over $(\L,\gamma)$ is
   \[B = (-1)^n N_{\L/\F_q}(\Delta)^{-1}\frakp^m.\]
 \end{proposition}
-In particular, $B$ can be computed in $(n \log q))^{1+o(1)}$ bit
+In particular, $B$ can be computed in $(n \log q)^{1+o(1)}$ bit
 operations. Indeed, $\frakp^m$ is a degree $n$ polynomial, and we can
-compute it in the prescribed time repeated squaring. Moreover
+compute it in the prescribed time by repeated squaring. Moreover
 $N_{\L/\F_q}(\Delta) =
 \textnormal{resultant}(\frakf,\Delta)$~\cite{Pohst:1989:AAN:76692},
 so we can compute it in the same time~\cite{Gathen:2003:MCA:945759}.
@@ -798,18 +798,18 @@ cost analysis is not provided in the original paper).
   q + n \log^2 q)^{1+o(1)}$ bit operations.
 \end{proposition}
 \begin{proof}
-First, we compute $x^q\bmod \frakp$, for $(n \log^2 q)^{1+o(1)}$ bit
-operations. Then, since $\deg A \leq{n}/{2}$, we set $A = \sum_{0
-  \le i \leq \floor*{n/2}} a_i x^i$, with all $a_i$'s in $\F_q$. By
-Theorem~\ref{charpoly}, we have $\tau^n \varphi_A = \tau^{2n} +
-\varphi_B.$
+The algorithm is as follows.
 \begin{enumerate}
-\item We start by computing $\varphi_1,\dots,\varphi_{x^n}$, in
-$(n^{\theta+2} \log q)^{1+o(1)}$ bit operations ({\bf 3.2.4})
+\item We compute once and for all $x^q\bmod \frakp$, for $(n \log^2
+  q)^{1+o(1)}$ bit operations.
+\item Compute $\varphi_1,\dots,\varphi_{x^n}$, in
+$(n^{\theta+2} \log q)^{1+o(1)}$ bit operations ({\bf 3.2.4}).
 \item Compute $B$ and deduce $\varphi_B$; this takes comparatively
-negligible time (see above and {\bf 3.2.3}) and gives us $\varphi_A$.
+  negligible time (see above and {\bf 3.2.3}) and gives us
+  $\varphi_A$, since Theorem~\ref{charpoly} implies that $\tau^n
+  \varphi_A = \tau^{2n} + \varphi_B.$
 \item Recover $A$ in $(n^{\theta+2} \log q)^{1+o(1)}$
-bit operations ({\bf 3.2.5}). \qedhere
+bit operations by {\bf 3.2.5}. \qedhere
 \end{enumerate}
 \end{proof}
 The cost of this procedure is at least cubic in $n$, due to the need
@@ -825,7 +825,7 @@ onto, allows for some faster algorithms, based on two observations:
 we can recover $A$ from its image $\gamma(A)$ in this case (since
  $\deg A \le \floor*{n/2}$), and $\gamma(A)$ can be easily
 derived from the {\em Hasse Invariant} of $\varphi$, which is the
-coefficient of $\tau^{n}$ in $\varphi_{\frakp}$.
+coefficient of $\tau^{n}$ in $\varphi_{\frakp}={\frakp}(\varphi_x)$.
 
 From this, Hsia and Yu~\cite{HsYu00} and Garai and
 Papikian~\cite{GaPa18} sketched algorithms that compute $A$.  When
@@ -850,91 +850,110 @@ is subquadratic in $n$.
 
 \section{On Narayanan's algorithm}\label{sec:narayanan}
 
-In~\cite[Sec.~3.1]{Narayanan18}, Narayanan gives the sketch of a
-Monte Carlo algorithm to solve Problem~\ref{pb1}, which applies to
-those Drinfeld modules for which the minimal polynomial $\Gamma$ of
-$\Phi_x$ has degree $n$. In this case, it must coincide with the
-characteristic polynomial of $\Phi_x$, which we saw is equal to
-$1-A+B$ (this assumption on $\Gamma$ holds for more than half of 
-elements of the parameter domain~\cite[Th.~3.6]{Narayanan18}). Since
-$B$ is easy to compute, knowing $1-A+B$ gives us $A$ readily.
+In~\cite[Sec.~3.1]{Narayanan18}, Narayanan gives the sketch of a Monte
+Carlo algorithm to solve Problem~\ref{pb1}, which applies to those
+Drinfeld modules for which the minimal polynomial $\Gamma$ of
+$\Phi_x=\gamma(x){\rm Id} + g \pi + \Delta \pi^2$ has degree $n$. In
+this case, it must coincide with the characteristic polynomial of
+$\Phi_x$, which we saw is equal to $1-A+B$ (this assumption on
+$\Gamma$ holds for more than half of elements of the parameter
+domain~\cite[Th.~3.6]{Narayanan18}). Since $B$ is easy to compute,
+knowing $1-A+B$ gives us $A$ readily.
 
 Narayanan's algorithm computes the minimal polynomial
 $\Gamma_{\ell,\alpha}$ of a sequence of the form $(r_k)_{k \ge 0} =
-(\ell(\Phi^k(\alpha))_{k\ge 0} \in {\F_q}^\N$, for a random $\F_q$-linear
-map $\L\to\F_q$ and a random $\alpha \in \L$. Using Wiedemann's
+(\ell(\Phi_x^k(\alpha))_{k\ge 0} \in {\F_q}^\N$, for a random $\F_q$-linear
+map $\ell:\L\to\F_q$ and a random $\alpha \in \L$. Using Wiedemann's
 analysis~\cite{Wiedemann:1986:SSL:13738.13744}, one can bound below
 the fraction of $\ell$ and $\alpha$ for which
 $\Gamma_{\ell,\alpha}=\Gamma$.
 The bottleneck of this algorithm is the computation of sufficiently
 many elements of the above sequence: the first $2n$ terms are needed,
 after which applying Berlekamp-Massey's algorithm gives us
-$\Gamma_{\ell,\alpha}$. To compute $(r_k)_{k < 2n}$, Narayanan states
+$\Gamma_{\ell,\alpha}$. To compute $(r_k)_{0 \le k < 2n}$, Narayanan states
 that we can adapt the {\em automorphism projection} algorithm of
 Kaltofen and Shoup~\cite{KaSh98} and enjoy its subquadratic
 complexity. Kaltofen and Shoup's algorithm computes terms in a similar
-sequence, namely $\ell(\pi^k(\alpha))_{k\ge 0}$. However, that
+sequence, namely $\ell(\pi^k(\alpha))_{k\ge 0}$, where $\pi$ is 
+the Frobenius map. However, that
 algorithm uses the fact that $\pi$ is a field automorphism, whereas
 $\Phi_x$ is not. As a result, whether a direct adaptation of Kaltofen
 and Shoup's algorithm is possible remains unclear to us.
 
-We propose an following alternative approach, which establishes the
-first point in Theorem~\ref{theo:main}.  It is inspired by
-Coppersmith's block Wiedemann algorithm~\cite{Coppersmith94}, and
-involves a matrix sequence rather than a scalar one; the application
-of the multipoint evaluation algorithm in {\bf 3.2.6} makes it
-possible to obtain a subquadratic cost.  The algorithm is Monte Carlo.
+We propose an alternative Monte Carlo algorithm, which
+establishes the first point in Theorem~\ref{theo:main}; it is
+inspired by Coppersmith's block Wiedemann
+algorithm~\cite{Coppersmith94}. 
+
+The sequence $(\ell(\Phi_x^k(\alpha))_{k\ge 0}$ used in Wiedemann's
+algorithm is linearly recurrent, so that its generating series is
+rational, with $\Gamma$ as denominator for generic choices of $\ell$
+and $\alpha$. In Coppersmith's block version, we consider a sequence
+of $\mu \times \mu$ matrices $({\bm R}_k)_{k \ge 0}$ over $\F_q$
+instead. These matrices are defined by choosing $\mu$ $\F_q$-linear
+mappings $\L\to\F_q$, say ${\bm \ell}=(\ell_1,\dots,\ell_\mu)$, and
+$\mu$ elements ${\bm \alpha}=(\alpha_1,\dots,\alpha_\mu)$ in $\L$.
+They define sequences $(r_{i,j,k})_{k \ge 0} :=
+(\ell_i(\Phi_x^k(\alpha_j)))_{k \ge 0}$, which we see as a sequence of
+$\mu \times \mu$ matrices $({\bm R}_k)_{k \ge 0}$.  Then, for generic
+choices of ${\bm \ell}$ and ${\bm \alpha}$, the generating series
+$\sum_{k \ge 0} {\bm R}_k / z^{k+1}$ can be written as ${\bm
+  Q}^{-1}{\bm N}$, for some ${\bm Q}$ and ${\bm N}$ in $\F_q[z]^{\mu
+  \times \mu}$.  In addition, ${\bm Q}$ has degree at most $n/\mu$ and
+can be computed in $(\mu^{\omega-1} n \log q)^{1+o(1)}$ bit operations
+from $({\bm R}_k)_{k \le 2n/\mu}$, using the PM basis algorithm
+of~\cite{GiJeVi03}. Finally, we will see that we can deduce the
+minimal polynomial $\Gamma$ from the determinant of ${\bm Q}$.
+
+
+Thus, Coppersmith's algorithm requires fewer values of the matrix
+sequence than Wiedemann's (roughly $2n/\mu$ instead of $2n$). As we
+will see, the multipoint evaluation algorithm in {\bf 3.2.6} makes it
+possible to compute all required matrices in subquadratic time.
+The overview of the algorithm is thus the following.
 \begin{enumerate}
 \item Fix $\mu=\lfloor n^{b} \rfloor$, for some exponent $b$ to be
   determined later; choose $\mu$ $\F_q$-linear mappings $\L\to\F_q$,
-  say ${\bm \ell}=(\ell_1,\dots,\ell_\mu)$, and $\mu$ elements ${\bm
-    \alpha}=(\alpha_1,\dots,\alpha_\mu)$ in $\L$.  They define
-  sequences $(r_{i,j,k})_{k \ge 0} := (\ell_i(\Phi_x^k(\alpha_j)))_{k
-    \ge 0}$, which we see as a sequence of $\mu \times \mu$ matrices
-  $({\bm R}_k)_{k \ge 0}$ over $\F_q$.
-\item Compute $({\bm R}_k)_{k \le 2n/\mu}$. We will discuss 
-  the cost of this operation further on.
-\item Compute matrices ${\bm Q}, {\bm N}$ in $\F_q[z]^{\mu \times
-  \mu}$ such that the generating series $\sum_{k \ge 0} {\bm R}_k /
-  z^{k+1}$ can be written as ${\bm Q}^{-1}{\bm N}$. 
+ ${\bm \ell}=(\ell_1,\dots,\ell_\mu)$, and $\mu$ elements ${\bm
+    \alpha}=(\alpha_1,\dots,\alpha_\mu)$ in $\L$.  
+\item Compute $({\bm R}_k)_{0 \le k \le 2n/\mu}$, for ${\bm R}_k$ as
+  defined above. We will discuss the cost of this operation below.
+\item Compute ${\bm Q}$; we saw that this takes $(\mu^{\omega-1} n \log q)^{1+o(1)}$ bit operations.
+\item Compute the determinant $\Gamma^*$ of ${\bm Q}$.  The cost of
+  this step is another $(\mu^{\omega-1} n \log q)^{1+o(1)}$ bit
+  operations~\cite{LaNeZh17}.  By~\cite[Th.~2.12]{KaVi04}, $\Gamma^*$
+  divides the characteristic polynomial of $\Phi_x$, which we assume
+  coincides with $\Gamma$. On the other hand, for generic $\ell_1$ and
+  $\alpha_1$, the minimal polynomial of $(r_{1,1,k})_{k \ge 0}$ is
+  precisely $\Gamma$. If this is the case, since $\Gamma^*$ cancels
+  that sequence, $\Gamma$ divides $\Gamma^*$, so that $\Gamma =
+  \Gamma^*$.
 
-  The last paragraphs of~\cite[Sec.~2.1]{KaVi04} show that there is
-  a non-zero polynomial $D$ in $\F_q[{\bm L}_1,\dots,{\bm L}_\mu,{\bm
-      A}_1,\dots,{\bm A}_\mu]$, where each boldface symbol is a vector
-  of $n$ indeterminates, such that $\deg D \le 2n$, and such that if
-  $D({\ell}_1,\dots,{\ell}_\mu,{\alpha}_1,\dots,{\alpha}_\mu)\ne 0$,
-  ${\bm Q}$ has degree at most $n/\mu$ \todo{Relationship between D and Q unclear.} and ${\bm Q}, {\bm N}$ can be
-  computed \todo{Is computing $\bm N$ necessary?} from $({\bm R}_k)_{k \le 2n/\mu}$.  In that case,
-  the cost is $(\mu^{\omega-1} n \log q)^{1+o(1)}$ bit
-  operations~\cite{GiJeVi03}. \todo{Cite or explain specific algorithm used to compute Q}
-  
-
-\item Compute the determinant $\Gamma^*$ of ${\bm Q}$.  The cost of this step is
-  another $(\mu^{\omega-1} n \log q)^{1+o(1)}$ bit
-  operations~\cite{LaNeZh17}.
-  
-  By~\cite[Th.~2.12]{KaVi04}, $\Gamma^*$ divides the characteristic
-  polynomial of $\Phi_x$, which we assume coincides with $\Gamma$. On
-  the other hand, there exists a non-zero polynomial $D^*$ in
-  $\F_q[{\bm L}_1,{\bm A}_1]$ of degree at most $2n$ such that if
-  $D^*({\ell}_1,{\alpha}_1)\ne 0$, the minimal polynomial of
-  $(r_{1,1,k})_{k \ge 0}$ is precisely $\Gamma$. If this is the case,
-  since $\Gamma^*$ cancels that sequence, $\Gamma$ divides $\Gamma^*$,
-  so that $\Gamma = \Gamma^*$.
+%% S = Q^{-1}N so QS = N so det(Q) S = Adj.N so det(Q). each entry of S is a polynomial
 \end{enumerate}
-Based on this analysis, the DeMillo-Lipton-Zippel-Schwartz lemma shows
-that the probability of failure is at most $4n/q$. If $q < 4n$,
-we may have to choose the coefficients of ${\bm \ell}$ and ${\bm
-  \alpha}$ in an extension of $\F_q$ of degree $O(\log n)$; this
-affects the runtime only with respect to logarithmic factors.
+
+Regarding the probabilistic aspects, combining the last paragraphs
+of~\cite[Sec.~2.1]{KaVi04} (that deal with the properties of ${\bm
+  Q}$) and the analysis
+in~\cite{Kaltofen:1991:PEP:113379.113396,Kaltofen-saun:1991:WMS:646027.676885}
+(for Step 4) shows that there is a non-zero polynomial $D$ in
+$\F_q[{\bm L}_1,\dots,{\bm L}_\mu,{\bm A}_1,\dots,{\bm A}_\mu]$, where
+each boldface symbol is a vector of $n$ indeterminates, such that
+$\deg D \le 4n$, and such that if
+$D({\ell}_1,\dots,{\ell}_\mu,{\alpha}_1,\dots,{\alpha}_\mu)\ne 0$, all
+properties above hold. By the DeMillo-Lipton-Zippel-Schwartz lemma,
+the probability of failure is thus at most $4n/q$. If $q < 4n$, we may
+have to choose the coefficients of ${\bm \ell}$ and ${\bm \alpha}$ in
+an extension of $\F_q$ of degree $O(\log n)$; this affects the runtime
+only with respect to logarithmic factors.
 
 It remains to explain how to compute the required matrix values $({\bm
   R}_k)_{k \le 2n/\mu}$ at step (2). This is done by adapting the
 baby-steps / giant steps techniques of~\cite[Algorithm {\bf
     AP}]{KaSh98} to the context of the block-Wiedemann algorithm, and
 leveraging multipoint evaluation.  Let $K:=\floor*{ (n/2\mu)^{c}}$,
-for another constant $c$ to be determined, and $K':=\lceil n/(2\mu K)
-\rceil$; remark that $\mu K' \le n$.  For our final choices of
+for another constant $c$ to be determined, and $K':=\lceil n/(2K\mu )
+\rceil$; remark that $K' \mu\le n$.  For our final choices of
 parameters, we will also have the inequalities $K' \le K$, $\mu \le
 \sqrt{K}$.
 \begin{enumerate}
@@ -949,35 +968,34 @@ parameters, we will also have the inequalities $K' \le K$, $\mu \le
   operations, by {\bf 3.2.2}.
 
 \item[(2.3)] For $j \le \mu$ and $v < K'$, compute $\alpha_{j,v} :=
-  \Phi_x^{Kv}(\alpha_j)$, so that $r_{i,j,u+Kv} =
-  \ell_{i,u}(\alpha_{j,v})$ for all $i,j,u,v$.
+  \Phi_x^{Kv}(\alpha_j)$, so that we have
+  $\ell_{i,u}(\alpha_{j,v}) = \ell_i( \Phi_x^{u+Kv}(\alpha_j) )$ for
+  all $i,j,u,v$.
 
 Starting from $(\alpha_{1,v},\dots,\alpha_{\mu,v})$, the application
-of $\varphi_{x^K}$ gives us
-$(\alpha_{1,v+1},\dots,\alpha_{\mu,v+1})$. Since $\mu \le \sqrt{K}$,
-the algorithm of {\bf 3.2.6} takes $ (K \mu^{\omega-2} n^{\theta} \log
-q)^{1+o(1)}$ bit operations per index $v$, for a total of
-$(\mu^{\omega-3} n^{1+\theta} \log q)^{1+o(1)}$.
+of $\varphi_{x^K}$ gives
+$(\alpha_{1,v+1},\dots,\alpha_{\mu,v+1})$. This takes $ (K
+\mu^{\omega-2} n^{\theta} \log q)^{1+o(1)}$ bit operations per index
+$v$ (by {\bf 3.2.6}), so that the total cost is $(\mu^{\omega-3} n^{\theta+1}
+\log q)^{1+o(1)}$ (note that $\mu \le \sqrt{K}$).
 
-\item[(2.4)] Multiply the $(\mu K,n) \times (n,\mu K')$ matrices with
+\item[(2.4)] Multiply the $(K\mu,n) \times (n,K'\mu)$ matrices with
   entries the coefficients of $(\ell_{1,0},\dots,\ell_{\mu,K-1})$,
   resp.\, $(\alpha_{1,0},\dots,\alpha_{\mu,K'-1})$, to obtain all
   needed values $r_{i,j,u+Kv}$.  The inequalities above imply that the
-  smallest dimension is $\mu K'$ so by {\bf 3.1.2}, the cost is $(\mu
-  K^{3-\omega} n^{\omega-1} \log q)^{1 + o(1)}$ bit operations.
+  smallest dimension is $K'\mu$ so by {\bf 3.1.2}, the cost is $(K^{3-\omega}\mu n^{\omega-1} \log q)^{1 + o(1)}$ bit operations.
 \end{enumerate}
 We know that we can take $\theta=1+\varepsilon$, for any $\varepsilon
 > 0$. To find $b$ and $c$ that minimize the overall exponent in $n$, we can
 thus replace $\theta$ by $1$ and disregard the exponent $1+o(1)$ and
 the terms depending on $\log q$; we will then round up the final
-result.  The terms that come into play are $\{\mu K n,
-K^{(\omega+1)/2}n, \mu^{\omega-2} n^2, \mu K^{3-\omega}n^{\omega-1},
+result.  The terms that come into play are $\{K\mu n,
+K^{(\omega+1)/2}n, \mu^{\omega-3} n^2,  K^{3-\omega}\mu n^{\omega-1},
 \mu^{\omega-1} n\}$.  For $\omega = 2.373$, taking $b = 0.183$ and
 $c=0.642$, all inequalities we needed are satisfied and the runtime is
 $(n^{1.885} \log q)^{1 + o(1)}$ bit operations. Taking into account
 the cost of computing $x^q$ in $\L$, this proves the first point in
 our main theorem.
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -985,19 +1003,20 @@ our main theorem.
 
 \section{A deterministic algorithm}\label{sec:schoof}
 
-We present here an alternative approach inspired by Schoof's algorithm
+We present next an alternative approach inspired by Schoof's algorithm
 for elliptic curves, establishing the second item in our main theorem:
 we can solve Problem~\ref{pb1} in time $(n^{2+\varepsilon} \log q + n
 \log^2 q)^{1+o(1)}$, for any $\varepsilon > 0$. As before, we first assume 
 that we know $x^q \bmod \frakp$.
 
 \smallskip\noindent{\bf 6.1.} We will first compute the Frobenius norm
-$B$. The idea of the algorithm is then to compute $A_i:=A \bmod E_i$, for
-some pairwise distinct irreducible polynomials $E_1,\dots,E_s$ in
-$\F_q[x]$ and recover $A$ by Chinese remaindering.  In particular, we
-need $\deg(E_1 \cdots E_s) > n/2$, and we will also impose that $\deg
-E_i \in O(\log n)$ for all $i$. First, we show that we can find such
-polynomials $E_i$'s in $(n^2 \log q)^{1+o(1)}$ bit operations.
+$B$. The idea of the algorithm is then to compute $A_i:=A \bmod E_i$,
+for some pairwise distinct irreducible polynomials $E_1,\dots,E_s$ of
+low degree in $\F_q[x]$ and recover $A$ by Chinese remaindering.  In
+particular, we need $\deg(E_1 \cdots E_s) > n/2$, and we will also
+impose that $\deg E_i \in O(\log n)$ for all $i$. First, we show that
+we can find such polynomials $E_i$'s in $(n^2 \log q)^{1+o(1)}$ bit
+operations.
 
 If $q > n/2$, it is enough to take $E_i = x-e_i$, for pairwise
 distinct elements $e_i$ in $\F_q$; enumerating $n/2+1$ elements of
@@ -1011,6 +1030,11 @@ polynomials of degree $t$ for irreducibility. There are $q^t < q(n+1)
 irreducibility test takes $\log^{O(1)} n$ bit
 operations~\cite{vonzurGathen1992} (a term $\log q$ usually appears in
 such runtime estimates, but here $\log q$ is in $O(\log n)$).
+
+Without loss of generality, we assume that no polynomial $E_i$ is
+such that $E_i(\gamma(x))=0$ (only one irreducible polynomial may
+satisfy this equality, so we discard it and find a replacement if
+needed).
 
 \smallskip\noindent{\bf 6.2.} Let $F \in\L\ang{\tau}$ be of degree
 $\delta$ and $\L\ang{\tau}_{\delta}$ be the set of all elements in
@@ -1080,7 +1104,7 @@ operations.
 
 \smallskip\noindent{\bf 6.5.} We can finally present the
 whole algorithm. 
-\todo{Consider splitting case where $q  \geq \frac{n}{2}$}
+%% \todo{Consider splitting case where $q  \geq \frac{n}{2}$}
 \begin{enumerate}
 \item Compute the Frobenius norm $B$ (Proposition~\ref{frobnorm})
 \item Compute polynomials $E_1,\dots,E_s$ as in {\bf 6.1}.
@@ -1095,14 +1119,14 @@ q)^{1+o(1)}$ bit operations. Since we can take $\theta = 1+\varepsilon$
 for any $\varepsilon > 0$, and adding the cost
 $(n \log^2 q)^{1+o(1)}$
  of computing $x^q \bmod \frakp$, 
-this establishes the last statement in Theorem~\ref{theo:main}.
-\todo{discard $E_i$ if $E_i(\gamma(x)) =0$}
+this establishes the second statement in Theorem~\ref{theo:main}.
+%% \todo{discard $E_i$ if $E_i(\gamma(x)) =0$}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{A practical Monte Carlo algorithm}\label{sec:mc}
+\section{A Monte Carlo algorithm}\label{sec:mc}
 
 In this section, we prove the last item in our main theorem: {\em
   there exists a Monte Carlo algorithm that solves Problem~\ref{pb1}
@@ -1111,10 +1135,10 @@ quadratic in $\log q$, but genuinely quadratic in $n$, not of the form
 $n^{2+\varepsilon}$. The main point is that we avoid applying high
 powers of the Frobenius (and thus modular composition); the required
 applications of $\Phi_x$ are done by repeated squaring.  This
-algorithm behaves well in practice, whereas almost-quadratic behavior
-of modular composition in practice significantly hinders the
-implementation of the algorithm in the previous section; see {\bf
-  3.1.3} and {\bf 3.2.4}.
+algorithm behaves well in practice, whereas the behavior of modular
+composition in practice significantly hinders the implementation of
+the algorithms in the previous sections; see {\bf 3.1.3} and {\bf
+  3.2.4}.
 
 The algorithm is inspired by~\cite[Th.~5]{Shoup94}; it bears
 similarities with Narayanan's, but does not require the assumption
@@ -1162,7 +1186,7 @@ Thus, $2\nu \ge n$, as claimed.
 \smallskip\noindent{\bf 7.3.} The first step in the algorithm computes
 the minimal polynomial $\Gamma$ of $\Phi_x$. 
 To do so, choose at random $\alpha$ in $\L$ and an $\F_q$-linear
-projection map further $\ell: \L \to \F_q$. The sequence
+projection map  $\ell: \L \to \F_q$. The sequence
 $(\ell(\Phi_x^i(\alpha)))_{i \ge 0}$ is linearly generated, and its
 minimal polynomial $\Gamma_{\ell,\alpha}$ divides $\Gamma$. Given $2n$
 entries in the sequence $\ell(\Phi_x^i(\alpha))$, we apply the
@@ -1232,18 +1256,22 @@ this takes $(n \log q)^{1+o(1)}$ bit operations.
 \item Compute $\tilde r = \alpha + \sum_{i \le n} b_i
   \Phi_{x^{i}}(\alpha) - a_\nu \Phi_\nu(\alpha)$; this takes $(n^2
   \log^2 q)^{1+o(1)}$ bit operations.
+\item Compute the sequence $(\Phi_{x^{i}}(\tilde r))_{i < \nu}$
+  and apply $\ell$ to all entries in this sequence. As above, this takes
+ $(n^2 \log^2 q)^{1+o(1)}$ bit
+  operations.
 \item Solve~\eqref{eq:A}; since the matrix is Hankel and non-singular,
   this takes $(n^2 \log q)^{1+o(1)}$ bit operations.
 \end{enumerate}
 Altogether, this takes  $(n^2 \log^2 q)^{1+o(1)}$ bit operations,
 as claimed.
-\todo{table comparing the different approaches?}
+%% \todo{table comparing the different approaches?}
 
 
 \begin{acks}
   We wish to thank Jason Bell and Mark Giesbrecht for their comments
   on Musleh's MSc thesis, which is the basis of this work, and Anand
-  Narayanan for answering many of our questions. Schost was supported
+Kumar  Narayanan for answering many of our questions. Schost was supported
   by an NSERC Discovery Grant.
 \end{acks}
 
