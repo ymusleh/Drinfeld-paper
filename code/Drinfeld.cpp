@@ -285,6 +285,107 @@ ZZ_pEX char_poly2(ZZ_pE g, ZZ_pE del, long p, long q_exp, int n, ZZ_pX P) {
 
 }
 
+void gekeler(ZZ_pE g, ZZ_pE del, long p, long q_exp, int n, ZZ_pX P) {
+
+	int cnum = n/2 + 1;
+	mat_ZZ_pE f;
+	mat_ZZ_pE A;
+	vec_ZZ_pE alphas;
+	ZZ_pE det;
+	alphas.SetLength(cnum);
+	int q = pow(p, q_exp);
+	vec_ZZ_pE x;
+	x.SetLength(cnum);
+	q = p;
+	ZZ_pX Pn = P;
+	ZZ_pX cons = ZZ_pX(INIT_MONO, 1, 1);
+	ZZ_pE mono = conv<ZZ_pE>(cons);
+
+	ZZ_pX b = pow(-1,n) * norm(del) * P;
+	ZZ_pE temp;
+	ZZ_pE temp2;
+	ZZ_pE norm_delta_inv = inv(conv<ZZ_pE>(norm(del)));
+	power(temp, del, pow(q,2*n));
+
+	f.SetDims(2*n+1, 2*n+1);
+	A.SetDims(cnum, cnum );
+	f[0][0] = 1;
+	//f[0][1] =
+	f[1][0] = mono;
+	f[1][1] = g;
+	f[1][2] = del;
+
+
+	for (int i = 2; i <= n; i++) {
+		for (int j = 0; j < 2*i - 1; j++) {
+			if (j == 0 ) {
+				power(f[i][j], mono, i);
+			}
+			else if (j == 1) {
+				power(temp, f[i-1][j-1], q);
+				f[i][j] = mono*f[i-1][j] + g*temp;
+			}
+			else {
+				power(temp, f[i-1][j-1], q);
+				f[i][j] = mono*f[i-1][j] + g*temp;
+				power(temp, f[i-1][j-2], q*q);
+				f[i][j] += del*temp;
+			}
+
+		}
+		power(temp, f[i-1][2*i-2], q);
+		f[i][2*i-1] += g*temp;
+		power(temp, f[i-1][2*i-3], q*q);
+		f[i][2*i-1] += del*temp;
+
+
+		power(temp, f[i-1][2*i-2], q*q);
+		f[i][2*i] += del*temp;
+
+	}
+
+	cout << "f: " << f << endl;
+
+	if (n % 2 == 0) {
+		alphas[cnum-1] = 1 + pow(-1,n)*norm_delta_inv*Pn[n]*f[n][2*n];
+	}
+
+	int end;
+	if (n % 2 == 1) {
+		end = cnum;
+	}
+	else end = cnum - 1;
+
+	for (int j = 0; j < end; j++) {
+		for(int i = ((2*j+n)/2); i <= n; i++  ) {
+			alphas[j] += Pn[i]*f[i][2*j+n];
+			cout << "i: " << i << " p: " << Pn[i] << " f: " << f[i][2*j+n] << endl;
+			cout << "j: " << j << " :: " << alphas[j] << endl;
+		}
+		alphas[j] *= pow(-1,n)*norm_delta_inv;
+
+	}
+
+	for (int i = 0; i < cnum; i++) {
+		for (int j = 0; j < cnum; j++) {
+			cout << f[i][2*j];
+			A[j][i] = f[i][2*j];
+		}
+	}
+
+	cout << "matrix: " << A << endl;
+	cout << "alphas: " << alphas << endl;
+
+	vec_ZZ_pE xx;
+	xx.SetLength(cnum);
+
+
+	solve(det, A, xx, alphas);
+
+	cout << "gekeler " << xx << endl;
+
+}
+
 
 int main() {
 	int p = 1163, q_exp = 1, n = 50;
@@ -298,6 +399,7 @@ int main() {
 	ZZ_pE g, del;
 	set(g);
 	set(del);
+	double start1, start2, start3, end1, end2, end3;
 
 	ZZ_pE base, res, op, elem;
 	ZZ_pX cons = ZZ_pX(INIT_MONO, 1, 1);
@@ -309,11 +411,11 @@ int main() {
 	frob(res, elem, p, 2);
 	//cout << "ref: " << base << "res: " << res << endl;
 
-	ZZ_pX out2 = char_poly1(g,del,p,q_exp,n,P);
+	ZZ_pX out1 = char_poly1(g,del,p,q_exp,n,P);
 
 
-	ZZ_pEX out = char_poly2(g,del,p,q_exp,n,P);
-	cout << "P: " << P << endl;
+	ZZ_pEX out2 = char_poly2(g,del,p,q_exp,n,P);
+	//cout << "P: " << P << endl;
 
-	cout << "Char poly (det): " << out << " char poly (rand): " << out2 << endl;
+	//cout << "Char poly (det): " << out2 << " char poly (rand): " << out1 << endl;
 }
