@@ -1267,10 +1267,60 @@ Altogether, this takes  $(n^2 \log^2 q)^{1+o(1)}$ bit operations,
 as claimed.
 %% \todo{table comparing the different approaches?}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Experimental Results}\label{sec:mc}
+
+In support of our theoretical analysis, the algorithms presented in sections 6 and 7, as well as Gekeler's algorithm in ~\cite[Section 3 ]{frobdist}, were implemented in C++ using Shoup's NTL library. Table \ref{tab:table-sample} provides sample runtimes for several parameter cases.
+
+Figure 1 is made up of 15 data points for a fixed choice of $p = 499$ and varied $n$, averaged over 5 runs. The randomized algorithm of section 7 demonstrated a significant runtime advantage over both Gekeler's original algorithm and the deterministic alternative. Due to its heavy dependency on efficient modular composition and a lack of readily available implementations of the Kedlaya and Umans algorithm on which we rely for our analysis, the deterministic algorithm appears to demonstrate a significantly higher complexity than expected. Figure 2 utilized 12 data points averaged over 5 trials, and largely confirms the expected logarithmic dependancy on $p$.
+
+The code used to generate these results is publicly available at \url{https://github.com/ymusleh/Drinfeld-paper/tree/master/code}.
+
+\begin{center}
+\begin{tabular}{ | m{2.1cm} | m{1.6cm}| m{1.6cm} | m{1.6cm} | } 
+%\caption{A summary of the computational results}
+\hline
+ & Randomized & Deterministic & Gekeler  \\ 
+\hline
+$p = 499$, $n=64$ & 0.070394 &	14.6718 &	2.42538 &
+\\
+\hline 
+$p = 1117$, $n=64$  & 0.07713 & 14.4626 & 2.67341
+ & \\ 
+\hline
+$p = 1117$, $n=128$ & 0.300442 & 233.453 & 21.0835 & \\
+\hline 
+
+$p = 600011$, $n = 128$ &0.816713 & 329.803 & 67.4505 \\
+
+\hline
+\end{tabular}
+\end{center}
+\begin{table}[h!]
+  \centering
+  \caption{Various parameter test case runtimes in seconds. We set $q = p$, $g = \Delta = 1$}
+  \label{tab:table-sample}
+\end{table}
+
+\begin{figure}[h!]\label{fig:ntest499}
+\centering
+  \includegraphics[width=3.5in]{chart-499.png}
+  \caption{Log-log plot of $n$ versus runtime with $p = 499$, $k = 1$, $g = 1$, $\Delta = 1$ for all three algorithms}
+\end{figure}
+
+\begin{figure}[h!]\label{fig:ptest50}
+\centering
+  \includegraphics[width=3.5in]{chart-50.png}
+  \caption{Log-log plot of $n$ versus runtime with $n = 50$, $k = 1$, $g = 1$, $\Delta = 1$ for all three algorithms}
+\end{figure}
+
 
 \begin{acks}
   We wish to thank Jason Bell and Mark Giesbrecht for their comments
-  on Musleh's MSc thesis, which is the basis of this work, and Anand
+  on Musleh's MMath thesis, which is the basis of this work, and Anand
 Kumar  Narayanan for answering many of our questions. Schost was supported
   by an NSERC Discovery Grant.
 \end{acks}
