@@ -496,7 +496,7 @@ void init(ZZ_pX& P, ZZ_pX& frakp, ZZ_pE& gamma, long p, int m, int n) {
 		ZZ_pX cons = ZZ_pX(INIT_MONO, 1, 1);
 		ZZ_pE mono = conv<ZZ_pE>(cons);
 		frakp = P;
-		fieldtrace = mono;
+		gamma = mono;
 	}
 
 }
