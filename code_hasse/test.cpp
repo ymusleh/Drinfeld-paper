@@ -18,46 +18,30 @@
 
 using namespace std;
 
-void testHasseLift() {
-    ZZ_pX f, g, delta, lift1, lift2;
+void testHasseLift(long p, long n) {
 
-    long degree = 10000;
-
-    // build a square-free modulus
-    Util util;
-    util.randomMonic(f, degree);
-    diff(g, f);
-    GCD(g, g, f);
-    div(f, f, g);
+    ZZ_p::init(to_ZZ(p));
+    ZZ_pX f, g, delta, lift;
+    BuildIrred(f, n);
     ZZ_pXModulus F;
     build(F, f);
-    degree = deg(F);
 
-    random(g, degree);
-    random(delta, degree);
+    random(g, n);
+    random(delta, n);
 
     HasseLiftExt hasseLiftExt(g, delta, F);
-    long start = util.getTimeMillis();
-    hasseLiftExt.computeNaive(lift1, degree / 2);
-    cout << util.getTimeMillis() - start << endl;
 
-    start = util.getTimeMillis();
-    hasseLiftExt.compute(lift2, degree / 2, 1);
-    cout << util.getTimeMillis() - start << endl;
-
-    if (lift1 == lift2)
-        cout << "OK" << endl;
-    else
-        cout << "Failed" << endl;
+    double start = GetWallTime();
+    hasseLiftExt.compute(lift, n, 0);
+    cout << GetWallTime() - start << endl;
 }
 
 int main(int argc, char** argv) {
 
-    ZZ p;
-    NextPrime(p, to_ZZ(7));
-    ZZ_p::init(p);
-    
-    testHasseLift();
+    long p = 7;
+    long n = 100;
+
+    testHasseLift(p, n);
     
     return 0;
 }
