@@ -1287,23 +1287,23 @@ as claimed.
 
 In support of our theoretical analysis, the algorithms presented in sections 6 and 7, as well as Gekeler's algorithm in ~\cite[Section 3 ]{frobdist}, were implemented in C++ using Shoup's NTL library. Table \ref{tab:table-sample} provides sample runtimes for several parameter cases.
 
-Figure 1 is made up of 15 data points for a fixed choice of $p = 499$ and varied $n$, averaged over 5 runs. The randomized algorithm of section 7 demonstrated a significant runtime advantage over both Gekeler's original algorithm and the deterministic alternative. Due to its heavy dependency on efficient modular composition and a lack of readily available implementations of the Kedlaya and Umans algorithm on which we rely for our analysis, the deterministic algorithm appears to demonstrate a significantly higher complexity than expected. Figure 2 utilized 12 data points averaged over 5 trials, and largely confirms the expected logarithmic dependancy on $p$.
+Figure 1 is made up of 24 data points for a fixed choice of $p = 499$, $m = 2$, and varied $n$, averaged over 4 runs. The randomized algorithm of section 7 demonstrated a significant runtime advantage over both Gekeler's original algorithm and the deterministic alternative. Due to its heavy dependency on efficient modular composition and a lack of readily available implementations of the Kedlaya and Umans algorithm on which we rely for our analysis, the deterministic algorithm appears to demonstrate a significantly higher complexity than expected. Figure 2 utilized 26 data points averaged over 4 trials, and largely confirms the expected logarithmic dependancy on $p$.
 
 The code used to generate these results is publicly available at \url{https://github.com/ymusleh/Drinfeld-paper/tree/master/code}.
 
 \begin{center}
-\begin{tabular}{ | m{2.1cm} | m{1.6cm}| m{1.6cm} | m{1.6cm} | } 
+\begin{tabular}{ | m{1.8cm} | m{1.5cm}| m{1.6cm} | m{0.9cm} | m{0.9cm} | } 
 %\caption{A summary of the computational results}
 \hline
- & Randomized & Deterministic & Gekeler  \\ 
+ & Randomized & Deterministic & Gekeler & Hasse  \\ 
 \hline
-$p = 499$, $n=64$ & 0.070394 &	14.6718 &	2.42538\\
+$p = 571$, $n=32$, $m = 1$ & 0.065341 &	1.19282 &	0.37291 & 0.02087\\
 \hline 
-$p = 1117$, $n=64$  & 0.07713 & 14.4626 & 2.67341 \\ 
+$p = 571$, $n=32$, $m = 4$  & 0.060729 & 1.17222 & 0.38341 & - \\ 
 \hline
-$p = 1117$, $n=128$ & 0.300442 & 233.453 & 21.0835  \\
+$p = 850853$, $n = 64$, $m=1$ & 0.598883 & 25.4512 & 8.97046 & 0.12814  \\
 \hline 
-$p = 600011$, $n = 128$ &0.816713 & 329.803 & 67.4505 \\
+$p = 850853$, $n = 64$, $m=8$ &0.615858 & 25.6425 & 9.12075 & - \\
 \hline
 \end{tabular}
 \end{center}
@@ -1315,14 +1315,14 @@ $p = 600011$, $n = 128$ &0.816713 & 329.803 & 67.4505 \\
 
 \begin{figure}[h!]\label{fig:ntest499}
 \centering
-  \includegraphics[width=3in]{chart-499.png}
-  \caption{Log-log plot of $n$ versus runtime with $p = 499$, $k = 1$, $g = 1$, $\Delta = 1$ for all three algorithms}
+  \includegraphics[width=3in]{chart-499-2.png}
+  \caption{Log-log plot of $n$ versus runtime with $p = 499$, $m = 2$ for all three algorithms}
 \end{figure}
 
 \begin{figure}[h!]\label{fig:ptest50}
 \centering
-  \includegraphics[width=3in]{chart-50.png}
-  \caption{Log-log plot of $n$ versus runtime with $n = 50$, $k = 1$, $g = 1$, $\Delta = 1$ for all three algorithms}
+  \includegraphics[width=3in]{chart-50-2.png}
+  \caption{Log-log plot of $n$ versus runtime with $n = 50$, $m = 2$ for all three algorithms}
 \end{figure}
 
 
