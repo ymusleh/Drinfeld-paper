@@ -707,17 +707,17 @@ only in Section~\ref{sec:narayanan}, so it can be skipped on first reading.
 
 
 In the case of commutative
-polynomials, it has been known for long that one can compute all
+polynomials, it has long been known that one can compute all
 $U(\alpha_i)$ at once faster than by successive evaluation of $U$ at
 $\alpha_1$, then $\alpha_2$, \dots;
 see~\cite[Ch.~10]{Gathen:2003:MCA:945759}. The same holds for 
 skew polynomial evaluation: in~\cite[Th.~15]{PUCHINGER2017b},
-Puchinger and Wachster-Zeh gave an algorithm that uses
+Puchinger and Wachter-Zeh gave an algorithm that uses
 $O(k^{\max(\log_2 3, \omega_2/2)}\log k)$ operations in $\L$
 (including Frobenius-powers applications) in the case $\mu=k$, where
 $\omega_2 \le \omega+1$ is as in {\bf 3.2.1}.
 
-We propose a baby-steps / giant steps procedure that applies
+We propose a baby-step / giant-step procedure that applies
 to any $\mu$ and $k$ (but the cost analysis depends on whether
 $\mu \le \sqrt{k}$ or not). Suppose without loss of
 generality that our input polynomial $U = u_0 + \cdots +
@@ -1287,7 +1287,7 @@ as claimed.
 
 In support of our theoretical analysis, the algorithms presented in sections 6 and 7, as well as Gekeler's algorithm in ~\cite[Section 3 ]{frobdist}, were implemented in C++ using Shoup's NTL library. Table \ref{tab:table-sample} provides sample runtimes for several parameter cases.
 
-Figure 1 is made up of 24 data points for a fixed choice of $p = 499$, $m = 2$, and varied $n$, averaged over 4 runs. The randomized algorithm of section 7 demonstrated a significant runtime advantage over both Gekeler's original algorithm and the deterministic alternative. Due to its heavy dependency on efficient modular composition and a lack of readily available implementations of the Kedlaya and Umans algorithm on which we rely for our analysis, the deterministic algorithm appears to demonstrate a significantly higher complexity than expected. Figure 2 utilized 26 data points averaged over 4 trials, and largely confirms the expected logarithmic dependancy on $p$.
+Figure 1 is made up of 24 data points for a fixed choice of $p = 499$, $m = 2$, and varied $n$, averaged over 4 runs. The randomized algorithm of section 7 demonstrated a significant runtime advantage over both Gekeler's original algorithm and the deterministic alternative. Due to its heavy dependency on efficient modular composition and a lack of readily available implementations of the Kedlaya-Umans algorithm on which we rely for our analysis, the deterministic algorithm appears to demonstrate a significantly higher complexity than expected. Figure 2 utilized 26 data points averaged over 4 trials, and largely confirms the expected logarithmic dependancy on $p$.
 
 The code used to generate these results is publicly available at \url{https://github.com/ymusleh/Drinfeld-paper/tree/master/code}.
 
@@ -1309,20 +1309,24 @@ $p = 850853$, $n = 64$, $m=8$ &0.615858 & 25.6425 & 9.12075 & - \\
 \end{center}
 \begin{table}[h!]
   \centering
-  \caption{Various parameter test case runtimes in seconds. We set $q = p$, $g = \Delta = 1$}
+  \caption{Various parameter test case runtimes in seconds. We set $q = p$}
   \label{tab:table-sample}
 \end{table}
+
+\vspace{-1cm}
 
 \begin{figure}[h!]\label{fig:ntest499}
 \centering
   \includegraphics[width=3in]{chart-499-2.png}
-  \caption{Log-log plot of $n$ versus runtime with $p = 499$, $m = 2$ for all three algorithms}
+  \caption{Log-log plot of $n$ versus runtime with $p = 499$, $m = 2$}
 \end{figure}
+
+\vspace{-0.25cm}
 
 \begin{figure}[h!]\label{fig:ptest50}
 \centering
   \includegraphics[width=3in]{chart-50-2.png}
-  \caption{Log-log plot of $n$ versus runtime with $n = 50$, $m = 2$ for all three algorithms}
+  \caption{Log-log plot of $n$ versus runtime with $n = 50$, $m = 2$}
 \end{figure}
 
 
