@@ -186,8 +186,7 @@ that we will study the properties of ring homomorphisms from $\F_q[x]$ to
 the skew polynomial ring $\L\ang{\tau}$, where $\tau$ satisfies the
 commutation relation $\tau u = u^q \tau$ for $u$ in $\L$. Here, the
 {\em rank} of such a morphism $\varphi$ is the degree in $\tau$ of
-$\varphi(x)$ (a Carlitz module is defined similarly, by specifying that
-$\varphi(x)$ have degree one).
+$\varphi(x)$.
 
 Rank two Drinfeld modules over $\L=\F_q(x)$, resp.\ $\L$ a finite
 field, enjoy remarkable similarities with elliptic curves over $\Q$,
@@ -203,9 +202,7 @@ public key cryptography~\cite{Scanlon01}; they have also been used to
 design several polynomial factorization
 algorithms~\cite{PaPo89,vanderHeiden04,Narayanan18,eschost2017arXiv171200669D};
 recent work by Garai and Papikian discusses the computation of their
-endomorphism rings~\cite{GaPa18}. Our goal here is study in detail the
-complexity of a particular problem, namely the computation of the
-characteristic polynomial of a rank two Drinfeld module over a finite field.
+endomorphism rings~\cite{GaPa18}.
 
 A fundamental object attached to an elliptic curve $E$ defined over a
 finite field $\F_q$ is its Frobenius endomorphism $\pi:(x,y) \mapsto
@@ -235,20 +232,12 @@ elliptic case).
 
 Contrary to the elliptic case, computing the characteristic polynomial
 of a Drinfeld module is easily seen to be feasible in polynomial time:
-it boils down to finding the $\Theta(n)$ coefficients of $a$, Which
+it boils down to finding the $\Theta(n)$ coefficients of $a$, which
 are known to satisfy certain linear relations. Gekeler detailed such
 an algorithm in~\cite{GEKELE1991187}; we will briefly revisit it in
-order to analyse its complexity, which turns out to be cubic in
+order to analyze its complexity, which turns out to be cubic in
 $n$. Our main contributions in this paper are several new algorithms
-with improved runtimes; we also present experimental results obtained
-by an implementation based on NTL~\cite{shoup2001ntl}.
-
-An implementation of Gekeler's algorithm was described
-in~\cite{Jung00} and used (alongside another algorithm due to Gekeler,
-which we mention below) to study the distribution of characteristic
-polynomials of Drinfeld modules, by computing several thousands of
-them. In future work, we plan to revisit the question, using the
-algorithms developed in this paper.
+with improved runtimes.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -366,8 +355,7 @@ $(g,\Delta) \in\L^2$.
   Let $\gamma: \F_5[x] \to \F_{625}$ be given by $x \mapsto \zeta$, so
   that $\frakp=\frakf$, $\K=\L=\F_{625}$ and $m=1$. We define the Drinfeld
   module $\varphi: \F_5[x] \to \F_{625}\ang{\tau}$ by
-\[ \varphi_x = \zeta + \tau + \tau^2,\]
-so that $(g,\Delta)=(1,1)$.
+$ \varphi_x = \zeta + \tau + \tau^2$ so that $(g,\Delta)=(1,1)$.
 \end{example}
 
 %% For completeness, we briefly mention how our definitions can be
@@ -473,11 +461,9 @@ Problem~\ref{pb1} is an interesting and challenging question.
 The algorithm of Section~\ref{sec:schoof} was directly inspired by
 Schoof's algorithm for elliptic curves (similarly, the algorithm
 of~\cite{eschost2017arXiv171200669D} was also inspired by its
-elliptic analogue). We believe that this interaction has the potential to
-yield further algorithms of interest. While the question of whether it will lead to improvements in core problems such as polynomial factorization over finite fields is still unknown, it remains natural to wonder whether other
-``elliptic'' techniques, such as $p$-adic approaches~\cite{Satoh00} or
-Harvey's amortization techniques~\cite{Harvey14}, apply in the present
-context.
+elliptic analogue). 
+%We believe that this interaction has the potential to
+%yield further algorithms of interest.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -632,19 +618,16 @@ Next, we analyze the cost of computing
 $\varphi_1,\varphi_x,\dots,\varphi_{x^k}$, for some $k \ge 0$. In
 this, we essentially follow a procedure used by
 Gekeler~\cite[Sec.~3]{frobdist}, although the cost analysis is not
-done in that reference. These polynomials satisfy the following
-recurrence:
-\begin{align*}
+done in that reference. These polynomials satisfy the
+recurrence $
  \varphi_{x^{i+1}} = \varphi_x \varphi_{x^i} & = (\gamma(x) + g\tau + \Delta \tau^2) \varphi_{x^i}.
-\end{align*}
-For $i \ge 0$, write 
-\[\varphi_{x^i}  = \sum_{0 \le j \leq 2i} f_{i,j} \tau^{j},\]
+$
+For $i \ge 0$, write $\varphi_{x^i}  = \sum_{0 \le j \leq 2i} f_{i,j} \tau^{j},$
 for some coefficients $f_{i,j} \in \L$ to be determined. We obtain
 \begin{align*}
  \sum_{0 \le j \leq 2i} f_{i,j} \tau^{j} = \sum_{0 \le j \leq 2i} \gamma(x) f_{i,j} \tau^{j} + \sum_{j \leq 2i} g f_{i,j}^q \tau^{j+1} + \sum_{j \leq 2i} \Delta f_{i,j}^{q^2} \tau^{j+2},
 \end{align*}
-so the $f_{i,j}$ satisfy the recurrence
-\[ f_{i+1,j} = \gamma(x) f_{i,j} + g f_{i,j-1}^q + \Delta f_{i,j-2}^{q^2}\]
+so the $f_{i,j}$ satisfy the recurrence $ f_{i+1,j} = \gamma(x) f_{i,j} + g f_{i,j-1}^q + \Delta f_{i,j-2}^{q^2}$
 with known initial conditions $f_{0,0} = 1$, $f_{1,0} = \gamma(x)$,
 $f_{1,1} = g$, and $f_{1,2} = \Delta$. Evaluating one instance of the
 recurrence involves $O(1)$ multiplications / additions in $\L$ and
@@ -722,8 +705,7 @@ generality that our input polynomial $U = u_0 + \cdots +
 u_{k-1}\tau^{k-1}$ has degree less than $k$, for some perfect square
 $k$, and let $s=\sqrt{k}$.
 \begin{enumerate}
-\item Commute powers of $\tau$ with the coefficients of $U$ to rewrite it as 
-$$U = U^*_{0} + \tau^s U^*_{1} + \cdots + \tau^{s(s-1)} U^*_{s-1},$$
+\item Commute powers of $\tau$ with the coefficients of $U$ to rewrite it as $U = U^*_{0} + \tau^s U^*_{1} + \cdots + \tau^{s(s-1)} U^*_{s-1}$,
   with all $U^*_i$ in $\L\ang{\tau}$ of degree less than $s$.
 This is $O(k)$  applications of Frobenius powers in $\L$.
 \item Compute $\alpha_{i,j}:=\pi^i(\alpha_j)$, for
@@ -751,8 +733,8 @@ we mention that if $\mu \ge \sqrt{k}$, the cost is
 $O(k^{(\omega-1)/2} \mu)$  operations in~$\L$.
 
 \item Using Horner's scheme, for $j=1,\dots,\mu$, recover $U(\alpha_j)$ as 
-$$U(\alpha_j) = \beta_{0,j} + \tau^s( \beta_{1,j} + \tau^s(\beta_{2,j}
-  + \cdots )).$$ The total is another $O(s \mu)$ operations
+$U(\alpha_j) = \beta_{0,j} + \tau^s( \beta_{1,j} + \tau^s(\beta_{2,j}
+  + \cdots )).$ The total is another $O(s \mu)$ operations
 in $\L$, including Frobenius powers.
 \end{enumerate}
 When $\mu \le \sqrt{k}$, the cost is $(k \mu^{\omega-2}
@@ -915,6 +897,7 @@ sequence than Wiedemann's (roughly $2n/\mu$ instead of $2n$). As we
 will see, the multipoint evaluation algorithm in {\bf 3.2.6} makes it
 possible to compute all required matrices in subquadratic time.
 The overview of the algorithm is thus the following.
+%\vspace{-0.1cm}
 \begin{enumerate}
 \item Fix $\mu=\lfloor n^{b} \rfloor$, for some exponent $b$ to be
   determined later; choose $\mu$ $\F_q$-linear mappings $\L\to\F_q$,
@@ -1166,8 +1149,8 @@ in $\L$, and ${\rm Tr}$ and ${\rm N}$ are (finite field) trace and
 norm. Using repeated squaring for exponentation, $a_{n/2}$ can be
 computed in $(n^2 \log q)^{1+o(1)}$ operations in $\F_q$, so $(n^2
   \log^2 q)^{1+o(1)}$ bit operations.
-(Other solutions are possible, using for instance a resultant
- for norm computation as in Section~\ref{ssec:gek}.)
+%(Other solutions are possible, using for instance a resultant
+ %for norm computation as in Section~\ref{ssec:gek}.)
 
 \smallskip\noindent{\bf 7.2.} Let $\Gamma \in \F_q[x]$ be the minimal
 polynomial of $\Phi_x$ and let $\nu \le n$ its degree. We prove here 
@@ -1221,8 +1204,8 @@ for $i=\floor*{n/2}+1,\dots,\nu-1$ and either $a_\nu=0$ (if
 $\floor*{n/2} \le \nu -1$) or $a_\nu$ can be determined as in {\bf
   7.1} (if $\floor*{n/2} = \nu$). In any case, $a_\nu$ is known.
 
-Theorem~\ref{charpoly} implies that for $\alpha$ as above, we have
-\[\Phi_A(\alpha)=r \quad\text{with}\quad r:=\alpha + \Phi_B(\alpha) \in \L.\]
+Theorem~\ref{charpoly} implies that for $\alpha$ as above, we have $\Phi_A(\alpha)=r$ with $r:=\alpha + \Phi_B(\alpha) \in \L.$
+%\[\Phi_A(\alpha)=r \quad\text{with}\quad r:=\alpha + \Phi_B(\alpha) \in \L.\]
 Using the expression of $A$ given above, this yields
 \[ \sum_{i = 0}^{\nu - 1}a_i \Phi_{x^{i}}(\alpha) = \tilde r,\]
 with $\tilde r =  r-a_\nu \Phi_\nu(\alpha)$.
@@ -1283,52 +1266,46 @@ as claimed.
 
 \section{Experimental Results}\label{sec:experiments}
 
-In support of our theoretical analysis, the algorithms presented in
+The algorithms presented in
 sections 6 and 7, as well as Gekeler's algorithm
 in~\cite[Section~3]{frobdist}, were implemented in C++ using Shoup's
 NTL library~\cite{shoup2001ntl}; our implementation currently supports
  prime $q$.  When $m=1$, we also compare our implementation
-with that of the algorithm in~\cite{eschost2017arXiv171200669D}.
-
-Table \ref{tab:table-sample} provides sample runtimes for several
-parameters. Figure 1 is made up of 24 data points for $q = 499$, $m =
+with that of the algorithm in~\cite{eschost2017arXiv171200669D}. %Table \ref{tab:table-sample} provides sample runtimes for several parameters. 
+Figure 1 is made up of 24 data points for $q = 499$, $m =
 2$, and varied $n$, averaged over 4 runs. The randomized algorithm of
 section 7 demonstrated a significant runtime advantage over both
 Gekeler's original algorithm and the deterministic alternative. Due to
 its heavy dependency on modular composition, and a lack of readily
 available implementations of the Kedlaya-Umans algorithm on which we
 rely for our analysis, the deterministic algorithm demonstrates a
-significantly higher complexity than expected. Figure 2 utilized 26
-data points averaged over 4 trials, and largely confirms the expected
-logarithmic dependency on $p$. For $m=1$, as predicted by the cost 
-analysis, the algorithm in~\cite{eschost2017arXiv171200669D} is overall
-the fastest.
+significantly higher complexity than expected.
 
-The code used to generate these results is publicly available at \url{https://github.com/ymusleh/Drinfeld-paper/tree/master/code}.
+%The code used to generate these results is publicly available at \url{https://github.com/ymusleh/Drinfeld-paper/tree/master/code}.
 
-\begin{center}
-\begin{tabular}{ | m{1.8cm} | m{1.5cm}| m{1.6cm} | m{0.9cm} | m{1cm} | } 
+%\begin{center}
+%\begin{tabular}{ | m{1.8cm} | m{1.5cm}| m{1.6cm} | m{0.9cm} | m{1cm} | } 
 %\caption{A summary of the computational results}
-\hline
- & Randomized & Deterministic & Gekeler & Hasse~\cite{eschost2017arXiv171200669D}  \\ 
-\hline
-$q = 571$, $n=32$, $m = 1$ & 0.065341 &	1.19282 &	0.37291 & 0.02087\\
-\hline 
-$q = 571$, $n=32$, $m = 4$  & 0.060729 & 1.17222 & 0.38341 & - \\ 
-\hline
-$q = 850853$, $n = 64$, $m=1$ & 0.598883 & 25.4512 & 8.97046 & 0.12814  \\
-\hline 
-$q = 850853$, $n = 64$, $m=8$ &0.615858 & 25.6425 & 9.12075 & - \\
-\hline
-\end{tabular}
-\end{center}
-\begin{table}[h!]
-  \centering
-  \caption{Various parameter test cases; time in seconds. }
-  \label{tab:table-sample}
-\end{table}
+%\hline
+ %& Randomized & Deterministic & Gekeler & Hasse~\cite{eschost2017arXiv171200669D}  \\ 
+%\hline
+%$q = 571$, $n=32$, $m = 1$ & 0.065341 &	1.19282 &	%0.37291 & 0.02087\\
+%\hline 
+%$q = 571$, $n=32$, $m = 4$  & 0.060729 & 1.17222 & 0.38341 & - \\ 
+%\hline
+%$q = 850853$, $n = 64$, $m=1$ & 0.598883 & 25.4512 & 8.97046 & 0.12814  \\
+%\hline 
+%$q = 850853$, $n = 64$, $m=8$ &0.615858 & 25.6425 & 9.12075 & - \\
+%\hline
+%\end{tabular}
+%\end{center}
+%\begin{table}[h!]
+%  \centering
+%  \caption{Various parameter test cases; time in seconds. }
+%  \label{tab:table-sample}
+%\end{table}
 
-\vspace{-1cm}
+%\vspace{-1cm}
 
 \begin{figure}[h!]\label{fig:ntest499}
 \centering
@@ -1336,13 +1313,13 @@ $q = 850853$, $n = 64$, $m=8$ &0.615858 & 25.6425 & 9.12075 & - \\
   \caption{Log-log plot of $n$ versus runtime with $q = 499$, $m = 2$}
 \end{figure}
 
-\vspace{-0.5cm}
+%\vspace{-0.5cm}
 
-\begin{figure}[h!]\label{fig:ptest50}
-\centering
-  \includegraphics[width=3in]{chart-50-2.png}
-  \caption{Log-log plot of $n$ versus runtime with $n = 50$, $m = 2$}
-\end{figure}
+%\begin{figure}[h!]\label{fig:ptest50}
+%\centering
+%  \includegraphics[width=3in]{chart-50-2.png}
+%  \caption{Log-log plot of $n$ versus runtime with $n = 50$, $m = 2$}
+%\end{figure}
 
 
 \begin{acks}
