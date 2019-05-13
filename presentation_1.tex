@@ -1,0 +1,758 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beamer Presentation
+% LaTeX Template
+% Version 1.0 (10/11/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+
+\documentclass{beamer}
+%\newtheorem{problem}{Problem}
+
+\mode<presentation> {
+
+% The Beamer class comes with a number of default slide themes
+% which change the colors and layouts of slides. Below this is a list
+% of all the themes, uncomment each in turn to see what they look like.
+
+%\usetheme{default}
+%\usetheme{AnnArbor}
+%\usetheme{Antibes}
+%\usetheme{Bergen}
+%\usetheme{Berkeley}
+%\usetheme{Berlin}
+%\usetheme{Boadilla}
+%\usetheme{CambridgeUS}
+%\usetheme{Copenhagen}
+%\usetheme{Darmstadt}
+%\usetheme{Dresden}
+%\usetheme{Frankfurt}
+%\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Ilmenau}
+%\usetheme{JuanLesPins}
+%\usetheme{Luebeck}
+\usetheme{Madrid}
+%\usetheme{Malmoe}
+%\usetheme{Marburg}
+%\usetheme{Montpellier}
+%\usetheme{PaloAlto}
+%\usetheme{Pittsburgh}
+%\usetheme{Rochester}
+%\usetheme{Singapore}
+%\usetheme{Szeged}
+%\usetheme{Warsaw}
+
+%\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+%\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+\newcommand{\minpol}{\textnormal{MinPoly}_{\mathbb{F}}}
+
+% As well as themes, the Beamer class has a number of color themes
+% for any slide theme. Uncomment each of these in turn to see how it
+% changes the colors of your current slide theme.
+
+%\usecolortheme{albatross}
+%\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{crane}
+%\usecolortheme{dolphin}
+%\usecolortheme{dove}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+%\usecolortheme{orchid}
+%\usecolortheme{rose}
+%\usecolortheme{seagull}
+%\usecolortheme{seahorse}
+%\usecolortheme{whale}
+%\usecolortheme{wolverine}
+
+%\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
+%\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+
+%\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+}
+
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{mathtools}
+\usepackage{amsmath}
+%\newcommand\keq{\stackrel{\mathclap{\mbox{\tiny k-uni}}}{=}}
+\newcommand{\f}{\mathbb{F}}
+\newcommand{\ot}{\widetilde{O}}
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title[master talk]{Computing the Characteristic Polynomial of a Finite Rank Two Drinfeld Module} % The short title appears at the bottom of every slide, the full title is only on the title page
+
+\author{Yossef Musleh} % Your name
+\institute[UW] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{
+University of Waterloo \\ % Your institution for the title page
+\medskip
+\textit{ymusleh@uwaterloo.ca} % Your email address
+}
+\date{\today} % Date, can be changed to a custom date
+
+\begin{document}
+
+\begin{frame}
+\titlepage % Print the title page as the first slide
+\end{frame}
+
+%\begin{frame}
+%\frametitle{Overview} % Table of contents slide, comment this block out to remove it
+%\tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+%\end{frame}
+
+%----------------------------------------------------------------------------------------
+%	PRESENTATION SLIDES
+%----------------------------------------------------------------------------------------
+
+\begin{frame}
+\frametitle{Motivation}
+
+\begin{itemize}
+
+\item  Elliptic Curves: Important to Classical Algebraic Geometry and Number Theory
+
+\begin{itemize}
+    \item Fermat's Last Theorem
+    \item Birch and Swinnerton-Dyer Conjecture
+    \item Elliptic Curve Cryptography
+    
+\end{itemize}
+
+\item Drinfeld Modules
+\begin{itemize}
+    \item Used to prove special cases of Langlands Conjectures [Drinfeld, 1974]
+    \item Used in polynomial factorization algorithms over finite fields
+    \begin{itemize}
+        \item $[$Panchishkin, Potemine, 1989], [van der Heiden, 2004]
+    \end{itemize}
+    \item Cryptography over Drinfeld modules - insecure [Scanlon, 2001]
+\end{itemize}
+  
+  
+  
+  
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Background and Notation}
+
+\begin{itemize}
+
+\item $\mathbb{F}$ a finite field
+\item Algebraic versus Bit Complexity
+\item $g(n) \in \ot(f(n))$ if $g(n) \in O(f(n) \log^k f(n))$ for some $k$
+
+%%%%%%%%%%%%%%%%%%%%
+%\item $\omega_2$ a real number such that $n \times n$ and $n \times n^2$ matrices can be multiplied in $O(n^{\omega_2})$ field operations
+  
+  
+  
+  
+\end{itemize}
+
+\end{frame}
+
+
+%------------------------------------------------
+\section{First Section} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
+%------------------------------------------------
+
+
+%------------------------------------------------
+
+\begin{frame}
+\frametitle{Elliptic Curves}
+\begin{itemize}
+\item Curve in $\mathbb{F}^2 \cup \{ \infty \}$ defined by $y^2 = x^3 -ax + b$
+\begin{itemize}
+    \item Non-singularity condition: $0 \neq 16(4a^3 + 27b^2)$
+\end{itemize}
+
+\item Classical example of an "abelian variety"
+
+\item $E(\mathbb{F})$ denotes an elliptic curve over $\mathbb{F}$
+
+\end{itemize}
+
+\begin{problem}[Point Counting]
+Given a finite field $\mathbb{F}$ of order $q$, compute $|E(\mathbb{F})|$
+\end{problem}
+
+\end{frame}
+
+%------------------------------------------------
+
+%\begin{frame}
+%\frametitle{Point Counting}
+
+%\begin{problem}
+%Given a finite field $\mathbb{F}$ of order $q$, compute $|E(\mathbb{F})|$
+%\end{problem}
+
+%\end{frame}
+
+%----------------------
+
+\begin{frame}
+\frametitle{Point Counting}
+
+\begin{itemize}
+\item Naive Solution: test every point
+\begin{itemize}
+    \item complexity $O(q^2)$
+\end{itemize}
+
+\item Hasse Invariant $H_{q}(E) :=$ coefficient of $x^{q - 1}$ in $(x^3 - ax + b)^{\frac{q-1}{2}}$
+\begin{itemize}
+    \item When $q$ is prime, $|E| = 1 - H_{q}(E)$ mod $q$
+    \item Expanding gives an $\ot(q)$ algorithm
+    \item Can find $|E|$ in $\ot(\sqrt{q})$ [Bostan et al., 2006]
+\end{itemize}
+
+\end{itemize}
+
+
+\end{frame}
+
+%---------------------------------------
+
+\begin{frame}
+\frametitle{Point Counting: Schoof's Algorithm}
+\begin{itemize}
+\item Schoof gave the first polynomial time algorithm [Schoof, 1985]
+\item Based on a theorem due to Hasse
+\end{itemize}
+
+\begin{theorem}[Hasse]
+$ | |E(\mathbb{F})| - q - 1  | \leq 2 \sqrt{q} $
+\end{theorem}
+
+\begin{itemize}
+\item Sufficient to compute $ h := q + 1 - |E(\mathbb{F})|$ mod $4\sqrt{q}$
+\item To do this, we consider the order $q$ Frobenius map $\sigma(x,y) := (x^q,y^q)$
+\end{itemize}
+
+\begin{theorem}
+The Frobenius endomorphism $\sigma : E(\overline{\mathbb{F}}) \to E(\overline{\mathbb{F}})  $ has characteristic polynomial of the form
+\[X^2 - hX + q\]
+ 
+\end{theorem}
+
+
+\end{frame}
+
+%------------------------------------
+
+\begin{frame}
+\frametitle{Point Counting}
+\begin{itemize}
+\item Fix a set of primes $P$ such that $\prod_{\ell \in P} \ell > 4\sqrt{q}$
+\item Consider $\ell$-torsion subgroups $E[\ell] := \{ t \in E(\overline{\mathbb{F}}) : \ell t = 0 \}$
+\item Compute the restrictions $\sigma^2 + q : E[\ell] \to E[\ell]$
+\item Find $h_{\ell}$ such that restrictions satisfy $\sigma^2 + q = h_{\ell} \sigma$
+\item Use the CRT to find $h < 4\sqrt{q}$ such that $ h = h_{\ell}$ mod $\ell$ for all $\ell \in P$
+\end{itemize}
+
+\end{frame}
+
+%-------------------------------------
+
+%\begin{frame}
+%\frametitle{Point Counting}
+
+%\begin{itemize}
+    %\item $(x^{q^2}, y^{q^2}) + q(x,y) := (C_x(x,y), C_y(x,y))$
+    %\item $h_p(x^q, y^q) = (C_x(x,y), C_y(x,y))$ mod $(y^2 - x^3 + ax - b, \psi_p)$
+    %\begin{itemize}
+    %    \item $\psi_p$ is the $p^{th}$ division polynomial for $E$
+    %    \item $\psi_p(x,y) = 0$ if and only if $(x,y) \in E[p]$
+    %\end{itemize}
+    
+%\item Runtime of Schoof's original algorithm is $\ot(\log^{5}q)$
+%\item Later improvements due to Atkin and Elkies bring this down to $\ot(\log^{4} q)$
+    
+%\end{itemize}
+
+
+%\end{frame}
+
+
+
+
+
+
+%-----------------------------------
+
+\begin{frame}
+\frametitle{Point Counting}
+
+\begin{itemize}
+\item Runtime of Schoof's original algorithm is $\ot(\log^{5}q)$
+\item Later improvements due to Atkin and Elkies bring this down to $\ot(\log^{4} q)$
+\item Key idea: Finding $|E(\mathbb{F})|$ reduces to computing the characteristic polynomial of the Frobenius
+\item Goal: Translate this to the rank-2 Drinfeld Module setting
+\end{itemize}
+
+\end{frame}
+
+
+%-------------------------------------
+
+\begin{frame}{Drinfeld Modules: Preliminaries}
+    \begin{itemize}
+        \item Recall $|\mathbb{F}| = q$
+        \item $A:= \f[T]$
+        \item $L$ a finite extension of $\mathbb{F}$ and $[L: \f] = n$
+
+        \item $\gamma: A \to L $ be a ring $\mathbb{F}$-morphism
+        \item $K$ field generated by $\gamma(A)$
+        %\begin{itemize}
+        %    \item Since $L$ is finite, 
+        %\end{itemize}
+        \item $\sigma(x) = x^q$
+
+    \end{itemize}
+    
+    \begin{example}
+    Let $\f = \f_2$, $L = \mathbb{F}_{16}$.
+    \[ \f_2[T]/(T^2 + T + 1) \cong \f_4 \subset \f_{16}\]
+    \[ \gamma : f(T) \mapsto f(T) \mod T^2 + T + 1 \xhookrightarrow{} \f_{16} \]
+    \[K = \f_4\]
+    \end{example}
+\end{frame}
+
+
+
+
+%-------------------------------------
+
+
+\begin{frame}
+\frametitle{Drinfeld Modules: Preliminaries}
+\begin{definition}
+Let $L[X,\sigma]$ denote the ring of \textit{skew-polynomials} in $X$ with coefficients in $L$, subject to the relation $Xa = \sigma(a)X$
+\end{definition}
+
+\begin{itemize}
+    \item Fast algorithms for multiplying skew polynomials
+    \begin{itemize}
+        \item $[$Puchinger, Wachter-Zeh, 2017]
+        \item $[$Caruso, Le Borgne, 2017]
+    \end{itemize}
+    \item Identify elements of $L[X,\sigma]$ with endomorphisms of $L$
+     \item  $a_0 + a_1X + a_2X^2 + \ldots \mapsto a_0I + a_1 \sigma + a_2 \sigma^2 + \ldots$
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}\frametitle{Drinfeld Modules: Preliminaries}
+
+\begin{example}
+Let $\mathbb{F} = \f_2$, $L = \f_2[T]/(T^2 + T + 1)$, $\sigma(x) = x^2$
+\[ a:= (T + 1)X^2 + TX + T + 1 \]
+\[b := X\]
+\[ab = (T + 1)X^3 + TX^2 + (T + 1)X\]
+\begin{align*}
+    ba & = X(T + 1)X^2 + XTX + XT + X)\\
+    & = (T+1)^2X^3 + T^2X^2 + (T^2 + 1)X \\
+     & = TX^3 + (T+1)X^2 + TX 
+\end{align*}
+\end{example}
+
+\end{frame}
+
+
+
+
+%-------------------------------------
+
+\begin{frame}
+\frametitle{Drinfeld Modules}
+
+\begin{definition}
+A \textbf{Drinfeld A-Module} is a ring homomorphism $\phi: A \to L[X,\sigma]$ such that 
+
+\begin{itemize}
+    \item $\phi(T) = \gamma(T) + a_1X + \ldots + a_rX^r$ with $a_r \neq 0$ for some $r \geq 1$
+\end{itemize}
+\end{definition}
+
+\begin{itemize}
+    \item The value $r$ is referred to as the \textit{rank} of the Drinfeld Module
+    \begin{itemize}
+        \item In the rank-2 case we say $\phi = (g, \Delta)$ with $\phi(T) = \gamma(T) + gX + \Delta X^2$
+    \end{itemize}
+    \item For any $a \in A$, $\phi_a := \phi(a)$
+\end{itemize}
+
+\end{frame}
+
+%--------------------------------------------------
+
+\begin{frame}
+\frametitle{Drinfeld Modules}
+
+\begin{theorem}[Gekeler, 1991]
+Let $\phi$ be a rank-2 Drinfeld Module, and let $\tau = \sigma^n$. Then there is a polynomial, the \textbf{characteristic polynonmial} of $\phi$,  $Y^2 - aY +b \in A[Y]$ such that
+
+\[\tau^2 -\phi_a\tau + \phi_b = 0\]
+in $L[X,\sigma]$
+\end{theorem}
+
+\begin{itemize}
+    %\item The \textit{Characteristic Polynomial} of $\phi$
+    \item $a$ is the \textit{Frobenius Trace}, $b$ the \textit{Frobenius Norm}
+    \item $\deg(a) \leq \frac{n}{2}$, $\deg(b) \leq n$
+\end{itemize}
+
+\begin{problem}
+Given a rank-2 Drinfeld module $\phi = (g,\Delta)$, compute its Frobenius Trace and Norm
+\end{problem}
+
+\end{frame}
+
+%-------------------------------------------------
+
+\begin{frame}{}
+    \begin{example}
+$\f = \f_2$, $L = \f_{16}$, $\gamma = \textnormal{quotient by } T^2 + T + 1$, $\phi = (1,1)$
+
+\[b = T^4 + T^2 + 1\]
+\[a = T^2 + T\]
+\[\phi_{T}^2 = X^4 + (T^2 + T)X + T^2\]
+\[\phi_T^4 = X^8 + X^2 + T + 1\]
+\[X^8 + \phi_aX^4 +  \phi_b\]
+\[X^8 - (X^4 + X^2 + (T^2 + T + 1)X + T^2 + T)X^4 + X^8 + X^4 + X^2 (T^2 + T)X + T^2 + T + 1
+
+\]
+\end{example}
+\end{frame}
+
+
+
+
+%-----------------------------------------------
+
+
+\begin{frame}
+\frametitle{Frobenius Norm}
+
+\begin{itemize}
+     \item $\mathfrak{p} = \textnormal{ker } \gamma$
+    \item $m:= [L : K]$
+    \item $N_{L/\f}(x) := $ field norm of $x \in L$ over $\mathbb{F}$
+\end{itemize}
+
+\begin{theorem}["Gekeler", 1991]
+Let $\phi = (g,\Delta)$ be a rank-2 Drinfeld Module. The Frobenius Norm of $\phi$ is
+
+\[ b = (-1)^n N_{L/\f}(\Delta)^{-1}\mathfrak{p}^m \]
+\end{theorem}
+
+\begin{itemize}
+    \item Using resultants to compute the norm, the expression for $b$ can be evaluated in $\ot(n)$ $\mathbb{F}$ operations.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Frobenius Trace}
+
+\begin{itemize}
+    \item Computing the Frobenius Trace is much more involved
+    \item $[$Gekeler, 2008] gives a straightforward approach
+    \item Set:
+    \begin{itemize}
+        \item $b = \sum_{i=0}^n b_i T^i$, $b_i \in \mathbb{F}$
+        \item $\phi_{T^i} = \sum_{j=0}^{2i}f_{i,j} X^j$, $f_{i,j} \in L$
+    \end{itemize}
+    \item Recall: $\tau^2 - \phi_a\tau + \phi_b = 0$
+    \item $X^{2n} - \sum_{i \leq n/2}a_i\sum_{j\leq 2i}f_{i,j} X^{n + j} + \sum_{i\leq n}b_i \sum_{j \leq 2i}f_{i,j} X^j = 0 $
+\end{itemize}
+
+
+\end{frame}
+
+
+%-----------------------------------------------
+
+
+
+%-----------------------------------------------
+
+\begin{frame}{Frobenius Trace}
+
+\begin{itemize}
+    \item $\sum_{0 \leq i \leq \frac{n}{2}} a_i f_{i,j-n} - \sum_{\frac{j}{2} \leq i \leq n} b_if_{i,j} = $ \begin{cases} 0 & \text{if}\ n \leq j < 2n \\ 1 & \text{if}\ j = 2n   \end{cases}
+    \item Removing redundant equations gives an upper triangular system of size $\left\lfloor \frac{n}{2} \right\rfloor + 1$
+    \item Set $\alpha_j = \sum_{\frac{j+n}{2} \leq i \leq n} b_i f_{i,j + n} + \delta_{j,2n}$
+\end{itemize}
+
+\begin{equation}
+\begin{bmatrix} f_{0,0} & f_{1,0} & \ldots & f_{\lfloor n/2 \rfloor, 0} \\
+                 0      & f_{1,2} & \ldots & f_{\lfloor n/2 \rfloor, 2}  \\
+                 0      & 0       & \ddots & \vdots                      \\
+                 \vdots  & \vdots  &  \ddots      & \vdots                       \\
+                 0  & 0 & \ldots & f_{\lfloor n/2 \rfloor, n}
+\end{bmatrix}
+\begin{bmatrix}
+a_0 \\ a_1 \\ \vdots \\ a_{\lfloor n/2 \rfloor}
+\end{bmatrix} = \begin{bmatrix} \alpha_{0} \\ \alpha_{2} \\ \vdots \\ \alpha_{n} \end{bmatrix}
+\end{equation}
+    
+\end{frame}
+
+%-------------------------------------------------
+
+\begin{frame}{Frobenius Trace}
+\begin{itemize}
+\item Can compute $f_{i,j}$ using the recurrence $f_{i+1,j} = \gamma(T) f_{i,j} + g f_{i,j-1}^q + \Delta f_{i,j-2}^{q^2}$
+\begin{itemize}
+    \item $f_{0,0} = 1$, $f_{1,0} = \gamma(T)$, $f_{1,1} = g$, and $f_{1,2 = \Delta}$
+\end{itemize}
+\item $O(n^2)$ instances of the recurrence to evaluate,
+
+\item Can evaluate $q$ powers in $L$ in $\ot(n \log q)$ $\mathbb{F}$ operations
+\item Overall cubic in $n$
+\item Can we do better?
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{Past Work}
+    \begin{itemize}
+        \item Gekeler gives an $\ot(n^2 \log q)$ algorithm based on Hasse Invariants [Doliskani et al., 2017]
+        \item Requires $L = K$ - reminiscent of Elliptic curve case
+        \[\]
+        \item Narayanan gave a randomized algorithm running in expected time $\ot(n^{\omega_2/2} \log q + n \log^2 q)$
+        \begin{itemize}
+            \item $\omega_2$ a real number such that $n \times n$ and $n \times n^2$ matrices can be multiplied in $O(n^{\omega_2})$ field operations
+            \item $\omega_2 \approx 3.2516$
+            \item $\frac{\omega_2}{2} \approx 1.6528$
+        \end{itemize}
+        \item Requires CharPoly$(\phi_T) = $ MinPoly$(\phi_T)$
+        \item Includes an unjustified claim
+    \end{itemize}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{A Randomized Algorithm}
+
+\begin{itemize}
+    \item Recall: $\tau^2 + \phi_b = \phi_a \tau$
+    \item Choose random elements $\alpha \in L$, $\ell : L \to \f$
+    \item Identify $\tau \mapsto \sigma^n$, $r := \alpha + \phi_b(\alpha) = \phi_a(\alpha)$
+    \item $a := \sum_{i=0}^{\left\lfloor \frac{n}{2} \right\rfloor}a_iT^i$
+    \item For $j \geq 0$: $\ell(\phi_T^j(r)) = \sum_{i = 0}^{\left\lfloor{\frac{n}{2}} \right\rfloor}a_i\ell(\phi_T^{i+j}(\alpha))$
+    \item For a choice of $\kappa$, we can construct a Hankel system
+\end{itemize}
+\[ \begin{bmatrix}\ell(\alpha) & \ell(\phi_T(\alpha)) & \ldots & \ell(\phi_T^{\left\lfloor n/2 \right\rfloor}(\alpha)) \\ \vdots & \vdots & & \vdots \\ 
+
+\ell(\phi_T^{j}(\alpha)) & \ell(\phi_T^{1+j}(\alpha)) & \ldots & \ell(\phi_T^{\left\lfloor n/2 \right\rfloor+j}(\alpha)) \\ \vdots & \vdots & & \vdots \\
+
+\ell(\phi_T^{\kappa}(\alpha)) & \ell(\phi_T^{1 + \kappa }(\alpha)) & \ldots & \ell(\phi_T^{\left\lfloor n/2 \right\rfloor + \kappa}(\alpha))
+
+\end{bmatrix} \begin{bmatrix} a_0 \\ a_1 \\ \vdots \\ a_i \\ \vdots \\ a_{\left\lfloor n/2 \right\rfloor} \end{bmatrix} = \begin{bmatrix} \ell(r) \\ \ell(\phi_T(r)) \\ \vdots \\ \ell(\phi_T^j(r)) \\ \vdots  \\   \ell(\phi_T^{\kappa}(r)) \end{bmatrix} \]
+    
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{A Randomized Algorithm}
+
+\begin{itemize}
+    \item Choose $\kappa \in O(n)$ such that the system has a unique solution
+\end{itemize}
+
+\begin{lemma}[Kaltofen, Pan, 1991]\label{kalpan}
+Let $\{c_i\}_{i=0}^{\infty}$ be a linear sequence over $\mathbb{F}$ and $d$ the degree of its minimal polynomial. Let:
+
+\[T_d := \begin{bmatrix} c_0 && c_1 && \ldots && c_{m-1} \\ c_1 && c_2 && \ldots && c_{m} \\ \vdots && \vdots && \ddots && \vdots \\ c_{m-1} && c_{m} && \ldots && c_{m + d - 2}  \end{bmatrix}\]
+
+Then $\det T_d \neq 0$.
+\end{lemma}
+
+\begin{itemize}
+    \item Take $c_i = \ell(\phi_T^i(\alpha))$
+\end{itemize}
+    
+\end{frame}
+
+%-------------------------------------------------
+
+
+\begin{frame}{A Randomized Algorithm}
+
+\begin{itemize}
+    \item  With probability at least $(1 - \frac{n}{2q})^2$ we have that $\minpol(\{\ell(\phi_T^i(\alpha)\}_i) = \minpol(\phi_T)$
+    \item $\frac{n-1}{2} \leq \deg \minpol(\phi_T) \leq n$
+    \item Take $\kappa = \deg \minpol(\phi_T)$
+    \item After possibly augmenting the Hankel matrix, the lemma guarantees an upper left submatrix of size at least $\left\lfloor \frac{n}{2} \right\rfloor + 1$ is invertible in almost all cases
+    \begin{itemize}
+        \item If $n$ is even and $\deg \minpol(\phi_T) = \frac{n}{2}$ this may fail
+        \item Compute $a_{n/2}$ directly [Gekeler, 1991]
+    \end{itemize}
+\end{itemize}
+    
+\end{frame}
+
+
+%-------------------------------------------------
+
+\begin{frame}{A Randomized Algorithm: Runtime}
+    \begin{itemize}
+        \item Takes $\ot(n^2 \log q)$ $\f$ operations to compute all entries of the Hankel matrix
+    \item $\ot(n)$ to solve the Hankel System
+    \end{itemize}
+\end{frame}
+
+%-------------------------------------------------
+
+\begin{frame}{A Deterministic Algorithm}
+
+\begin{itemize}
+    \item We can instead exploit the ring-homomorphic properties of $\phi$
+    \item Suppose $ \frac{n}{2} + 1 < q$
+    \item Pick a set $\{e_0, \ldots e_{\frac{n}{2}}\} \subset \mathbb{F}$
+    \item $\phi_a \textnormal{ (mod } \phi_{T - e_i} \textnormal{)} = \phi_{a(e_i)} = a(e_i)$
+    \item $a(e_i) X^n  = X^{2n} + b(e_i) \mod \phi_{T} - e_i $
+    \item Interpolate to recover $a$
+    \item Inspired by Schoof's Algorithm
+\end{itemize}
+    
+\end{frame}
+
+
+%-------------------------------------------------
+
+\begin{frame}{A Deterministic Algorithm}
+\begin{itemize}
+    \item Want to compute $X^n \mod \phi_{T} - e_i$
+    \item $\phi_T - e_i = \gamma_T - e_i + gX + \Delta X^2$
+    \item $X^j = \nu_j + \mu_j X \mod \phi_{T} - e_i$ with $\nu_j, \mu_j \in L$
+    \item $\nu_{j+1} = -\frac{\gamma_T - e_i}{\Delta}\mu_{j}^q$ and $\mu_{j + 1} = \nu_j^q - \frac{g}{\Delta} \mu_j^q$
+    
+    \item Define $\alpha := -\frac{\gamma_T - e_i}{\Delta}$, $\beta := - \frac{g}{\Delta}$
+    
+    \item $M^{(q^j)} := \begin{bmatrix} 0 & \alpha^{q^j} \\ 1 & \beta^{q^j} \end{bmatrix}$
+    
+    \item $\begin{bmatrix} \nu_{n} \\ \mu_n  \end{bmatrix} = M M^{(q)} \ldots M^{(q^{n-1})}  \begin{bmatrix} 1 \\ 0  \end{bmatrix}$
+    
+    
+    
+\end{itemize}
+    
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}{A Deterministic Algorithm}
+\begin{itemize}
+    \item Set $ P_j := M M^{(q)} \ldots M^{(q^j)}$
+    \item $P_{2j + 1} = P_{j} P_{j}^{(q^{j+1})}$
+    \item If $\mu_n \neq 0$, $a(e_i) = \nu_n + \nu_n^q + \mu_n^q \beta$
+    \item Otherwise $a(e_i) = \nu_n + b(e_i)$
+\end{itemize}
+    
+\end{frame}
+
+%-------------------------------------------------
+
+\begin{frame}{A Deterministic Algorithm}
+    \begin{itemize}
+    \item Evaluating higher order Frobenius maps efficiently on $L$ requires fast modular composition
+    \item Modular Composition: given $f(x), g(x), h(x) \in \mathbb{F}[x]$, compute $f(g(x)) \mod h(x)$
+
+        \item Overall runtime of $\ot(n^{\omega_2/2 + 1} + n^2 \log q)$ $\mathbb{F}$ operations using Brent-Kung Modular Composition
+        \begin{itemize}
+            \item $\frac{\omega_2}{2} + 1 \approx 2.6528$
+        \end{itemize}
+        \item $\ot(n^{2+\delta} \log^{1 + o(1)} q)$ bit operations for any $\delta > 0$ Using Kedlaya-Umans Modular Composition
+    \end{itemize}
+\end{frame}
+
+%-------------------------------------------------
+
+\begin{frame}
+\begin{example}
+Let $q = 5$, $n = 4$, $L = \mathbb{F}_5[T]/(T^4 + 4T^2 + 4T + 2)$, $\phi = (1,1)$. Then for $e_0 = 0$ we have $\alpha = 4t$, $\beta = 4$. Letting
+
+\[M = \begin{bmatrix}0 & 4T \\ 1 & 4 \end{bmatrix}\]
+
+We get:
+
+\[M M^{(5)} M^{(25)} M^{(125)} = \begin{bmatrix} T^3 + T^2 + 3 & T^3 + 2T + 3 \\ 2T^3 + 2T^2 + 3T + 4 & 4T^3 + 4T^2 + 4 \end{bmatrix}\]
+
+So $\nu_4 = T^3 + T^2 + 3$ and $\mu_4 = 2T^3 + 2T^2 + 3T + 4$ and
+
+\[a(0) = \nu_4 + \nu_4^5 + 4\mu_4^5 = 2\]
+
+
+\end{example}
+\end{frame}
+
+\begin{frame}
+
+\begin{example}
+Repeating for $e_1 = 1$, $e_2 = 2$ we get $a(1) = 3$ and $a(2) = 3$. We interpolate to get
+
+\[a = (T-1)(T-2) + 2T(T-2) + 4T(T-1)   = 2T^2 + 4T + 2.\]
+\end{example}
+    
+\end{frame}
+
+%--------------------------------------------------
+
+\begin{frame}{Conclusion}
+
+\begin{itemize}
+    \item We provide two new algorithms for computing the characteristic polynomial of a rank-2 Drinfeld module
+    \item Sub-cubic runtime in $[L:\f]$
+    \item Works for all finite Drinfeld modules
+\end{itemize}
+    
+\end{frame}
+
+%--------------------------------------------------
+
+%\begin{frame}
+%\frametitle{References}
+%\footnotesize{
+%\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
+%\bibitem[Smith, 2012]{p1} M.B. Paterson, D.R. Stinson (2015)
+%\newblock Combinatorial Characterizations of algebraic manipulation detection codes involving generalized difference families
+%\end{thebibliography}
+%}
+%\end{frame}
+
+%------------------------------------------------
+
+%\begin{frame}
+%\Huge{\centerline{Fin}}
+%\end{frame}
+
+%----------------------------------------------------------------------------------------
+
+\end{document} 

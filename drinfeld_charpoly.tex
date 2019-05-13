@@ -1,6 +1,8 @@
 % backup
 
 \documentclass[sigconf]{acmart}
+\settopmatter{printacmref=true}
+\fancyhead{}
 \usepackage{algorithm, pseudocode}
 \usepackage{booktabs} 
 \usepackage{graphicx}
@@ -122,11 +124,13 @@
 \acmPrice{15.00}
 \acmDOI{10.1145/3326229.3326256}
 \acmISBN{978-1-4503-6084-5/19/07}
-\title{Computing the characteristic polynomial of a finite rank two Drinfeld module}
+\title{Computing the Characteristic Polynomial of a Finite Rank Two Drinfeld Module}
 
 \author{Yossef Musleh}
 \affiliation{%
   \institution{Cheriton School of Computer Science \\ University of Waterloo}
+  \city{Waterloo}
+  \state{Ontario}
   \country{Canada}
 }
 \email{ymusleh@uwaterloo.ca}
@@ -134,6 +138,8 @@
 \author{\'Eric Schost}
 \affiliation{%
   \institution{Cheriton School of Computer Science \\ University of Waterloo}
+    \city{Waterloo}
+  \state{Ontario}
   \country{Canada}
 }
 \email{eschost@uwaterloo.ca}
@@ -165,7 +171,7 @@
 
 \ccsdesc[500]{Computing methodologies~Symbolic and algebraic algorithms}
 
-\keywords{Drinfeld module, algorithms, complexity.}
+\keywords{Drinfeld module; algorithms; complexity.}
 
 
 \setcounter{secnumdepth}{4}
@@ -265,7 +271,7 @@ questions, see for instance~\cite{Goss96}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{The fields $\F_q$, $\K$ and $\L$}\label{ssec:not}
+\subsection{The Fields $\F_q$, $\K$ and $\L$}\label{ssec:not}
 
 In all the paper, $\F_q$ is a given finite field, of order a prime
 power $q$, and $\L \supset \F_q$ is another finite field of degree $n$
@@ -298,7 +304,7 @@ u^{q^i}$; for $i \le 0$, $\pi^i$ is the $i$th iterate of $\pi^{-1}$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Skew polynomials}
+\subsection{Skew Polynomials}
 
 We write $\L\ang{\tau}$ for the ring of so-called {\em skew
   polynomials}
@@ -475,7 +481,7 @@ Harvey's amortization techniques~\cite{Harvey14}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Algorithmic background}
+\section{Algorithmic Background}
 
 We now discuss the cost of operations in $\L$ and $\L\ang{\tau}$ with runtimes
 given in bit operations. Notation ($\F_q,\L,\dots$) is as in~\ref{ssec:not}. To simplify cost
@@ -572,7 +578,7 @@ the linear form $\Phi_x^\perp(\ell): \alpha\mapsto
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Skew polynomial arithmetic}
+\subsection{Skew Polynomial Arithmetic}
 
 \smallskip\noindent{\bf 3.2.1.}  We continue with skew polynomial
 multiplication. This is an intricate question, with several algorithms
@@ -752,7 +758,7 @@ q)^{1+ o(1)}$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Previous work on Problem~\ref{pb1}}\label{sec:prev}
+\section{Previous Work on Problem~\ref{pb1}}\label{sec:prev}
 
 Next, we briefly review existing algorithms for solving
 Problem~\ref{pb1}, and comment on their runtime. Notation are still
@@ -838,10 +844,10 @@ is subquadratic in $n$.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{On Narayanan's algorithm}\label{sec:narayanan}
+\section{On Narayanan's Algorithm}\label{sec:narayanan}
 
 In~\cite[Sec.~3.1]{Narayanan18}, Narayanan gives the sketch of a Monte
-Carlo algorithm to solve Problem~\ref{pb1}, which applies to those
+Carlo algorithm to solve Problem~\ref{pb1} for odd $q$, which applies to those
 Drinfeld modules $(g,\Delta)$ for which the minimal polynomial $\Gamma$ of
 $\Phi_x=\gamma(x){\rm Id} + g \pi + \Delta \pi^2$ has degree $n$. In
 this case, it must coincide with the characteristic polynomial of
@@ -997,7 +1003,7 @@ which is currently unrealistic in practice).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{A deterministic algorithm}\label{sec:schoof}
+\section{A Deterministic Algorithm}\label{sec:schoof}
 
 We present next an alternative approach inspired by Schoof's algorithm
 for elliptic curves, establishing the second item in our main theorem:
@@ -1122,7 +1128,7 @@ this establishes the second statement in Theorem~\ref{theo:main}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{A Monte Carlo algorithm}\label{sec:mc}
+\section{A Monte Carlo Algorithm}\label{sec:mc}
 
 We now prove the last item in our main theorem: {\em
   there exists a Monte Carlo algorithm that solves Problem~\ref{pb1}
