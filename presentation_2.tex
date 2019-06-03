@@ -140,7 +140,7 @@ University of Waterloo \\ % Your institution for the title page
 
 \item Drinfeld Modules
 \begin{itemize}
-\item A "function field analogue of elliptic curves"
+\item Rank 2 case a "function field analogue of elliptic curves"
     \item Used to prove special cases of Langlands Conjectures [Drinfeld, 1974]
     \item Used in polynomial factorization algorithms over finite fields
     
@@ -172,7 +172,7 @@ University of Waterloo \\ % Your institution for the title page
 \begin{frame}{Background and Notation}
 
 \begin{example}
-Let $\mathbb{F} = \f_2$, $L = \f_2[x]/(x^2 + x + 1)$, %$\sigma(x) = x^2$
+Let $\mathbb{F} = \f_2$, mathbb{L} = \f_2[x]/(x^2 + x + 1)$, %$\sigma(x) = x^2$
 \[ a:= (x + 1)X^2 + xX + x + 1 \]
 \[b := X\]
 \[ab = (x + 1)X^3 + xX^2 + (x + 1)X\]
@@ -265,7 +265,7 @@ A \textbf{Drinfeld Module} is a ring homomorphism $\varphi: \mathbb{F}_q[x] \to 
 \frametitle{Point Counting}
 
 \begin{theorem}[Gekeler, 1991]
-Let $\phi$ be a rank-2 Drinfeld Module, and let $\tau = \sigma^n$. Then there is a polynomial, the \textbf{characteristic polynomial} of $\varphi$,  $Y^2 - aY +b \in \mathbb{F}_q[Y]$ such that
+Let $\varphi$ be a rank-2 Drinfeld Module, and let $\tau = \sigma^n$. Then there is a polynomial, the \textbf{characteristic polynomial} of $\varphi$,  $Y^2 - aY +b \in \mathbb{F}_q[Y]$ such that
 
 \[\tau^2 -\phi_a\tau + \phi_b = 0\]
 in $\mathbb{L}[X,\sigma]$
@@ -284,7 +284,7 @@ in $\mathbb{L}[X,\sigma]$
 \frametitle{Point Counting}
 
 \begin{problem}
-Given a rank-2 Drinfeld module $\phi = (g,\Delta)$, compute its Frobenius Trace and Norm
+Given a rank-2 Drinfeld module $\varphi = (g,\Delta)$, compute its Frobenius Trace and Norm
 \end{problem}
 
 \end{frame}
@@ -334,7 +334,7 @@ One can compute the Frobenius trace of a rank 2 drinfeld module
 \end{frame}
 
 \begin{frame}
-\frametitle{Frobenius Trace}
+\frametitle{Previous Techniques}
 
 \begin{itemize}
     \item $[$Gekeler, 2008] gives a straightforward approach
@@ -362,7 +362,7 @@ One can compute the Frobenius trace of a rank 2 drinfeld module
 
 %-----------------------------------------------
 
-\begin{frame}{Previous Approaches}
+\begin{frame}{Previous Techniques}
 
 \begin{itemize}
 
@@ -390,7 +390,7 @@ One can compute the Frobenius trace of a rank 2 drinfeld module
 
 %-------------------------------------------------
 
-\begin{frame}{Frobenius Trace}
+\begin{frame}{Previous Techniques}
 \begin{itemize}
 
 \item A faster algorithm based on the Hasse invariant exists when $\mathbb{L} = \mathbb{K}$
@@ -454,7 +454,7 @@ One can compute the Frobenius trace of a rank 2 drinfeld module
 
 %-------------------------------------------------
 
-\begin{frame}{A Randomized Algorithm: Runtime}
+\begin{frame}{A Randomized Algorithm}
     \begin{itemize}
         \item Takes $n^2 \log q$ $\f_q$ operations to compute all entries of the Hankel matrix
     \item $n$ to solve the Hankel System
