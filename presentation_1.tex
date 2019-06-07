@@ -358,7 +358,7 @@ In a RAM model, one can compute the Frobenius trace of a rank 2 Drinfeld module
     \item Lecerf-van der Hoeven: $(n
 \log q)^{1+o(1)}$
 \end{itemize}
-\item Degree at most $d$ skew polynomial multiplication: $(d^{(\omega+1)/2} n\log q)^{1+o(1)}$
+\item Degree at most $d$ skew polynomial multiplication: $(d^{1.67} n\log q)^{1+o(1)}$
 \item Naive Frobenius
     
 \end{itemize}
@@ -422,7 +422,7 @@ In a RAM model, one can compute the Frobenius trace of a rank 2 Drinfeld module
     \item Recall: $\tau^2 + \varphi_b = \varphi_a \tau$
     \item Choose random $\alpha \in \mathbb{L}$, $\ell : \mathbb{L} \to \f_q$
     \item Identify $\tau \mapsto \sigma^n$, $r := \alpha + \varphi_b(\alpha) = \varphi_a(\alpha)$
-    \item $a := \sum_{i=0}^{\left\lfloor \frac{n}{2} \right\rfloor}a_ix^i$
+    \item $a := \sum_{i=0}^{\left\lfloor \frac{n}{2} \right\rfloor}a_iT^i$
     \item For $j \geq 0$: $\ell(\varphi_T^j(r)) = \sum_{i = 0}^{\left\lfloor{\frac{n}{2}} \right\rfloor}a_i\ell(\varphi_T^{i+j}(\alpha))$
     \end{itemize}
     
@@ -569,7 +569,7 @@ Gekeler &  $(n^{3}\log
 Narayanan & $(n^{1.885} \log q + n \log^2 q)^{1+o(1)}$  \\
 Hasse & $(n^{3/2} \log q + n \log^2 q)^{1+o(1)}$  \\
 Randomized & $O\tilde{~}(n^2 \log^2 q)$  \\
-Deterministic & $(n^2 \log q + n \log^2 q)^{1+o(1)} \\ \hline
+Deterministic & $(n^2 \log q + n \log^2 q)^{1+o(1)}$ \\ \hline
 \end{tabular}
 \end{table}
     
