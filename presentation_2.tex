@@ -17,6 +17,8 @@
 
 \documentclass{beamer}
 %\newtheorem{problem}{Problem}
+%\setbeamertemplate{footline}[frame number]{}
+\setbeamertemplate{navigation symbols}{}
 
 \mode<presentation> {
 
@@ -98,7 +100,7 @@
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
 
-\title[master talk]{Computing the Characteristic Polynomial of a Finite Rank Two Drinfeld Module} % The short title appears at the bottom of every slide, the full title is only on the title page
+\title[]{Computing the Characteristic Polynomial of a Finite Rank Two Drinfeld Module} % The short title appears at the bottom of every slide, the full title is only on the title page
 
 \author{Yossef Musleh} % Your name
 \institute[UW] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
@@ -162,8 +164,9 @@ University of Waterloo \\ % Your institution for the title page
 
 \begin{itemize}
 
+\item $\mathbb{L} = \mathbb{F}_q[T]/f(T)$
+\item deg$(f) = n$
 \item $\gamma: \mathbb{F}_q \to \mathbb{L}$ finite fields
-\item $[\mathbb{L} : \F_q] = n$
 \item $\sigma(x) := x^q$
 \item $\mathbb{L}[X,\sigma] := $ skew polynomials over $\mathbb{L}$ subject to $Xa = \sigma(a)X$ for $a \in \mathbb{L}$ 
 
@@ -171,12 +174,20 @@ University of Waterloo \\ % Your institution for the title page
 \end{frame}
 \begin{frame}{Background and Notation}
 
+%\begin{example}
+%Let $\mathbb{F} = \f_2$, \mathbb{L} = \f_2[x]/(x^2 + x + 1)$, %$\sigma(x) = x^2$
+%\[ a:= (x + 1)X^2 + xX + x + 1 \]
+%\[b := X\]
+%\[ab = (x + 1)X^3 + xX^2 + (x + 1)X\]
+%\[ba = xX^3 + (x+1)X^2 + xX \]
+%\end{example}
+
 \begin{example}
-Let $\mathbb{F} = \f_2$, mathbb{L} = \f_2[x]/(x^2 + x + 1)$, %$\sigma(x) = x^2$
-\[ a:= (x + 1)X^2 + xX + x + 1 \]
+Let $q = 2$, $\mathbb{L} = \mathbb{F}_2[T]/(T^2 + T + 1) = \mathbb{F}_4$, $\sigma(T) = T^2$
+\[ a:= (T + 1)X^2 + TX + T + 1 \]
 \[b := X\]
-\[ab = (x + 1)X^3 + xX^2 + (x + 1)X\]
-\[ba = xX^3 + (x+1)X^2 + xX \]
+\[ab = (T + 1)X^3 + TX^2 + (T + 1)X\]
+\[ba = TX^3 + (T+1)X^2 + TX \]
 \end{example}
 
 
@@ -213,18 +224,19 @@ A \textbf{Drinfeld Module} is a ring homomorphism $\varphi: \mathbb{F}_q[x] \to 
 \begin{itemize}
     \item The value $r$ is referred to as the \textit{rank} of the Drinfeld Module
         \item In the rank-2 case we say $\varphi = (g, \Delta)$ with $\varphi(x) = \gamma(x) + gX + \Delta X^2$
-        \item 
- $\varphi_c := \varphi(c)$
+        \item Identify elements of $\mathbb{L}[X,\sigma]$ with endomorphisms of $\mathbb{L}$
+        \item $\varphi_c := \varphi(c)$
  
  \end{itemize}
  \end{frame}
  
  \begin{frame}{Drinfeld Modules}
    \begin{example}
-   Let $\f = \f_2$, $L = \mathbb{F}_{16}$.
+   Let $q =2$, $\mathbb{F}_2[T]/(T^2 + T + 1)$.
    \[ \f_2[T]/(T^2 + T + 1) \cong \f_4 \subset \f_{16}\]
-   \[ \gamma : f(T) \mapsto f(T) \mod T^2 + T + 1 \xhookrightarrow{} \f_{16} \]
-   \[K = \f_4\]
+   \[ \gamma : f(T) \mapsto f(T) \mod T^2 + T + 1  \]
+   \[ \varphi_T := T + X + X^2 \]
+   \[ \varphi = (1,1)\]
    \end{example}
 
 \end{frame}
@@ -313,17 +325,17 @@ Given a rank-2 Drinfeld module $\varphi = (g,\Delta)$, compute its Frobenius Tra
 
 
 \begin{frame}
-\frametitle{Point Counting}
+\frametitle{Main Result}
 
 \begin{itemize}
 \item Computing the Frobenius norm is relatively straightforward [Gekeler, 1991]
 \item Computing the Frobenius trace turns out to be much harder
 
 \begin{theorem}
-One can compute the Frobenius trace of a rank 2 drinfeld module
+In a RAM model, one can compute the Frobenius trace of a rank 2 Drinfeld module
 \begin{enumerate}
 \item in Monte Carlo time $O\tilde{~}(n^2 \log^2 q)$
-\item in time $(n^2 \log q + n \log^2 q)^{1+o(1)}$
+\item in deterministic time $(n^2 \log q + n \log^2 q)^{1+o(1)}$
 
 \end{enumerate}
 \end{theorem}
@@ -333,23 +345,42 @@ One can compute the Frobenius trace of a rank 2 drinfeld module
 
 \end{frame}
 
+%------------------
+
+\begin{frame}
+\frametitle{Known Results}
+
+\begin{itemize}
+\item Modular composition: $F(G) \mod H$ , $\deg F, G,H \leq d$
+\begin{itemize}
+    \item Kedlaya-Umans: $(n^{1 + \varepsilon}
+\log q)^{1+o(1)}$
+    \item Lecerf-van der Hoeven: $(n
+\log q)^{1+o(1)}$
+\end{itemize}
+\item Degree at most $d$ skew polynomial multiplication: $(d^{(\omega+1)/2} n\log q)^{1+o(1)}$
+\item Naive Frobenius
+    
+\end{itemize}
+
+
+\end{frame}
+
+
+%-----------------
+
+
+
 \begin{frame}
 \frametitle{Previous Techniques}
 
 \begin{itemize}
     \item $[$Gekeler, 2008] gives a straightforward approach
-    \item Set:
-    \begin{itemize}
-        \item $b = \sum_{i=0}^n b_i T^i$, $b_i \in \mathbb{F}$
-        \item $\phi_{T^i} = \sum_{j=0}^{2i}f_{i,j} X^j$, $f_{i,j} \in L$
-    \end{itemize}
+    \item Set $\phi_{T^i} = \sum_{j=0}^{2i}f_{i,j} X^j$, $f_{i,j} \in L$
     \item Recall: $\tau^2 - \phi_a\tau + \phi_b = 0$
-    \item $X^{2n} - \sum_{i \leq n/2}a_i\sum_{j\leq 2i}f_{i,j} X^{n + j} + \sum_{i\leq n}b_i \sum_{j \leq 2i}f_{i,j} X^j = 0 $
-        \item By equating coefficients:
-    \begin{itemize}
-    \item 
-    $\sum_{0 \leq i \leq \frac{n}{2}} a_i f_{i,j-n} - \sum_{\frac{j}{2} \leq i \leq n} b_if_{i,j} =  \begin{cases} 0 & \text{if}\ n \leq j < 2n \\ 1 & \text{if}\ j = 2n   \end{cases}$
-    \end{itemize}
+    \item Construct a triangular system for the coefficients of $a$ in terms of $f_{i,j}$
+    \item Compute $f_{i,j}$ using a recurrence
+    \item Overall runtime $(n^3 \log q + n\log^2 q)^{1 + o(1)}$
 \end{itemize}
 
 
@@ -362,43 +393,19 @@ One can compute the Frobenius trace of a rank 2 drinfeld module
 
 %-----------------------------------------------
 
-\begin{frame}{Previous Techniques}
 
-\begin{itemize}
-
-        \item Set $\alpha_j = \sum_{\frac{j+n}{2} \leq i \leq n} b_i f_{i,j + n} + \delta_{j,2n}$
-    \item Removing redundant equations gives an upper triangular system of size $\left\lfloor \frac{n}{2} \right\rfloor + 1$ in terms of $f_{i,j}$, $a_i$, $\alpha_j$
-    \item Can compute $f_{i,j}$ using the recurrence $f_{i+1,j} = \gamma(T) f_{i,j} + g f_{i,j-1}^q + \Delta f_{i,j-2}^{q^2}$
-
-\item Overall runtime cubic in $n$
-
-\end{itemize}
-
-%\begin{equation}
-%\begin{bmatrix} f_{0,0} & f_{1,0} & \ldots & f_{\lfloor n/2 \rfloor, 0} \\
-%                 0      & f_{1,2} & \ldots & f_{\lfloor n/2 \rfloor, 2}  \\
-%                 0      & 0       & \ddots & \vdots                      \\
-%                 \vdots  & \vdots  &  \ddots      & \vdots                       \\
-%                 0  & 0 & \ldots & f_{\lfloor n/2 \rfloor, n}
-%\end{bmatrix}
-%\begin{bmatrix}
-%a_0 \\ a_1 \\ \vdots \\ a_{\lfloor n/2 \rfloor}
-%\end{bmatrix} = \begin{bmatrix} \alpha_{0} \\ \alpha_{2} \\ \vdots \\ \alpha_{n} \end{bmatrix}
-%\end{equation}
-    
-\end{frame}
 
 %-------------------------------------------------
 
 \begin{frame}{Previous Techniques}
 \begin{itemize}
 
-\item A faster algorithm based on the Hasse invariant exists when $\mathbb{L} = \mathbb{K}$
+\item A faster algorithm based on the Hasse invariant exists when $\gamma$ is an automorphism
 \item Narayanan gave a randomized algorithm when $q$ is odd and  CharPoly$(\varphi_x) = $ MinPoly$(\varphi_x)$
-\item Based on the Automorphism projection algorithm of [Kaltofen and Shoup, 1998]
+\item Based on the automorphism projection algorithm of [Kaltofen and Shoup, 1998]
 \item Runs in Monte Carlo time $(n^{1.885} \log q + n \log^2 q)^{1+o(1)}$,
-  if the minimal polynomial of $\varphi_x$ has degree $n$
-\item Includes an unjustified claim which we repair
+  if $ \deg \textnormal{MinPoly}(\varphi_T) = n$
+\item Includes an unjustified claim which we repair using a block Wiedemann approach
 \end{itemize}
 \end{frame}
 
@@ -411,11 +418,12 @@ One can compute the Frobenius trace of a rank 2 drinfeld module
 \begin{frame}{A Randomized Algorithm}
 
 \begin{itemize}
+    \item Inspired by Shoup  
     \item Recall: $\tau^2 + \varphi_b = \varphi_a \tau$
-    \item Choose random elements $\alpha \in L$, $\ell : L \to \f$
+    \item Choose random $\alpha \in \mathbb{L}$, $\ell : \mathbb{L} \to \f_q$
     \item Identify $\tau \mapsto \sigma^n$, $r := \alpha + \varphi_b(\alpha) = \varphi_a(\alpha)$
     \item $a := \sum_{i=0}^{\left\lfloor \frac{n}{2} \right\rfloor}a_ix^i$
-    \item For $j \geq 0$: $\ell(\varphi_x^j(r)) = \sum_{i = 0}^{\left\lfloor{\frac{n}{2}} \right\rfloor}a_i\ell(\varphi_x^{i+j}(\alpha))$
+    \item For $j \geq 0$: $\ell(\varphi_T^j(r)) = \sum_{i = 0}^{\left\lfloor{\frac{n}{2}} \right\rfloor}a_i\ell(\varphi_T^{i+j}(\alpha))$
     \end{itemize}
     
     \end{frame}
@@ -424,13 +432,13 @@ One can compute the Frobenius trace of a rank 2 drinfeld module
     \begin{itemize}
     \item For a choice of $\kappa$, we can construct a Hankel system
 \end{itemize}
-\[ \begin{bmatrix}\ell(\alpha) & \ell(\varphi_x(\alpha)) & \ldots & \ell(\varphi_x^{\left\lfloor n/2 \right\rfloor}(\alpha)) \\ \vdots & \vdots & & \vdots \\ 
+\[ \begin{bmatrix}\ell(\alpha) & \ell(\varphi_T(\alpha)) & \ldots & \ell(\varphi_T^{\left\lfloor n/2 \right\rfloor}(\alpha)) \\ \vdots & \vdots & & \vdots \\ 
 
-\ell(\varphi_x^{j}(\alpha)) & \ell(\varphi_x^{1+j}(\alpha)) & \ldots & \ell(\varphi_x^{\left\lfloor n/2 \right\rfloor+j}(\alpha)) \\ \vdots & \vdots & & \vdots \\
+\ell(\varphi_T^{j}(\alpha)) & \ell(\varphi_T^{1+j}(\alpha)) & \ldots & \ell(\varphi_T^{\left\lfloor n/2 \right\rfloor+j}(\alpha)) \\ \vdots & \vdots & & \vdots \\
 
-\ell(\varphi_x^{\kappa}(\alpha)) & \ell(\varphi_x^{1 + \kappa }(\alpha)) & \ldots & \ell(\varphi_x^{\left\lfloor n/2 \right\rfloor + \kappa}(\alpha))
+\ell(\varphi_T^{\kappa}(\alpha)) & \ell(\varphi_T^{1 + \kappa }(\alpha)) & \ldots & \ell(\varphi_T^{\left\lfloor n/2 \right\rfloor + \kappa}(\alpha))
 
-\end{bmatrix} \begin{bmatrix} a_0 \\ a_1 \\ \vdots \\ a_i \\ \vdots \\ a_{\left\lfloor n/2 \right\rfloor} \end{bmatrix} = \begin{bmatrix} \ell(r) \\ \ell(\varphi_x(r)) \\ \vdots \\ \ell(\varphi_x^j(r)) \\ \vdots  \\   \ell(\varphi_x^{\kappa}(r)) \end{bmatrix} \]
+\end{bmatrix} \begin{bmatrix} a_0 \\ a_1 \\ \vdots \\ a_i \\ \vdots \\ a_{\left\lfloor n/2 \right\rfloor} \end{bmatrix} = \begin{bmatrix} \ell(r) \\ \ell(\varphi_T(r)) \\ \vdots \\ \ell(\varphi_T^j(r)) \\ \vdots  \\   \ell(\varphi_T^{\kappa}(r)) \end{bmatrix} \]
     
 \end{frame}
 
@@ -443,9 +451,9 @@ One can compute the Frobenius trace of a rank 2 drinfeld module
 \begin{frame}{A Randomized Algorithm}
 
 \begin{itemize}
-    \item  With probability at least $(1 - \frac{n}{2q})^2$ we have that $\minpol(\{\ell(\varphi_x^i(\alpha)\}_i) = \minpol(\varphi_x)$
-    \item $\frac{n-1}{2} \leq \deg \minpol(\varphi_x) \leq n$
-    \item Take $\kappa = \deg \minpol(\varphi_x)$
+    \item  With probability at least $(1 - \frac{n}{2q})^2$ we have that $\minpol(\{\ell(\varphi_T^i(\alpha)\}_i) = \minpol(\varphi_T)$
+    \item $\frac{n-1}{2} \leq \deg \minpol(\varphi_T) \leq n$
+    \item Take $\kappa = \deg \minpol(\varphi_T)$
     \item After possibly augmenting the Hankel matrix an upper left submatrix of size at least $\left\lfloor \frac{n}{2} \right\rfloor + 1$ is invertible in almost all cases
 \end{itemize}
     
@@ -468,7 +476,8 @@ One can compute the Frobenius trace of a rank 2 drinfeld module
 \begin{frame}{A Deterministic Algorithm}
 
 \begin{itemize}
-    \item We can instead exploit the ring-homomorphic properties of $\varphi$
+    \item Inspired by Schoof's algorithm for elliptic curves
+    \item Exploit the ring-homomorphic properties of $\varphi$
     \item Suppose $ \frac{n}{2} + 1 < q$
     \item Pick a set $\{e_0, \ldots e_{\frac{n}{2}}\} \subset \mathbb{F}$
     \item Characteristic equation: $a(e_i) X^n  = X^{2n} + b(e_i) \mod \varphi_{x} - e_i $
@@ -482,8 +491,8 @@ One can compute the Frobenius trace of a rank 2 drinfeld module
 
 \begin{frame}{A Deterministic Algorithm}
 \begin{itemize}
-    \item Want to compute $X^n \mod \varphi_{x} - e_i$
-    \item Define $X^j := \nu_j + \mu_j X \mod \phi_{T} - e_i$ with $\nu_j, \mu_j \in L$
+    \item Want to compute $X^n \mod \varphi_{T} - e_i$
+    \item Define $X^j \mod \varphi_{T} - e_i := \nu_j + \mu_j X $ with $\nu_j, \mu_j \in \mathbb{L}$
     %\item $\phi_T - e_i = \gamma_T - e_i + gX + \Delta X^2$
     %\item 
     %\item We obtain the recurrences $\nu_{j+1} = -\frac{\gamma_x - e_i}{\Delta}\mu_{j}^q$ and $\mu_{j + 1} = \nu_j^q - \frac{g}{\Delta} \mu_j^q$
@@ -508,7 +517,7 @@ One can compute the Frobenius trace of a rank 2 drinfeld module
         \item If $\mu_n \neq 0$, $a(e_i) = \nu_n + \nu_n^q + \mu_n^q \beta$, otherwise $a(e_i) = \nu_n + b(e_i)$
     \item Overall runtime is $(n^2 \log q + n \log^2 q)^{1+o(1)}$ bit operations
 
-    \item This approach can be extended to the cases where $\frac{n}{2} + 1 \geq q$ by using $\varphi_{g}$ for irreduscible $g$
+    \item This approach can be extended to the cases where $\frac{n}{2} + 1 \geq q$ by using $\varphi_{g}$ for irreducible $g$
 \end{itemize}
     
 \end{frame}
@@ -547,6 +556,45 @@ One can compute the Frobenius trace of a rank 2 drinfeld module
 %\end{frame}
 
 %--------------------------------------------------
+
+
+\begin{frame}{Conclusion}
+
+\begin{table}[]
+\begin{tabular}{|c|c|}
+\hline
+Algorithm & Runtime  \\ \hline
+Gekeler &  $(n^{3}\log
+  q + n \log^2 q)^{1+o(1)}$ \\
+Narayanan & $(n^{1.885} \log q + n \log^2 q)^{1+o(1)}$  \\
+Hasse & $(n^{3/2} \log q + n \log^2 q)^{1+o(1)}$  \\
+Randomized & $O\tilde{~}(n^2 \log^2 q)$  \\
+Deterministic & $(n^2 \log q + n \log^2 q)^{1+o(1)} \\ \hline
+\end{tabular}
+\end{table}
+    
+\end{frame}
+
+%-----------------------------------------
+
+%\begin{frame}{Conclusion}
+
+%\begin{table}[]
+%\begin{tabular}{|c|c|}
+%\hline
+%Algorithm & Runtime  \\ \hline
+%Gekeler &  $(n^{\theta+2}\log
+%  q + n \log^2 q)^{1+o(1)}$ \\
+%Narayanan & $(n^{1.885} \log q + n \log^2 q)^{1+o(1)}$  \\
+%Hasse & $(n^{\theta+1/2} \log q + n \log^2 q)^{1+o(1)}$  \\
+%Randomized & $O\tilde{~}(n^2 \log^2 q)$  \\
+%Deterministic & $(n^2 \log q + n \log^2 q)^{1+o(1)} \\ \hline
+%\end{tabular}
+%\end{table}
+    
+%\end{frame}
+
+%-------------------------------------------
 
 \begin{frame}{Conclusion}
 
