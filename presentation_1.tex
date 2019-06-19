@@ -153,7 +153,7 @@ University of Waterloo \\ % Your institution for the title page
 
 \item Rank 2 case a "function field analogue of elliptic curves"
   \item Used to prove special cases of Langlands Conjectures \textcolor{blue}{[Drinfeld, 1974]}
-   \item  Used in polynomial factorization algorithms over finite fields
+   \item  Used in polynomial factorization algorithms over finite fields \blue{[van der Heiden, 2004]}
     
  
      \item Cryptography over Drinfeld modules - insecure \blue{[Scanlon, 2001]}
@@ -171,7 +171,7 @@ University of Waterloo \\ % Your institution for the title page
 
 \frametitle{Motivation}
 
-\item The characteristic polynomial associated to a Drinfeld Module were studied extensively by Gekeler and Jung. 
+\item The characteristic polynomials associated to Drinfeld Modules were studied extensively by Gekeler and Jung. 
 
 \item Explored whether conjectures concerning the distributions of Frobenius traces for elliptic curves might have parallels in the Drinfeld case \blue{[Jung, 2000]}
 
@@ -193,7 +193,7 @@ University of Waterloo \\ % Your institution for the title page
 \item $\gamma: \mathbb{F}_q[T] \to \mathbb{L}$ finite fields
 \item $\sigma(x) := x^q$
 \item $\mathbb{L}[X,\sigma] := $ skew polynomials over $\mathbb{L}$ subject to $Xa = \sigma(a)X$ for $a \in \mathbb{L}$ 
-\item Runtimes given count bit operations unless stated otherwise
+%\item Runtimes given count bit operations unless stated otherwise
 
 \end{itemize}
 \end{frame}
@@ -258,7 +258,12 @@ A \textbf{Drinfeld Module} is a ring homomorphism $\varphi: \mathbb{F}_q[T] \to 
    
    \spa
    
-    To every elements of $\mathbb{L}[X,\sigma]$ we can associate an endomorphism of $\mathbb{L}$, in which case we will write $\varphi_c := \varphi(c)$
+   
+   We will write $\varphi_c := \varphi(c)$
+   
+   \spa
+   
+    To every element of $\mathbb{L}[X,\sigma]$ we can associate an endomorphism of $\mathbb{L}$
  
 
  \end{frame}
@@ -337,7 +342,7 @@ $\blue{b}$ the \blue{\textit{Frobenius Norm}}
 
 \spa
 
-Setting coefficients to zero induces the degree constraints $\deg(\red{a}) \leq \frac{n}{2}$, $\deg(\blue{b}) \leq n$
+We have the degree constraints $\deg(\red{a}) \leq \frac{n}{2}$, $\deg(\blue{b}) \leq n$
 
 
 \end{frame}
@@ -411,18 +416,17 @@ In a RAM model counting bit operations, one can compute the Frobenius trace of a
 \begin{frame}
 \frametitle{Known Results}
 
-Polynomial multiplication of degree at most $n$: $\blue{(n\log q)^{1 + o(1)}}$
+Polynomial multiplication of degree at most $n$: $\blue{O\tilde{~}(n\log q)}$
+
+%Polynomial multiplication of degree at most $n$: $\blue{(n\log q)^{1 + o(1)}}$
 
 \spa
 
 Modular composition: Compute $F(G) \mod H$ given single variable polynomials $\deg F, G,H \leq n$
 \begin{itemize}
-\item Brent-Kung: $\blue{(n^{(\omega+1)/2}
-\log q)^{1+o(1)}}$
-    \item Kedlaya-Umans: $\blue{(n^{1 + \varepsilon}
-\log q)^{1+o(1)}}$
-    \item Lecerf-van der Hoeven: $\blue{(n
-\log q)^{1+o(1)}}$
+\item Brent-Kung: $\blue{O\tilde{~}(n^{(\omega+1)/2}\log q)} $ % $\blue{(n^{(\omega+1)/2}\log q)^{1+o(1)}}$
+    \item Kedlaya-Umans: $\blue{(n^{1 + \varepsilon}\log q)^{1+o(1)}}$
+    \item Lecerf-van der Hoeven: $\blue{(n \log q)^{1+o(1)}}$
 \end{itemize}
 
 %\spa
@@ -431,7 +435,7 @@ Modular composition: Compute $F(G) \mod H$ given single variable polynomials $\d
 
 \spa
 
-Compute the Frobenius map via fast exponentiation: $\blue{(n\log^2 q)^{1 + o(1)}}$ 
+Compute the Frobenius map via fast exponentiation: $\blue{O\tilde{~}(n\log^2 q)}$ %$\blue{(n\log^2 q)^{1 + o(1)}}$ 
     
 
 
@@ -461,7 +465,8 @@ Compute the Frobenius map via fast exponentiation: $\blue{(n\log^2 q)^{1 + o(1)}
      Construct a triangular system for the coefficients of $a$ in terms of $f_{i,j}$ and compute $f_{i,j}$ using a recurrence
      
      \spa
-     Overall runtime: $\blue{(n^3 \log q + n\log^2 q)^{1 + o(1)}}$
+     Overall runtime: $\blue{O\tilde{~}(n^3 \log q + n\log^2 q)}$
+     %Overall runtime: $\blue{(n^3 \log q + n\log^2 q)^{1 + o(1)}}$
 
 
 
@@ -493,7 +498,7 @@ Recall $\mathbb{L} = \mathbb{F}_q[T]/f$, $\deg(f) = n$
 
 \spa
 
-Runtime of $\blue{(n^{3/2} \log q + n \log^2 q)^{1+o(1)}}$
+Runtime of $\blue{(n^{3/2} \log q + n \log^2 q)^{1+o(1)}}$ \blue{[Doliskani et. al., 2017]}
 
 %$\gamma(a)$ can be computed from $H_{\varphi}$ using
 
@@ -588,8 +593,10 @@ Runs in Monte Carlo time $\blue{(n^{1.885} \log q + n \log^2 q)^{1+o(1)}}$,
     \item Inspired by Schoof's algorithm for elliptic curves
     \item The Drinfeld case turns out to be much simpler: it's sufficient to exploit the ring-homomorphic properties of $\varphi$
     \item We begin with the assumption $ \frac{n}{2} + 1 < q$ and pick a set $\{e_0, \ldots e_{\frac{n}{2}}\} \subset \mathbb{F}$
-    \item The characteristic equation applied to each $e_i$:
-    \centerline{$a(e_i) X^n  = X^{2n} + b(e_i) \mod \varphi_{T} - e_i $}
+    \item Recall the characteristic equation:
+    \[X^{2n} - \varphi_a X^n + \varphi_b = 0\]
+    \item The characteristic equation applied to each $e_i$ reduced modulo $\varphi_{T} - e_i$:
+    \[a(e_i) X^n  = X^{2n} + b(e_i) \mod \varphi_{T} - e_i \]
     \item To compute $a$, we find each $a(e_i)$ and interpolate
     \item \red{To solve for $a(e_i)$, we want to compute $X^n \mod \varphi_{T} - e_i$}
 
@@ -611,9 +618,10 @@ Runs in Monte Carlo time $\blue{(n^{1.885} \log q + n \log^2 q)^{1+o(1)}}$,
     
     \item Set $\alpha := -\frac{\gamma(T) - e_i}{\Delta}$, $\beta := - \frac{g}{\Delta}$, $M^{(q^j)} := \begin{bmatrix} 0 & \alpha^{q^j} \\ 1 & \beta^{q^j} \end{bmatrix}$
     
-    \item Simple recurrence gives $\begin{bmatrix} \nu_{n} \\ \mu_n  \end{bmatrix} = M M^{(q)} \ldots M^{(q^{n-1})}  \begin{bmatrix} 1 \\ 0  \end{bmatrix}$
+    \item Simple recurrence gives 
+    \[\begin{bmatrix} \nu_{n} \\ \mu_n  \end{bmatrix} = M M^{(q)} \ldots M^{(q^{n-1})}  \begin{bmatrix} 1 \\ 0  \end{bmatrix}\]
     
-    \item Modular composition and a recursive procedure computes the expression 
+    \item Modular composition and a recursive procedure efficiently computes the preceding expression 
 
     
 \end{frame}
@@ -626,7 +634,7 @@ Runs in Monte Carlo time $\blue{(n^{1.885} \log q + n \log^2 q)^{1+o(1)}}$,
         \item If $\mu_n \neq 0$, $a(e_i) = \nu_n + \nu_n^q + \mu_n^q \beta$, otherwise $a(e_i) = \nu_n + b(e_i)$
     \item Overall runtime is $\blue{(n^2 \log q + n \log^2 q)^{1+o(1)}}$ bit operations
 
-    \item This approach can be extended to the cases where $\frac{n}{2} + 1 \geq q$ by using $\varphi_{g}$ for irreducible $g$
+    \item This approach can be extended to the cases where $\frac{n}{2} + 1 \geq q$ by using $\varphi_{g}$ for irreducible $g$ instead of $\varphi_T - e_i$
 
     
 \end{frame}
@@ -673,8 +681,7 @@ Runs in Monte Carlo time $\blue{(n^{1.885} \log q + n \log^2 q)^{1+o(1)}}$,
 \begin{tabular}{|c|c|c|}
 \hline
 Algorithm & Runtime & Conditions  \\ \hline
-Gekeler &  $(n^{3}\log
-  q + n \log^2 q)^{1+o(1)}$ & None \\
+Gekeler &  $O\tilde{~}(n^3 \log q + n\log^2 q)$ & None \\
 Narayanan & $(n^{1.885} \log q + n \log^2 q)^{1+o(1)}$ & \thead{ {\footnotesize CharPoly$(\varphi_T) = $ MinPoly$(\varphi_T)$ } \\ {\footnotesize $q$ odd } } \\
 Hasse & $(n^{3/2} \log q + n \log^2 q)^{1+o(1)}$ & $\gamma$ surjective  \\
 Randomized & $O\tilde{~}(n^2 \log^2 q)$ & None  \\
@@ -706,6 +713,8 @@ Deterministic & $(n^2 \log q + n \log^2 q)^{1+o(1)}$ & None \\ \hline
 %-------------------------------------------
 
 \begin{frame}{Experimental Results}
+
+Our new algorithms were implemented in C++ using Shoup's Number Theory Library. Tests were run on a consumer laptop (Thinkpad T450s).
 
 \begin{figure}[h!]\label{fig:ntest499}
 \centering
