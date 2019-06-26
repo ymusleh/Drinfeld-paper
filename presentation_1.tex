@@ -110,7 +110,7 @@
 
 \title[]{Computing the Characteristic Polynomial of a Finite Rank Two Drinfeld Module} % The short title appears at the bottom of every slide, the full title is only on the title page
 
-\author{\'Eric Schost and Yossef Musleh} % Your name
+\author{  Yossef Musleh and \'Eric Schost} % Your name
 \institute[UW] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
 {
 University of Waterloo \\ % Your institution for the title page
@@ -145,6 +145,7 @@ University of Waterloo \\ % Your institution for the title page
 \item Birch and Swinnerton-Dyer Conjecture
  \item Elliptic Curve Cryptography
  \end{itemize}
+
     
 
  Drinfeld Modules
@@ -152,8 +153,8 @@ University of Waterloo \\ % Your institution for the title page
 \begin{itemize}
 
 \item Rank 2 case a "function field analogue of elliptic curves"
-  \item Used to prove special cases of Langlands Conjectures \textcolor{blue}{[Drinfeld, 1974]}
-   \item  Used in polynomial factorization algorithms over finite fields \blue{[van der Heiden, 2004]}
+  \item Used to prove special cases of the Langlands Program \textcolor{blue}{[Drinfeld, 1974]}
+   \item  Used in polynomial factorization algorithms over finite fields \blue{[Panchishkin \& Potemine, 1989]} \blue{[van der Heiden, 2004]} \blue{[Doliskani, Narayanan \& Schost, 2017]} \blue{[Narayanan, 2018]}
     
  
      \item Cryptography over Drinfeld modules - insecure \blue{[Scanlon, 2001]}
@@ -176,6 +177,7 @@ University of Waterloo \\ % Your institution for the title page
 \item Explored whether conjectures concerning the distributions of Frobenius traces for elliptic curves might have parallels in the Drinfeld case \blue{[Jung, 2000]}
 
 
+
     
 \end{frame}
 
@@ -190,9 +192,10 @@ University of Waterloo \\ % Your institution for the title page
 
 \item $\mathbb{L} = \mathbb{F}_q[T]/f(T)$
 \item deg$(f) = n$
-\item $\gamma: \mathbb{F}_q[T] \to \mathbb{L}$ finite fields
+\item $\gamma: \mathbb{F}_q[T] \to \mathbb{L}$ field map
 \item $\sigma(x) := x^q$
 \item $\mathbb{L}[X,\sigma] := $ skew polynomials over $\mathbb{L}$ subject to $Xa = \sigma(a)X$ for $a \in \mathbb{L}$ 
+\item To every element of $\mathbb{L}[X,\sigma]$ we can associate an endomorphism of $\mathbb{L}$
 %\item Runtimes given count bit operations unless stated otherwise
 
 \end{itemize}
@@ -209,6 +212,7 @@ University of Waterloo \\ % Your institution for the title page
 
 \begin{example}
 Let $q = 2$, $\mathbb{L} = \mathbb{F}_2[T]/(T^2 + T + 1) = \mathbb{F}_4$, $\sigma(T) = T^2$
+\[ \gamma : T \mapsto T \mod T^2 + T + 1\]
 \[ a:= (T + 1)X^2 + TX + T + 1 \]
 \[b := X\]
 \[ab = (T + 1)X^3 + TX^2 + (T + 1)X\]
@@ -261,9 +265,9 @@ A \textbf{Drinfeld Module} is a ring homomorphism $\varphi: \mathbb{F}_q[T] \to 
    
    We will write $\varphi_c := \varphi(c)$
    
-   \spa
+ %  \spa
    
-    To every element of $\mathbb{L}[X,\sigma]$ we can associate an endomorphism of $\mathbb{L}$
+
  
 
  \end{frame}
@@ -272,8 +276,9 @@ A \textbf{Drinfeld Module} is a ring homomorphism $\varphi: \mathbb{F}_q[T] \to 
    \begin{example}
    Let $q =2$, $\mathbb{L} = \mathbb{F}_2[T]/(T^2 + T + 1)$.
    \[ \gamma : f(T) \mapsto f(T) \mod T^2 + T + 1  \]
-   \[ \varphi_T := T + \blue{1}X + \red{1}X^2 \]
-   \[ \varphi = (\blue{1},\red{1})\]
+   \[ \varphi_T := T + \blue{T}X + \red{1}X^2 \]
+   \[ \varphi_{T^2} = T + 1 + T X + X^2 + X^4 \]
+   \[ \varphi = (\blue{T},\red{1})\]
    \end{example}
 
 \end{frame}
@@ -325,7 +330,7 @@ Based on Hasse's theorem, which provides the bound
 \frametitle{Point Counting}
 
 \begin{theorem}[Gekeler, 1991]
-Let $\varphi$ be a rank-2 Drinfeld Module, and let $\tau = X^n$. Then there is a polynomial, the \textbf{characteristic polynomial} of $\varphi$,  $Y^2 - \red{a}Y +\blue{b} \in \mathbb{F}_q[Y]$ such that
+Let $\varphi$ be a rank-2 Drinfeld Module and $\tau = X^n$. Then there is a polynomial, the \textbf{characteristic polynomial} of $\varphi$,  $Y^2 - \red{a}Y +\blue{b} \in \mathbb{F}_q[T][Y]$ such that
 
 \[\tau^2 -\varphi_{\red{a}}\tau + \varphi_{\blue{b}} = 0\]
 in $\mathbb{L}[X,\sigma]$
@@ -348,6 +353,9 @@ We have the degree constraints $\deg(\red{a}) \leq \frac{n}{2}$, $\deg(\blue{b})
 \end{frame}
 
 
+%-------------------
+% 11
+
 \begin{frame}
 \frametitle{Main Problem}
 
@@ -363,6 +371,24 @@ Given a rank-2 Drinfeld module $\varphi = (g,\Delta)$, compute its Frobenius tra
  
  Computing the Frobenius trace turns out to be much harder
 
+\end{frame}
+
+\begin{frame}{Computing the Characteristic Polynomial}
+\begin{example}
+Let $q = 2$, $n = 2$, $\mathbb{L} = \mathbb{F}_2[T]/(T^2 + T + 1)$, $\varphi = (1,1)$. Then we have:
+
+\[ b = T^2 + T +1\]
+\[ a = 0\]
+
+And we verify that
+\[ X^{4} + (T + X +X^2)^2 + (T + X +X^2) + 1\]
+\[ = X^{4} + (T +1 + X + X^2 + X^4) + (T + X +X^2) + 1\]
+\[ = 0\]
+
+
+
+
+\end{example}
 \end{frame}
 
 %-------------------------------------------------
@@ -387,6 +413,7 @@ Given a rank-2 Drinfeld module $\varphi = (g,\Delta)$, compute its Frobenius tra
 
 %-----------------------------------------------
 
+% 12
 
 \begin{frame}
 \frametitle{Main Result}
@@ -413,6 +440,8 @@ In a RAM model counting bit operations, one can compute the Frobenius trace of a
 
 %------------------
 
+% 13
+
 \begin{frame}
 \frametitle{Known Results}
 
@@ -425,7 +454,7 @@ Polynomial multiplication of degree at most $n$: $\blue{O\tilde{~}(n\log q)}$
 Modular composition: Compute $F(G) \mod H$ given single variable polynomials $\deg F, G,H \leq n$
 \begin{itemize}
 \item Brent-Kung: $\blue{O\tilde{~}(n^{(\omega+1)/2}\log q)} $ % $\blue{(n^{(\omega+1)/2}\log q)^{1+o(1)}}$
-    \item Kedlaya-Umans: $\blue{(n^{1 + \varepsilon}\log q)^{1+o(1)}}$
+    \item Kedlaya-Umans: $\blue{(n^{1 + \varepsilon}\log q)^{1+o(1)}}$ $\forall \epsilon > 0 $
     \item Lecerf-van der Hoeven: $\blue{(n \log q)^{1+o(1)}}$
 \end{itemize}
 
@@ -443,6 +472,9 @@ Compute the Frobenius map via fast exponentiation: $\blue{O\tilde{~}(n\log^2 q)}
 
 
 %-----------------
+
+
+%14
 
 
 
@@ -522,9 +554,11 @@ Based on the automorphism projection algorithm of \blue{[Kaltofen and Shoup, 199
 
 \spa
 
+We proposed a modification to the algorithm to repair an unjustified claim
 
-Runs in Monte Carlo time $\blue{(n^{1.885} \log q + n \log^2 q)^{1+o(1)}}$,
-  if $ \deg \textnormal{MinPoly}(\varphi_T) = n$
+\spa
+
+Runs in Monte Carlo time $\blue{(n^{1.885} \log q + n \log^2 q)^{1+o(1)}}$
     
 \end{frame}
 
@@ -533,7 +567,7 @@ Runs in Monte Carlo time $\blue{(n^{1.885} \log q + n \log^2 q)^{1+o(1)}}$,
 \begin{frame}{A Randomized Algorithm}
 
 
-     Inspired by Shoup's algorithm for constructing irreducible polynomials \blue{[Shoup, 1994]}  
+     Inspired by Shoup's algorithm for constructing irreducible polynomials \blue{[Shoup, 1994]} and Wiedemann's algorithm for solving sparse systems \blue{[Wiedemann, 1986]}
      
      \spa
      
@@ -541,7 +575,7 @@ Runs in Monte Carlo time $\blue{(n^{1.885} \log q + n \log^2 q)^{1+o(1)}}$,
     
     
     \item Choose a random element $\alpha \in \mathbb{L}$ and projection $\ell : \mathbb{L} \to \f_q$
-    \item Recall the operator identification $X \mapsto \sigma$, $\tau \mapsto \sigma^n$
+    \item Recall the operator identification $X \mapsto \sigma$, $\tau \mapsto X^n \mapsto \sigma^n$
     \item Set
     \item \centerline{$r := \alpha + \varphi_b(\alpha) = \varphi_a(\alpha)$}
     \item \centerline{$a := \sum_{i=0}^{\left\lfloor \frac{n}{2} \right\rfloor}a_iT^i$}
@@ -590,13 +624,13 @@ Runs in Monte Carlo time $\blue{(n^{1.885} \log q + n \log^2 q)^{1+o(1)}}$,
 \begin{frame}{A Deterministic Algorithm}
 
 
-    \item Inspired by Schoof's algorithm for elliptic curves
+    \item Inspired by Schoof's algorithm for elliptic curves: compute the trace modulo primes up to a bound
     \item The Drinfeld case turns out to be much simpler: it's sufficient to exploit the ring-homomorphic properties of $\varphi$
-    \item We begin with the assumption $ \frac{n}{2} + 1 < q$ and pick a set $\{e_0, \ldots e_{\frac{n}{2}}\} \subset \mathbb{F}$
+    \item Begin with the assumption $ \frac{n}{2} + 1 < q$ and pick a set $\{e_0, \ldots e_{\frac{n}{2}}\} \subset \mathbb{F_q}$
     \item Recall the characteristic equation:
-    \[X^{2n} - \varphi_a X^n + \varphi_b = 0\]
+    \[X^{2n} + \varphi_b = \varphi_a X^n\]
     \item The characteristic equation applied to each $e_i$ reduced modulo $\varphi_{T} - e_i$:
-    \[a(e_i) X^n  = X^{2n} + b(e_i) \mod \varphi_{T} - e_i \]
+    \[ X^{2n} + b(e_i) = a(e_i) X^n  \mod \varphi_{T} - e_i \]
     \item To compute $a$, we find each $a(e_i)$ and interpolate
     \item \red{To solve for $a(e_i)$, we want to compute $X^n \mod \varphi_{T} - e_i$}
 
@@ -644,23 +678,8 @@ Runs in Monte Carlo time $\blue{(n^{1.885} \log q + n \log^2 q)^{1+o(1)}}$,
 
 %-------------------------------------------------
 
-%\begin{frame}
-%\begin{example}
-%Let $q = 5$, $n = 4$, $L = \mathbb{F}_5[T]/(T^4 + 4T^2 + 4T + 2)$, $\phi = (1,1)$. Then for $e_0 = 0$ we have $\alpha = 4t$, $\beta = 4$. Letting
-
-%\[M = \begin{bmatrix}0 & 4T \\ 1 & 4 \end{bmatrix}\]
-
-%We get:
-
-%\[M M^{(5)} M^{(25)} M^{(125)} = \begin{bmatrix} T^3 + T^2 + 3 & T^3 + 2T + 3 \\ 2T^3 + 2T^2 + 3T + 4 & 4T^3 + 4T^2 + 4 \end{bmatrix}\]
-
-%So $\nu_4 = T^3 + T^2 + 3$ and $\mu_4 = 2T^3 + 2T^2 + 3T + 4$ and
-
-%\[a(0) = \nu_4 + \nu_4^5 + 4\mu_4^5 = 2\]
 
 
-%\end{example}
-%\end{frame}
 
 %\begin{frame}
 
@@ -725,6 +744,17 @@ Our new algorithms were implemented in C++ using Shoup's Number Theory Library. 
 \end{frame}
 
 %--------------------------------------------------
+
+\begin{frame}{Future Work}
+
+Our main goal of achieving a sub-quadratic runtime in $n$ remains unfulfilled.
+
+To this end, exploring whether additional elliptic techniques have efficient Drinfeld parallels may prove to be a fruitful topic of further investigation.
+
+
+
+
+\end{frame}
 
 %\begin{frame}
 %\frametitle{References}
